@@ -17,5 +17,6 @@
             "-o",
             "${workspaceFolder}/results/out.csv",
         ]
-    }
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

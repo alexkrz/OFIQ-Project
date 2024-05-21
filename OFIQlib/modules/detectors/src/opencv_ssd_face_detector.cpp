@@ -27,6 +27,7 @@
 #include "opencv_ssd_face_detector.h"
 #include "OFIQError.h"
 #include "utils.h"
+#include <opencv2/highgui.hpp>
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -156,6 +157,8 @@ namespace OFIQ_LIB::modules::detectors
                 }
             }
         }
+        cv::imshow("bounding box", cvImage);
+        cv::waitKey(0);
 
         return faceRects;
     }
