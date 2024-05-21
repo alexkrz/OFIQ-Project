@@ -157,8 +157,16 @@ namespace OFIQ_LIB::modules::detectors
                 }
             }
         }
+
+        cv::namedWindow("bounding box", cv::WINDOW_NORMAL);
         cv::imshow("bounding box", cvImage);
-        cv::waitKey(0);
+        cv::resizeWindow("bounding box", 600, 600);
+
+    // we give GUI the time to create and resize the window
+    //a little bit of a workaround
+        cv::waitKey(1);
+
+        cv::waitKey(0);  
 
         return faceRects;
     }
