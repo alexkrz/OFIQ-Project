@@ -158,11 +158,6 @@ namespace OFIQ_LIB::modules::detectors
             }
         }
 
-        cv::namedWindow("Bounding Box", WINDOW_AUTOSIZE);
-        cv::imshow("Bounding Box", cvImage);
-
-        cv::waitKey(0);  
-
         return faceRects;
     }
 

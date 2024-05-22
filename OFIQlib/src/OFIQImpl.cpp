@@ -31,6 +31,8 @@
 #include "FaceMeasures.h"
 #include "utils.h"
 #include "image_io.h"
+#include <opencv2/imgproc.hpp> 
+
 
 using namespace std;
 using namespace OFIQ;
@@ -89,6 +91,31 @@ ReturnStatus OFIQImpl::scalarQuality(const OFIQ::Image& face, double& quality)
     return ReturnStatus(ReturnCode::Success);
 }
 
+void drawBoundingBox(cv::Mat& image, OFIQ::BoundingBox& bb){
+
+    cv::Point2i top_left = cv::Point2i(bb.xleft, bb.ytop);
+    cv::Point2i bottom_right = cv::Point2i(bb.xleft + bb.width, bb.ytop + bb.height);
+
+    cv::Scalar blue = cv::Scalar( 255, 0, 0 ) ;
+
+    cv::rectangle(image, top_left, bottom_right, blue, 10);
+}
+
+void showBoundingBox(Session& session,  std::vector<OFIQ::BoundingBox>& faces){
+
+    cv::Mat image = copyToCvImage(session.image());
+
+    for(BoundingBox bb : faces)
+    {
+        drawBoundingBox(image, bb);
+    }
+
+    cv::namedWindow("Bounding Box", cv::WINDOW_NORMAL);
+    cv::imshow("Bounding Box", image);
+
+    cv::waitKey(0);  
+}
+
 void OFIQImpl::performPreprocessing(Session& session)
 {
     log("\t1. detectFaces ");
@@ -98,6 +125,9 @@ void OFIQImpl::performPreprocessing(Session& session)
         log("\n\tNo faces were detected, abort preprocessing\n");
         throw OFIQError(ReturnCode::FaceDetectionError, "No faces were detected");
     }
+
+    showBoundingBox(session, faces);
+
     session.setDetectedFaces(faces);
     log("2. estimatePose ");
     session.setPose(networks->poseEstimator->estimatePose(session));
@@ -235,3 +265,4 @@ OFIQ_EXPORT std::shared_ptr<Interface> Interface::getImplementation()
 {
     return std::make_shared<OFIQImpl>();
 }
+
