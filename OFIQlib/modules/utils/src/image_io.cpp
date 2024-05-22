@@ -28,8 +28,8 @@
 #include "utils.h"
 
 #include <algorithm>
-#include <memory>
 #include <fstream>
+#include <memory>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -46,12 +46,17 @@ namespace OFIQ_LIB
         try
         {
             cv::Mat cvImage = cv::imread(filename, cv::IMREAD_COLOR);
-            if(cvImage.empty())
+            if (cvImage.empty())
             {
                 retCode = ReturnCode::ImageReadingError;
                 retStatusInfo = std::string("failed to read image or image is empty: ") + filename;
                 return ReturnStatus(retCode, retStatusInfo);
             }
+
+            // cv::namedWindow("Display Window", cv::WINDOW_NORMAL);
+            // cv::resizeWindow("Display Window", 800, 600);
+            // cv::imshow("Display Window", cvImage);
+            // cv::waitKey(0);
 
             cv::cvtColor(cvImage, cvImage, cv::COLOR_BGR2RGB);
             image.width = static_cast<uint16_t>(cvImage.cols);
