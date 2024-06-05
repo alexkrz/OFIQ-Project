@@ -114,8 +114,9 @@ namespace OFIQ_LIB::modules::segmentations
         }
 
         cv::Mat mask;
+        
         OFIQ::Image maskImage = OFIQ_LIB::MakeGreyImage(segmentationImage->cols, segmentationImage->rows);
-
+        
 
         if (OFIQ_LIB::modules::segmentations::SegmentClassLabels::face == faceSegment) {
             memcpy(maskImage.data.get(), segmentationImage->data, maskImage.size());
@@ -134,8 +135,8 @@ namespace OFIQ_LIB::modules::segmentations
             cv::morphologyEx(mask, mask, cv::MORPH_CLOSE, kernel);
 
             memcpy(maskImage.data.get(), mask.data, maskImage.size());
+ 
         }
-
         return maskImage;
     }
 
