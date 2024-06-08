@@ -11,3 +11,6 @@
 
 # Results
 /results/
+
+# VScode settings
+/.vscode/
