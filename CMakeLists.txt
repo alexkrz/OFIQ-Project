@@ -2,6 +2,13 @@ cmake_minimum_required(VERSION 3.26)
 
 file(READ "Version.txt" ver)
 
+#MTCNN 
+set_property (GLOBAL PROPERTY USE_FOLDERS ON)
+
+set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
 string(REGEX MATCH "VERSION_MAJOR ([0-9]*)" _ ${ver})
 set(ver_major ${CMAKE_MATCH_1})
 
