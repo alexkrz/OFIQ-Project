@@ -34,10 +34,25 @@
 #include <opencv2/imgproc.hpp> 
 
 
+/**
+ * more includes for the mtcnn
+ * #TODO: change the one above 
+ */
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/timer/timer.hpp>
+
+#include <opencv2/dnn.hpp>
+#include <opencv2/highgui.hpp>
+
+#include "../modules/detectors/detector.h"
+
 using namespace std;
 using namespace OFIQ;
 using namespace OFIQ_LIB;
 using namespace OFIQ_LIB::modules::measures;
+
+
 
 
 OFIQImpl::OFIQImpl():m_emptySession({this->dummyImage, this->dummyAssement}) {}
@@ -179,7 +194,7 @@ void visualizeLandmarks(Session& session, const std::vector<OFIQ::FaceLandmarks>
     previewWindow("Landmark Preview", image);
 }
 
-void OFIQImpl::performPreprocessing(Session& session)
+/**void OFIQImpl::performPreprocessing(Session& session)
 {
     log("\t1. detectFaces ");
     //find Bounding Boxes
@@ -258,6 +273,7 @@ void OFIQImpl::performPreprocessing(Session& session)
     );
     log("\npreprocessing finished\n");
 }
+**/
 
 void OFIQImpl::alignFaceImage(Session& session) {
     auto landmarks = session.getLandmarks();

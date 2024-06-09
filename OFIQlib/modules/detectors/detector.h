@@ -1,10 +1,10 @@
 #ifndef _include_opencv_mtcnn_detector_h_
 #define _include_opencv_mtcnn_detector_h_
 
-#include "face.h"
-#include "onet.h"
-#include "pnet.h"
-#include "rnet.h"
+#include "../include/mtcnn/face.h"
+#include "../include/mtcnn/onet.h"
+#include "../include/mtcnn/pnet.h"
+#include "../include/mtcnn/rnet.h"
 
 namespace OFIQ_LIB::modules::detectors{
 
