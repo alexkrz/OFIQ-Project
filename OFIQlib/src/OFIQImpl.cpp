@@ -160,7 +160,7 @@ void visualizeLandmarks(Session& session, const std::vector<OFIQ::FaceLandmarks>
     cv::Mat image = copyToCvImage(session.image());
 
     //NOTE: color values are in BGR!
-    cv::Scalar orange = cv::Scalar(224, 110, 0);
+    cv::Scalar lightblue = cv::Scalar(224, 110, 0);
     
     //go through all detected facelandmarks for each face on the image
     int index = 0;
@@ -169,7 +169,7 @@ void visualizeLandmarks(Session& session, const std::vector<OFIQ::FaceLandmarks>
         //go through eacht specific landmark point and draw it onto the image
         for(LandmarkPoint fp : fl.landmarks)
         {
-            drawLandmarkPoint(image, fp, orange, index);
+            drawLandmarkPoint(image, fp, lightblue, index);
             index++;
         }
     }
@@ -185,14 +185,49 @@ void visualizeFaceAlignment(Session& session)
 
 void visualizeSegmentationMask(Session& session)
 {
-    cv::Mat segementations = session.getFaceParsingImage();
-    previewWindow("Segementation Face Mask", segementations);
+    cv::Mat segmentation = session.getFaceParsingImage();
+    previewWindow("Segementation Face Mask", segmentation);
 }
 
 void visualizeOcclusionMask(Session& session)
 {
-    cv::Mat segementations = session.getFaceOcclusionSegmentationImage();
-    previewWindow("Occlusion Face Mask", segementations);
+    int imageSize = 400;
+    int cropLeft = 30;
+    int cropRight = 30;
+    int cropTop = 0;
+    int cropBottom = 60;
+
+    cv::Mat occlusion = session.getFaceOcclusionSegmentationImage();
+    cv::Mat image = session.getAlignedFace();
+    cv::Mat cropped = image(cv::Range(0, image.rows - cropBottom), cv::Range(cropLeft, image.cols - cropRight));
+
+    //crop the image to (occlusion.rows x occlusion.cols)
+    //cv::getRectSubPix(image, cv::Size(occlusion.rows, occlusion.cols), cv::Point2f(image.rows * 0.5, image.cols * 0.5), cropped);
+    cout<<image.size<<endl;
+    cout<<occlusion.size<<endl;
+    //NOTE: color values are in BGR!
+    cv::Scalar lightgreen = cv::Scalar(148, 198, 130);
+    cv::Scalar red = cv::Scalar(0, 32, 200);
+    cv::Point2i center;
+
+    for(size_t i = 0; i < occlusion.cols; i++)
+    {
+        for (size_t j = 0; j < occlusion.rows; j++)
+        {
+            if(occlusion.at<int>(j, i) == 0)
+            {
+                center = cv::Point2i(i, j);
+                cv::circle(cropped, center, 1, lightgreen, cv::FILLED);
+            }
+            if(occlusion.at<int>(j, i) == 1)
+            {
+                center = cv::Point2i(i, j);
+                cv::circle(cropped, center, 1, red, cv::FILLED);
+            }
+        }
+        
+    }
+    previewWindow("Occlusion Face Mask", cropped);
 }
 
 void visualizeLandmarkRegion(Session& session)
@@ -214,7 +249,7 @@ void OFIQImpl::performPreprocessing(Session& session)
     }
     session.setDetectedFaces(faces);
 
-    //visualizeBoundingBoxes(session, faces);
+   // visualizeBoundingBoxes(session, faces);
 
     log("2. estimatePose ");
     session.setPose(networks->poseEstimator->estimatePose(session));
@@ -235,7 +270,7 @@ void OFIQImpl::performPreprocessing(Session& session)
 #endif
         
     
-    //visualizeLandmarks(session, session.getLandmarksAllFaces());
+    // visualizeLandmarks(session, session.getLandmarksAllFaces());
 
     log("4. alignFaceImage ");
     // aligned face requires the landmarks of the face thus it must come after the landmark extraction.
@@ -251,7 +286,7 @@ void OFIQImpl::performPreprocessing(Session& session)
             OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
         false));
 
-    visualizeSegmentationMask(session);
+    //visualizeSegmentationMask(session);
 
     log("6. getFaceOcclusionMask ");
     session.setFaceOcclusionSegmentationImage(OFIQ_LIB::copyToCvImage(
@@ -260,7 +295,7 @@ void OFIQImpl::performPreprocessing(Session& session)
             OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
         false));
 
-    //visualizeOcclusionMask(session);
+    visualizeOcclusionMask(session);
 
     static const std::string alphaParamPath = "params.measures.FaceRegion.alpha";
     double alpha = 0.0f;
@@ -284,7 +319,7 @@ void OFIQImpl::performPreprocessing(Session& session)
          )
     );
 
-    visualizeLandmarkRegion(session);
+    //visualizeLandmarkRegion(session);
 
     log("\npreprocessing finished\n");
 }
