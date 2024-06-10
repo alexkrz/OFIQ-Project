@@ -6,7 +6,7 @@
 #include "../include/mtcnn/pnet.h"
 #include "../include/mtcnn/rnet.h"
 
-namespace OFIQ_LIB::modules::detectors{
+namespace OFIQ_LIB::modules::detector{
 
   class MTCNNDetector{
 
