@@ -155,70 +155,70 @@ void visualizeBoundingBoxes(Session& session, const std::vector<OFIQ::BoundingBo
     previewWindow("Bounding Boxes Preview", image);
 }
 
-cv::Scalar determineColor(int i)
+cv::Vec3b determineColor(int i)
 {
     switch(i)
     {
-        //background
+        //background (black)
         case 0:
-            return cv::Scalar(1, 1, 1);
-        //face skin
+            return cv::Vec3b(0, 0, 0);
+        //face skin (lightblue)
         case 1: 
-            return cv::Scalar(204, 153, 0);
-        //left eye brow
+            return cv::Vec3b(204, 153, 51);
+        //left eye brow (green)
         case 2:
-            return cv::Scalar(51, 153, 0);
-        //right eye brow
+            return cv::Vec3b(51, 153, 0);
+        //right eye brow (green)
         case 3:
-            return cv::Scalar(51, 153, 0);
-        //left eye
+            return cv::Vec3b(51, 153, 0);
+        //left eye (yellow)
         case 4: 
-            return cv::Scalar(0, 204, 255);
-        //right eye
+            return cv::Vec3b(0, 204, 255);
+        //right eye (yellow)
         case 5:
-            return cv::Scalar(0, 204, 255);
-        //eyeglasses
+            return cv::Vec3b(0, 204, 255);
+        //eyeglasses (red)
         case 6:
-            return cv::Scalar(0, 51, 255);
-        //left ear
+            return cv::Vec3b(0, 51, 255);
+        //left ear (darkblue)
         case 7:
-            return cv::Scalar(255, 204, 0);
-        //right ear
+            return cv::Vec3b(102, 0, 0);
+        //right ear (darkblue)
         case 8:
-            return cv::Scalar(255, 204, 0);
-        //earring
+            return cv::Vec3b(102, 0, 0);
+        //earring (pink)
         case 9:
-            return cv::Scalar(255, 102, 255);
-        //nose
+            return cv::Vec3b(255, 102, 255);
+        //nose (purple)
         case 10:
-            return cv::Scalar(255, 102, 153);
-        //mouth
+            return cv::Vec3b(255, 0, 153);
+        //mouth (green)
         case 11:
-            return cv::Scalar(102, 0, 102);
-        //upper lip
+            return cv::Vec3b(51, 153, 0);
+        //upper lip (lime)
         case 12:
-            return cv::Scalar(102, 0, 204);
-        //lower lip
+            return cv::Vec3b(0, 255, 0);
+        //lower lip (aqua)
         case 13:
-            return cv::Scalar(102, 0, 204);
-        //neck
+            return cv::Vec3b(255, 255, 0);
+        //neck (brown)
         case 14: 
-            return cv::Scalar(80, 80, 255);
-        //necklace
+            return cv::Vec3b(0, 51, 102);
+        //necklace (gold)
         case 15:
-            return cv::Scalar(0, 204, 255);
-        //clothing
+            return cv::Vec3b(0, 204, 255);
+        //clothing (steal)
         case 16:
-            return cv::Scalar(153, 153, 102);
-        //hair
+            return cv::Vec3b(153, 153, 102);
+        //hair (coral)
         case 17:
-            return cv::Scalar(102, 153, 153);
-        //head covering
+            return cv::Vec3b(153, 153, 255);
+        //head covering (red)
         case 18:
-            return cv::Scalar(0, 51, 255);
-        //covering errors
+            return cv::Vec3b(0, 51, 255);
+        //covering errors (white)
         default:
-            return cv::Scalar(0, 0, 0);
+            return cv::Vec3b(255, 255, 255);
     }     
 }
 
@@ -253,37 +253,38 @@ void visualizeFaceAlignment(Session& session)
 void visualizeSegmentationMask(Session& session)
 {
     double alpha, beta;
-    alpha = 0.3;
-    beta = 0.7;
+    int row, col;
+
+    alpha = 0.7;
+    beta = 1 - alpha;
 
     cv::Mat image, segmentation ,layered;
 
     segmentation = session.getFaceParsingImage();
-    image = session.getAlignedFace();
+    image = copyToCvImage(session.image());
 
-    std::cout<<"Channels: "<<std::endl;
-    std::cout<<segmentation.channels()<<std::endl;
-    std::cout<<"Type: "<<std::endl;
-    std::cout<<segmentation.type()<<std::endl;
-    std::cout<<"Depth: "<<std::endl;
-    std::cout<<segmentation.depth()<<std::endl;
-
-    cv::resize(segmentation, segmentation, image.size(), 0.0, 0.0, cv::INTER_LINEAR);
-
-    //std::cout<<segmentation<<std::endl;
-
-    for (size_t i = 50; i < segmentation.cols; i++)
+    cv::resize(segmentation, segmentation, image.size(), 0.0, 0.0, cv::INTER_CUBIC);
+    
+    for (col = 0; col < segmentation.cols; col++)
     {
-        for (size_t j = 80; j < segmentation.rows; j++)
+        for(row = 0; row < segmentation.rows; row++)
         {
-            segmentation.at<cv::Scalar>(cv::Point(i,j)) = determineColor(segmentation.at<int>(cv::Point(i,j)));;
+            cv::Vec3b pixel = segmentation.at<cv::Vec3b>(row, col);
+
+            //std::cout << "Pixel value at (" << row << ", " << col << "): ["
+            //         << (int)pixel[0] << ", " << (int)pixel[1] << ", " << (int)pixel[2] << "]" << std::endl;
+            cv::Vec3b color = determineColor(pixel[0]);
+
+            //std::cout << "Color value at (" << row << ", " << col << "): ["
+            //          << (int)color[0] << ", " << (int)color[1] << ", " << (int)color[2] << "]" << std::endl;
+
+            segmentation.at<cv::Vec3b>(row, col) = color;
         }
     }
     
-    std::cout<<segmentation<<std::endl;
-    //cv::addWeighted(segmentation, alpha, image, beta, 0.0, layered);
+    cv::addWeighted(segmentation, alpha, image, beta, 0.0, layered);
 
-    //previewWindow("Segementation Face Mask", layered);
+    previewWindow("Segementation Face Mask", layered);
 }
 
 void visualizeOcclusionMask(Session& session)
@@ -291,7 +292,7 @@ void visualizeOcclusionMask(Session& session)
     cv::Mat image, occlusion, layered;
     double alpha, beta;
     alpha = 0.3;
-    beta = 0.7;
+    beta = 1 - alpha;
 
     occlusion = session.getFaceOcclusionSegmentationImage() * 255.0f;
     image = session.getAlignedFace();
@@ -310,7 +311,7 @@ void visualizeLandmarkRegion(Session& session)
     regions = session.getAlignedFaceLandmarkedRegion();
     image = session.getAlignedFace();
     
-    cv::addWeighted(regions, alpha, image, beta, 0.0, layered);
+    //cv::addWeighted(regions, alpha, image, beta, 0.0, layered);
     
     previewWindow("Face Landmark Region", layered);
 }
@@ -398,7 +399,7 @@ void OFIQImpl::performPreprocessing(Session& session)
          )
     );
 
-    visualizeLandmarkRegion(session);
+    //visualizeLandmarkRegion(session);
 
     log("\npreprocessing finished\n");
 }
