@@ -13,7 +13,7 @@
             "-c",
             "${workspaceFolder}/data/ofiq_config.jaxn",
             "-i",
-            "${workspaceFolder}/data/tests/images/c-04-headcovered.png",
+            "${workspaceFolder}/data/tests/images/b-01-smile.png",
             "-o",
             "${workspaceFolder}/results/out.csv",
         ]
@@ -90,6 +90,12 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "*.ipp": "cpp",
+        "csignal": "cpp",
+        "strstream": "cpp",
+        "future": "cpp",
+        "cfenv": "cpp",
+        "valarray": "cpp"
     }
 }
