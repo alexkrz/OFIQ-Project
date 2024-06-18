@@ -261,9 +261,10 @@ void visualizeSegmentationMask(Session& session)
     cv::Mat image, segmentation ,layered;
 
     segmentation = session.getFaceParsingImage();
-    image = copyToCvImage(session.image());
+    image = session.getAlignedFace();
+    cv::Mat croppedImage = image(cv::Range(0, image.rows - 60), cv::Range(30, image.cols - 30));
 
-    cv::resize(segmentation, segmentation, image.size(), 0.0, 0.0, cv::INTER_CUBIC);
+    cv::resize(croppedImage, croppedImage, segmentation.size(), 0.0, 0.0, cv::INTER_NEAREST);
     
     for (col = 0; col < segmentation.cols; col++)
     {
@@ -282,7 +283,7 @@ void visualizeSegmentationMask(Session& session)
         }
     }
     
-    cv::addWeighted(segmentation, alpha, image, beta, 0.0, layered);
+    cv::addWeighted(segmentation, alpha, croppedImage, beta, 0.0, layered);
 
     previewWindow("Segementation Face Mask", layered);
 }
@@ -306,12 +307,15 @@ void visualizeLandmarkRegion(Session& session)
     cv::Mat image, regions, layered;
     double alpha, beta;
     alpha = 0.3;
-    beta = 0.7;
+    beta = 1 - alpha;
 
-    regions = session.getAlignedFaceLandmarkedRegion();
+    regions = session.getAlignedFaceLandmarkedRegion() * 255.0f;
     image = session.getAlignedFace();
-    
-    //cv::addWeighted(regions, alpha, image, beta, 0.0, layered);
+
+    cv::cvtColor(regions, regions, cv::COLOR_GRAY2BGR);
+    cv::resize(regions, regions, image.size(), 0.0, 0.0, cv::INTER_NEAREST);
+
+    cv::addWeighted(regions, alpha, image, beta, 0.0, layered);
     
     previewWindow("Face Landmark Region", layered);
 }
@@ -329,7 +333,7 @@ void OFIQImpl::performPreprocessing(Session& session)
     }
     session.setDetectedFaces(faces);
 
-    //visualizeBoundingBoxes(session, faces);
+    visualizeBoundingBoxes(session, faces);
 
     log("2. estimatePose ");
     session.setPose(networks->poseEstimator->estimatePose(session));
@@ -350,13 +354,13 @@ void OFIQImpl::performPreprocessing(Session& session)
 #endif
         
     
-    //visualizeLandmarks(session, session.getLandmarksAllFaces());
+    visualizeLandmarks(session, session.getLandmarksAllFaces());
 
     log("4. alignFaceImage ");
     // aligned face requires the landmarks of the face thus it must come after the landmark extraction.
     alignFaceImage(session);
 
-    //visualizeFaceAlignment(session);
+    visualizeFaceAlignment(session);
 
     log("5. getSegmentationMask ");
     // segmentation results for face_parsing
@@ -375,7 +379,7 @@ void OFIQImpl::performPreprocessing(Session& session)
             OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
         false));
 
-    //visualizeOcclusionMask(session);
+    visualizeOcclusionMask(session);
 
     static const std::string alphaParamPath = "params.measures.FaceRegion.alpha";
     double alpha = 0.0f;
@@ -399,7 +403,7 @@ void OFIQImpl::performPreprocessing(Session& session)
          )
     );
 
-    //visualizeLandmarkRegion(session);
+    visualizeLandmarkRegion(session);
 
     log("\npreprocessing finished\n");
 }

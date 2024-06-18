@@ -13,7 +13,7 @@
             "-c",
             "${workspaceFolder}/data/ofiq_config.jaxn",
             "-i",
-            "${workspaceFolder}/data/tests/images/b-01-smile.png",
+            "${workspaceFolder}/data/tests/images/c-06-glasses.png",
             "-o",
             "${workspaceFolder}/results/out.csv",
         ]
