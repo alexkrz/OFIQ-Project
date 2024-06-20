@@ -89,9 +89,6 @@ ReturnStatus OFIQImpl::scalarQuality(const OFIQ::Image& face, double& quality)
     return ReturnStatus(ReturnCode::Success);
 }
 
-/**
- * method opens up a window displaying the given image. window has given title.
-*/
 void previewWindow(std::string title, cv::Mat& image)
 {
     cv::namedWindow(title, cv::WINDOW_NORMAL);
@@ -99,10 +96,6 @@ void previewWindow(std::string title, cv::Mat& image)
     cv::waitKey(0);
 }
 
-
-/**
- * method draws the given bounding box onto the image. the bounding box will have the given color. 
-*/
 void drawBoundingBox(cv::Mat& image, OFIQ::BoundingBox& bb, cv::Scalar& color)
 {
     //Corner points of bounding box
@@ -135,9 +128,6 @@ void drawLandmarkPoint(cv::Mat& image, OFIQ::LandmarkPoint& fp, cv::Scalar& colo
     cv::putText(image, std::to_string(index) , text_origin, cv::FONT_HERSHEY_PLAIN, 3, cv::Scalar(0,0,0), 3);
 }
 
-/**
- * method draws all found bounding boxes onto the image.
-*/
 void visualizeBoundingBoxes(Session& session, const std::vector<OFIQ::BoundingBox>& boxes)
 {
     cv::Mat image = copyToCvImage(session.image());
@@ -159,9 +149,6 @@ cv::Vec3b determineColor(int i)
 {
     switch(i)
     {
-        //background (black)
-        case 0:
-            return cv::Vec3b(0, 0, 0);
         //face skin (lightblue)
         case 1: 
             return cv::Vec3b(204, 153, 51);
@@ -271,11 +258,18 @@ void visualizeSegmentationMask(Session& session)
         for(row = 0; row < segmentation.rows; row++)
         {
             cv::Vec3b pixel = segmentation.at<cv::Vec3b>(row, col);
-
+            cv::Vec3b color;
             //std::cout << "Pixel value at (" << row << ", " << col << "): ["
             //         << (int)pixel[0] << ", " << (int)pixel[1] << ", " << (int)pixel[2] << "]" << std::endl;
-            cv::Vec3b color = determineColor(pixel[0]);
-
+            if(pixel[0] == 0)
+            {
+                color = croppedImage.at<cv::Vec3b>(row, col);
+            }
+            else
+            {
+                color = determineColor(pixel[0]);
+            }
+            
             //std::cout << "Color value at (" << row << ", " << col << "): ["
             //          << (int)color[0] << ", " << (int)color[1] << ", " << (int)color[2] << "]" << std::endl;
 
@@ -292,11 +286,29 @@ void visualizeOcclusionMask(Session& session)
 {
     cv::Mat image, occlusion, layered;
     double alpha, beta;
-    alpha = 0.3;
+    int col, row;
+    alpha = 0.35;
     beta = 1 - alpha;
 
     occlusion = session.getFaceOcclusionSegmentationImage() * 255.0f;
     image = session.getAlignedFace();
+
+    for (col = 0; col < occlusion.cols; col++)
+    {
+        for(row = 0; row < occlusion.rows; row++)
+        {
+            cv::Vec3b pixel = occlusion.at<cv::Vec3b>(row, col);
+            
+            if(pixel[0] > 0)
+            {
+                occlusion.at<cv::Vec3b>(row, col) = cv::Vec3b(255, 0, 153);
+            } 
+            else
+            {
+                occlusion.at<cv::Vec3b>(row, col) = image.at<cv::Vec3b>(row, col);
+            }
+        }
+    }
 
     cv::addWeighted(occlusion, alpha, image, beta, 0.0, layered);
     previewWindow("Occlusion Face Mask", layered);
@@ -305,14 +317,32 @@ void visualizeOcclusionMask(Session& session)
 void visualizeLandmarkRegion(Session& session)
 {
     cv::Mat image, regions, layered;
+    int row, col;
     double alpha, beta;
-    alpha = 0.3;
+    alpha = 0.35;
     beta = 1 - alpha;
 
     regions = session.getAlignedFaceLandmarkedRegion() * 255.0f;
     image = session.getAlignedFace();
 
     cv::cvtColor(regions, regions, cv::COLOR_GRAY2BGR);
+
+    for (col = 0; col < regions.cols; col++)
+    {
+        for(row = 0; row < regions.rows; row++)
+        {
+            cv::Vec3b pixel = regions.at<cv::Vec3b>(row, col);
+            
+            if(pixel[0] > 0)
+            {
+                regions.at<cv::Vec3b>(row, col) = cv::Vec3b(102, 0, 0);
+            }
+            else
+            {
+                regions.at<cv::Vec3b>(row, col) =  image.at<cv::Vec3b>(row, col);
+            }
+        }
+    }
     cv::resize(regions, regions, image.size(), 0.0, 0.0, cv::INTER_NEAREST);
 
     cv::addWeighted(regions, alpha, image, beta, 0.0, layered);
