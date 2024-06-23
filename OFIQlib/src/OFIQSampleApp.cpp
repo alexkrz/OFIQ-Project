@@ -31,6 +31,7 @@
 #include "ofiq_lib.h"
 #include "image_io.h"
 #include "utils.h"
+#include "yolov8_face_detector.h"
 
 #include <cstring>
 #include <fstream>
@@ -41,6 +42,9 @@
 #include <cmath>
 #include <magic_enum.hpp>
 #include <filesystem>
+#include <opencv2/dnn.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
 
 constexpr int SUCCESS = 0;
 constexpr int FAILURE = 1;
@@ -296,6 +300,21 @@ void usage(const string& executable)
          << endl;
 }
 
+void detectWithYOLO(string inputFile, float confidenceThres, float nmsThres)
+{
+    
+	YOLOv8_face YOLOv8_face_model("weights/yolov8n-face.onnx", 0.45, 0.5);
+	string imgpath = "images/2.jpg";
+	cv::Mat srcimg = cv::imread(imgpath);
+	YOLOv8_face_model.detect(srcimg);
+	
+	static const string kWinName = "Deep learning face detection use OpenCV";
+	cv::namedWindow(kWinName, cv::WINDOW_NORMAL);
+	cv::imshow(kWinName, srcimg);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+}
+
 int main(int argc, char* argv[])
 {
     int requiredArgs = 1; /* exec name */
@@ -339,6 +358,7 @@ int main(int argc, char* argv[])
         configFile = fs::path(configDir).filename().generic_string();
         configDir = fs::path(configDir).parent_path().generic_string();
     }
+    //============================//
 
     /* Get implementation pointer */
     auto implPtr = Interface::getImplementation();
