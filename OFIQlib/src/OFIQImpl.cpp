@@ -64,7 +64,7 @@ ReturnStatus OFIQImpl::scalarQuality(const OFIQ::Image& face, double& quality)
 {
     FaceImageQualityAssessment assessments;
 
-    if (auto result = vectorQuality(face, assessments); 
+    if (auto result = vectorQuality(face, assessments, ""); 
         result.code != ReturnCode::Success)
         return result;
 
@@ -350,92 +350,100 @@ void visualizeLandmarkRegion(Session& session)
     previewWindow("Face Landmark Region", layered);
 }
 
-void OFIQImpl::performPreprocessing(Session& session)
+void OFIQImpl::performPreprocessing(Session& session, const std::string& detector)
 {
-    log("\t1. detectFaces ");
-    //find Bounding Boxes
-    std::vector<OFIQ::BoundingBox> faces = networks->faceDetector->detectFaces(session);
-
-    if (faces.empty())
+    if(detector == "" || detector == "ssd")
     {
-        log("\n\tNo faces were detected, abort preprocessing\n");
-        throw OFIQError(ReturnCode::FaceDetectionError, "No faces were detected");
-    }
-    session.setDetectedFaces(faces);
+        log("\t1. detectFaces ");
+        //find Bounding Boxes
+        std::vector<OFIQ::BoundingBox> faces = networks->faceDetector->detectFaces(session);
 
-    visualizeBoundingBoxes(session, faces);
+        if (faces.empty())
+        {
+            log("\n\tNo faces were detected, abort preprocessing\n");
+            throw OFIQError(ReturnCode::FaceDetectionError, "No faces were detected");
+        }
+        session.setDetectedFaces(faces);
 
-    log("2. estimatePose ");
-    session.setPose(networks->poseEstimator->estimatePose(session));
+        visualizeBoundingBoxes(session, faces);
 
-    log("3. extractLandmarks ");
-#ifdef OFIQ_SINGLE_FACE_PRESENT_WITH_TMETRIC
-    session.setLandmarksAllFaces(networks->landmarkExtractor->extractLandmarksAllFaces(session, session.getDetectedFaces()));
-    if (!session.getLandmarksAllFaces().empty())
-    {
-        session.setLandmarks(session.getLandmarksAllFaces().front());
+        log("2. estimatePose ");
+        session.setPose(networks->poseEstimator->estimatePose(session));
+
+        log("3. extractLandmarks ");
+        #ifdef OFIQ_SINGLE_FACE_PRESENT_WITH_TMETRIC
+            session.setLandmarksAllFaces(networks->landmarkExtractor->extractLandmarksAllFaces(session, session.getDetectedFaces()));
+            if (!session.getLandmarksAllFaces().empty())
+            {
+                session.setLandmarks(session.getLandmarksAllFaces().front());
+            }
+            else
+            {
+                session.setLandmarks(networks->landmarkExtractor->extractLandmarks(session));
+            }
+        #else
+            session.setLandmarks(networks->landmarkExtractor->extractLandmarks(session));
+        #endif
+        
+    
+        visualizeLandmarks(session, session.getLandmarksAllFaces());
+
+        log("4. alignFaceImage ");
+        // aligned face requires the landmarks of the face thus it must come after the landmark extraction.
+        alignFaceImage(session);
+
+        visualizeFaceAlignment(session);
+
+        log("5. getSegmentationMask ");
+        // segmentation results for face_parsing
+        session.setFaceParsingImage(OFIQ_LIB::copyToCvImage(
+            networks->segmentationExtractor->GetMask(
+                session,
+                OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
+            false));
+
+        visualizeSegmentationMask(session);
+
+        log("6. getFaceOcclusionMask ");
+        session.setFaceOcclusionSegmentationImage(OFIQ_LIB::copyToCvImage(
+            networks->faceOcclusionExtractor->GetMask(
+                session,
+                OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
+            false));
+
+        visualizeOcclusionMask(session);
+
+        static const std::string alphaParamPath = "params.measures.FaceRegion.alpha";
+        double alpha = 0.0f;
+        try
+        {
+            alpha = this->config->GetNumber(alphaParamPath);
+        }
+        catch(...)
+        {
+            alpha = 0.0f;
+        }
+
+        log("7. getAlignedFaceMask ");
+
+        session.setAlignedFaceLandmarkedRegion(
+            OFIQ_LIB::modules::landmarks::FaceMeasures::GetFaceMask(
+                session.getAlignedFaceLandmarks(),
+                session.getAlignedFace().rows,
+                session.getAlignedFace().cols,
+                (float)alpha
+            )
+        );
+
+        visualizeLandmarkRegion(session);
+
+        log("\npreprocessing finished\n"); 
     }
     else
     {
-        session.setLandmarks(networks->landmarkExtractor->extractLandmarks(session));
-    }
-#else
-    session.setLandmarks(networks->landmarkExtractor->extractLandmarks(session));
-#endif
         
-    
-    visualizeLandmarks(session, session.getLandmarksAllFaces());
-
-    log("4. alignFaceImage ");
-    // aligned face requires the landmarks of the face thus it must come after the landmark extraction.
-    alignFaceImage(session);
-
-    visualizeFaceAlignment(session);
-
-    log("5. getSegmentationMask ");
-    // segmentation results for face_parsing
-    session.setFaceParsingImage(OFIQ_LIB::copyToCvImage(
-        networks->segmentationExtractor->GetMask(
-            session,
-            OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
-        false));
-
-    visualizeSegmentationMask(session);
-
-    log("6. getFaceOcclusionMask ");
-    session.setFaceOcclusionSegmentationImage(OFIQ_LIB::copyToCvImage(
-        networks->faceOcclusionExtractor->GetMask(
-            session,
-            OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
-        false));
-
-    visualizeOcclusionMask(session);
-
-    static const std::string alphaParamPath = "params.measures.FaceRegion.alpha";
-    double alpha = 0.0f;
-    try
-    {
-        alpha = this->config->GetNumber(alphaParamPath);
-    }
-    catch(...)
-    {
-        alpha = 0.0f;
     }
 
-    log("7. getAlignedFaceMask ");
-
-    session.setAlignedFaceLandmarkedRegion(
-         OFIQ_LIB::modules::landmarks::FaceMeasures::GetFaceMask(
-            session.getAlignedFaceLandmarks(),
-            session.getAlignedFace().rows,
-            session.getAlignedFace().cols,
-            (float)alpha
-         )
-    );
-
-    visualizeLandmarkRegion(session);
-
-    log("\npreprocessing finished\n");
 }
 
 void OFIQImpl::alignFaceImage(Session& session) {
@@ -452,14 +460,14 @@ void OFIQImpl::alignFaceImage(Session& session) {
 }
 
 ReturnStatus OFIQImpl::vectorQuality(
-    const OFIQ::Image& image, OFIQ::FaceImageQualityAssessment& assessments)
+    const OFIQ::Image& image, OFIQ::FaceImageQualityAssessment& assessments, const std::string& detector)
 {
     auto session = Session(image, assessments);
 
     try
     {
         log("perform preprocessing:\n");
-        performPreprocessing(session);
+        performPreprocessing(session, detector);
     }
     catch (const OFIQError& e)
     {

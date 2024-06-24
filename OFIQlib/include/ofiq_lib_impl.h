@@ -86,7 +86,7 @@ namespace OFIQ_LIB
          * @return OFIQ::ReturnStatus 
          */
         OFIQ::ReturnStatus vectorQuality(
-            const OFIQ::Image& image, OFIQ::FaceImageQualityAssessment& assessments) override;
+            const OFIQ::Image& image, OFIQ::FaceImageQualityAssessment& assessments, const std::string& detector) override;
 
     private:
         /**
@@ -150,7 +150,7 @@ namespace OFIQ_LIB
          * computed by the \link OFIQ_LIB::OFIQImpl::performPreprocessing()
          * OFIQImpl::performPreprocessing()\endlink method
          */
-        void performPreprocessing(Session& session);
+        void performPreprocessing(Session& session, const std::string& detector);
         
         /**
          * @brief Perform the face alignment.

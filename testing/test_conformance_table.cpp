@@ -220,9 +220,10 @@ TEST_P(ConformanceTest, ValidateScores)
 	else
 	{
 		Image inputImage;
+		std::string detector = "";
 		ReturnStatus retStatus = OFIQ_LIB::readImage(imageFile, inputImage);
 		ASSERT_TRUE(retStatus.code == OFIQ::ReturnCode::Success);
-		ofiqImpl->vectorQuality(inputImage, assessments);
+		ofiqImpl->vectorQuality(inputImage, assessments, detector);
 		assessmentsCache[filename] = assessments;
 	}
 

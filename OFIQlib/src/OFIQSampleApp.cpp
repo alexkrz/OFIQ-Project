@@ -31,8 +31,6 @@
 #include "ofiq_lib.h"
 #include "image_io.h"
 #include "utils.h"
-#include "yolov8_face_detector.h"
-
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -42,9 +40,6 @@
 #include <cmath>
 #include <magic_enum.hpp>
 #include <filesystem>
-#include <opencv2/dnn.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
 
 constexpr int SUCCESS = 0;
 constexpr int FAILURE = 1;
@@ -60,7 +55,8 @@ using namespace OFIQ_LIB;
 int getQualityAssessmentResults(
     std::shared_ptr<Interface>& implPtr,
     const string& inputFile,
-    FaceImageQualityAssessment& assessments);
+    FaceImageQualityAssessment& assessments,
+    const string& detector);
 
 std::vector<std::string> readFileLines(
     const std::string& inputFile);
@@ -125,7 +121,7 @@ bool isStringContained(
 }
 
 int runQuality(
-    std::shared_ptr<Interface>& implPtr, const string& inputFile, std::ostream* p_outStream = &std::cout )
+    std::shared_ptr<Interface>& implPtr, const string& inputFile, const string& detector, std::ostream* p_outStream = &std::cout)
 {
     std::vector<std::string> imageFiles;
     std::vector<FaceImageQualityAssessment> faceImageQAs;
@@ -149,7 +145,7 @@ int runQuality(
     for (auto const& imageFile: imageFiles)
     {
         FaceImageQualityAssessment assessment;
-        int resCode = getQualityAssessmentResults(implPtr, imageFile, assessment);
+        int resCode = getQualityAssessmentResults(implPtr, imageFile, assessment, detector);
         faceImageQAresultCodes.push_back(resCode);
 
         faceImageQAs.push_back(assessment);
@@ -235,7 +231,8 @@ int runQuality(
 int getQualityAssessmentResults(
     std::shared_ptr<Interface>& implPtr,
     const string& inputFile,
-    FaceImageQualityAssessment& assessments)
+    FaceImageQualityAssessment& assessments,
+    const std::string& detector)
 {
     Image image;
     //loading images 
@@ -248,7 +245,7 @@ int getQualityAssessmentResults(
     }
 
     std::cout << "--> Start processing image file: " << inputFile << std::endl;
-    retStatus = implPtr->vectorQuality(image, assessments);
+    retStatus = implPtr->vectorQuality(image, assessments, detector);
 
     return retStatus.code == ReturnCode::Success ? SUCCESS : FAILURE;
 }
@@ -300,21 +297,6 @@ void usage(const string& executable)
          << endl;
 }
 
-void detectWithYOLO(string inputFile, float confidenceThres, float nmsThres)
-{
-    
-	YOLOv8_face YOLOv8_face_model("weights/yolov8n-face.onnx", 0.45, 0.5);
-	string imgpath = "images/2.jpg";
-	cv::Mat srcimg = cv::imread(imgpath);
-	YOLOv8_face_model.detect(srcimg);
-	
-	static const string kWinName = "Deep learning face detection use OpenCV";
-	cv::namedWindow(kWinName, cv::WINDOW_NORMAL);
-	cv::imshow(kWinName, srcimg);
-	cv::waitKey(0);
-	cv::destroyAllWindows();
-}
-
 int main(int argc, char* argv[])
 {
     int requiredArgs = 1; /* exec name */
@@ -328,6 +310,7 @@ int main(int argc, char* argv[])
     char* outputFile = nullptr;
     string inputFile;
     string configFile;
+    string detector = "ssd";
 
     for (int i = 0; i < argc - requiredArgs; i++)
     {
@@ -339,6 +322,8 @@ int main(int argc, char* argv[])
             inputFile = argv[requiredArgs + (++i)];
         else if (strcmp(argv[requiredArgs + i], "-cf") == 0)
             configFile = argv[requiredArgs + (++i)];
+        else if(strcmp(argv[requiredArgs + i], "-yolo") == 0)
+            detector = "yolo";
         else
         {
             cerr << "[ERROR] Unrecognized flag: " << argv[requiredArgs + i] << endl;
@@ -358,8 +343,7 @@ int main(int argc, char* argv[])
         configFile = fs::path(configDir).filename().generic_string();
         configDir = fs::path(configDir).parent_path().generic_string();
     }
-    //============================//
-
+    
     /* Get implementation pointer */
     auto implPtr = Interface::getImplementation();
     /* Initialization */
@@ -380,7 +364,7 @@ int main(int argc, char* argv[])
         std::ofstream ofs(outputFile);
         if (ofs.good())
         {
-            runQuality(implPtr, inputFile, &ofs);
+            runQuality(implPtr, inputFile, detector, &ofs);
         }
         else
         {
@@ -391,7 +375,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        runQuality(implPtr, inputFile, &std::cout);
+        runQuality(implPtr, inputFile, detector, &std::cout);
     }
 
     return 0;

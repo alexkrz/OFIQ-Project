@@ -113,7 +113,7 @@ namespace OFIQ
          * @return OFIQ::ReturnStatus
          */
         virtual OFIQ::ReturnStatus vectorQuality(
-            const OFIQ::Image& image, OFIQ::FaceImageQualityAssessment& assessments) = 0;
+            const OFIQ::Image& image, OFIQ::FaceImageQualityAssessment& assessments, const std::string& detector) = 0;
 
         /**
          * @brief
