@@ -652,7 +652,6 @@ void OFIQImpl::performPreprocessing(Session& session, const std::string& detecto
     else
     {
         std::cout << "bin in else YOLO: " << endl;
-        ;
         cv::Mat srcimg = copyToCvImage(session.image());
         std::filesystem::path cwd = std::filesystem::current_path();
         std::cout << "Current working directory: " << cwd << std::endl;
