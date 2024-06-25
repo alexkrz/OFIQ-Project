@@ -150,6 +150,15 @@ namespace OFIQ_LIB
     OFIQ_EXPORT OFIQ::Image MakeGreyImage(uint16_t width, uint16_t height);
 
     /**
+     * @brief This function generates a colored image with the resolution passed by the call.
+     * 
+     * @param width Width of the generated image.
+     * @param height Height of the generated image.
+     * @return OFIQ::Image Generated gray scaled image.
+     */
+    OFIQ_EXPORT OFIQ::Image MakeColoredImage(uint16_t width, uint16_t height);
+    
+    /**
      * @brief Based on the provided landmarks this function computes the distance between the point between the eyes and the chin.
      * 
      * @param faceLandmarks Input face landmarks.

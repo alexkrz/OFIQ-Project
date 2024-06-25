@@ -89,9 +89,6 @@ ReturnStatus OFIQImpl::scalarQuality(const OFIQ::Image& face, double& quality)
     return ReturnStatus(ReturnCode::Success);
 }
 
-/**
- * method opens up a window displaying the given image. window has given title.
-*/
 void previewWindow(std::string title, cv::Mat& image)
 {
     cv::namedWindow(title, cv::WINDOW_NORMAL);
@@ -99,10 +96,6 @@ void previewWindow(std::string title, cv::Mat& image)
     cv::waitKey(0);
 }
 
-
-/**
- * method draws the given bounding box onto the image. the bounding box will have the given color. 
-*/
 void drawBoundingBox(cv::Mat& image, OFIQ::BoundingBox& bb, cv::Scalar& color)
 {
     //Corner points of bounding box
@@ -135,9 +128,6 @@ void drawLandmarkPoint(cv::Mat& image, OFIQ::LandmarkPoint& fp, cv::Scalar& colo
     cv::putText(image, std::to_string(index) , text_origin, cv::FONT_HERSHEY_PLAIN, 3, cv::Scalar(0,0,0), 3);
 }
 
-/**
- * method draws all found bounding boxes onto the image.
-*/
 void visualizeBoundingBoxes(Session& session, const std::vector<OFIQ::BoundingBox>& boxes)
 {
     cv::Mat image = copyToCvImage(session.image());
@@ -155,12 +145,76 @@ void visualizeBoundingBoxes(Session& session, const std::vector<OFIQ::BoundingBo
     previewWindow("Bounding Boxes Preview", image);
 }
 
+cv::Vec3b determineColor(int i)
+{
+    switch(i)
+    {
+        //face skin (lightblue)
+        case 1: 
+            return cv::Vec3b(204, 153, 51);
+        //left eye brow (green)
+        case 2:
+            return cv::Vec3b(51, 153, 0);
+        //right eye brow (green)
+        case 3:
+            return cv::Vec3b(51, 153, 0);
+        //left eye (yellow)
+        case 4: 
+            return cv::Vec3b(0, 204, 255);
+        //right eye (yellow)
+        case 5:
+            return cv::Vec3b(0, 204, 255);
+        //eyeglasses (red)
+        case 6:
+            return cv::Vec3b(0, 51, 255);
+        //left ear (darkblue)
+        case 7:
+            return cv::Vec3b(102, 0, 0);
+        //right ear (darkblue)
+        case 8:
+            return cv::Vec3b(102, 0, 0);
+        //earring (pink)
+        case 9:
+            return cv::Vec3b(255, 102, 255);
+        //nose (purple)
+        case 10:
+            return cv::Vec3b(255, 0, 153);
+        //mouth (green)
+        case 11:
+            return cv::Vec3b(51, 153, 0);
+        //upper lip (lime)
+        case 12:
+            return cv::Vec3b(0, 255, 0);
+        //lower lip (aqua)
+        case 13:
+            return cv::Vec3b(255, 255, 0);
+        //neck (brown)
+        case 14: 
+            return cv::Vec3b(0, 51, 102);
+        //necklace (gold)
+        case 15:
+            return cv::Vec3b(0, 204, 255);
+        //clothing (steal)
+        case 16:
+            return cv::Vec3b(153, 153, 102);
+        //hair (coral)
+        case 17:
+            return cv::Vec3b(153, 153, 255);
+        //head covering (red)
+        case 18:
+            return cv::Vec3b(0, 51, 255);
+        //covering errors (white)
+        default:
+            return cv::Vec3b(255, 255, 255);
+    }     
+}
+
 void visualizeLandmarks(Session& session, const std::vector<OFIQ::FaceLandmarks>& landmarks)
 {
     cv::Mat image = copyToCvImage(session.image());
 
     //NOTE: color values are in BGR!
-    cv::Scalar orange = cv::Scalar(224, 110, 0);
+    cv::Scalar lightblue = cv::Scalar(224, 110, 0);
     
     //go through all detected facelandmarks for each face on the image
     int index = 0;
@@ -169,12 +223,131 @@ void visualizeLandmarks(Session& session, const std::vector<OFIQ::FaceLandmarks>
         //go through eacht specific landmark point and draw it onto the image
         for(LandmarkPoint fp : fl.landmarks)
         {
-            drawLandmarkPoint(image, fp, orange, index);
+            drawLandmarkPoint(image, fp, lightblue, index);
             index++;
         }
     }
     //open window
     previewWindow("Landmark Preview", image);
+}
+
+void visualizeFaceAlignment(Session& session)
+{
+    cv::Mat aligned = session.getAlignedFace();
+    previewWindow("Face Alignment", aligned);
+}
+
+void visualizeSegmentationMask(Session& session)
+{
+    double alpha, beta;
+    int row, col;
+
+    alpha = 0.7;
+    beta = 1 - alpha;
+
+    cv::Mat image, segmentation ,layered;
+
+    segmentation = session.getFaceParsingImage();
+    image = session.getAlignedFace();
+    cv::Mat croppedImage = image(cv::Range(0, image.rows - 60), cv::Range(30, image.cols - 30));
+
+    cv::resize(croppedImage, croppedImage, segmentation.size(), 0.0, 0.0, cv::INTER_NEAREST);
+    
+    for (col = 0; col < segmentation.cols; col++)
+    {
+        for(row = 0; row < segmentation.rows; row++)
+        {
+            cv::Vec3b pixel = segmentation.at<cv::Vec3b>(row, col);
+            cv::Vec3b color;
+            //std::cout << "Pixel value at (" << row << ", " << col << "): ["
+            //         << (int)pixel[0] << ", " << (int)pixel[1] << ", " << (int)pixel[2] << "]" << std::endl;
+            if(pixel[0] == 0)
+            {
+                color = croppedImage.at<cv::Vec3b>(row, col);
+            }
+            else
+            {
+                color = determineColor(pixel[0]);
+            }
+            
+            //std::cout << "Color value at (" << row << ", " << col << "): ["
+            //          << (int)color[0] << ", " << (int)color[1] << ", " << (int)color[2] << "]" << std::endl;
+
+            segmentation.at<cv::Vec3b>(row, col) = color;
+        }
+    }
+    
+    cv::addWeighted(segmentation, alpha, croppedImage, beta, 0.0, layered);
+
+    previewWindow("Segementation Face Mask", layered);
+}
+
+void visualizeOcclusionMask(Session& session)
+{
+    cv::Mat image, occlusion, layered;
+    double alpha, beta;
+    int col, row;
+    alpha = 0.35;
+    beta = 1 - alpha;
+
+    occlusion = session.getFaceOcclusionSegmentationImage() * 255.0f;
+    image = session.getAlignedFace();
+
+    for (col = 0; col < occlusion.cols; col++)
+    {
+        for(row = 0; row < occlusion.rows; row++)
+        {
+            cv::Vec3b pixel = occlusion.at<cv::Vec3b>(row, col);
+            
+            if(pixel[0] > 0)
+            {
+                occlusion.at<cv::Vec3b>(row, col) = cv::Vec3b(255, 0, 153);
+            } 
+            else
+            {
+                occlusion.at<cv::Vec3b>(row, col) = image.at<cv::Vec3b>(row, col);
+            }
+        }
+    }
+
+    cv::addWeighted(occlusion, alpha, image, beta, 0.0, layered);
+    previewWindow("Occlusion Face Mask", layered);
+}
+
+void visualizeLandmarkRegion(Session& session)
+{
+    cv::Mat image, regions, layered;
+    int row, col;
+    double alpha, beta;
+    alpha = 0.35;
+    beta = 1 - alpha;
+
+    regions = session.getAlignedFaceLandmarkedRegion() * 255.0f;
+    image = session.getAlignedFace();
+
+    cv::cvtColor(regions, regions, cv::COLOR_GRAY2BGR);
+
+    for (col = 0; col < regions.cols; col++)
+    {
+        for(row = 0; row < regions.rows; row++)
+        {
+            cv::Vec3b pixel = regions.at<cv::Vec3b>(row, col);
+            
+            if(pixel[0] > 0)
+            {
+                regions.at<cv::Vec3b>(row, col) = cv::Vec3b(102, 0, 0);
+            }
+            else
+            {
+                regions.at<cv::Vec3b>(row, col) =  image.at<cv::Vec3b>(row, col);
+            }
+        }
+    }
+    cv::resize(regions, regions, image.size(), 0.0, 0.0, cv::INTER_NEAREST);
+
+    cv::addWeighted(regions, alpha, image, beta, 0.0, layered);
+    
+    previewWindow("Face Landmark Region", layered);
 }
 
 void OFIQImpl::performPreprocessing(Session& session)
@@ -209,13 +382,15 @@ void OFIQImpl::performPreprocessing(Session& session)
 #else
     session.setLandmarks(networks->landmarkExtractor->extractLandmarks(session));
 #endif
+        
     
-
     visualizeLandmarks(session, session.getLandmarksAllFaces());
 
     log("4. alignFaceImage ");
     // aligned face requires the landmarks of the face thus it must come after the landmark extraction.
     alignFaceImage(session);
+
+    visualizeFaceAlignment(session);
 
     log("5. getSegmentationMask ");
     // segmentation results for face_parsing
@@ -223,14 +398,18 @@ void OFIQImpl::performPreprocessing(Session& session)
         networks->segmentationExtractor->GetMask(
             session,
             OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
-        true));
+        false));
+
+    visualizeSegmentationMask(session);
 
     log("6. getFaceOcclusionMask ");
     session.setFaceOcclusionSegmentationImage(OFIQ_LIB::copyToCvImage(
         networks->faceOcclusionExtractor->GetMask(
             session,
             OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
-        true));
+        false));
+
+    visualizeOcclusionMask(session);
 
     static const std::string alphaParamPath = "params.measures.FaceRegion.alpha";
     double alpha = 0.0f;
@@ -253,6 +432,9 @@ void OFIQImpl::performPreprocessing(Session& session)
             (float)alpha
          )
     );
+
+    visualizeLandmarkRegion(session);
+
     log("\npreprocessing finished\n");
 }
 

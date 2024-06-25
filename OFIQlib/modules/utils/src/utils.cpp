@@ -184,6 +184,12 @@ namespace OFIQ_LIB
         return {width, height, 8, data};
     }
 
+    OFIQ_EXPORT OFIQ::Image MakeColoredImage(uint16_t width, uint16_t height)
+    {
+        std::shared_ptr<uint8_t> data{new uint8_t[width * height]};
+        return {width, height, 24, data};
+    }
+
     OFIQ_EXPORT cv::Mat copyToCvImage(const OFIQ::Image& sourceImage, bool asGrayImage)
     {
         bool isRGB = sourceImage.depth == 24;
@@ -212,7 +218,7 @@ namespace OFIQ_LIB
         OFIQ::FaceLandmarks& alignedFaceLandmarks,
         cv::Mat& transformationMatrix)
     {
-        cv::Mat cvImage = copyToCvImage(faceImage);
+        cv::Mat cvImage = copyToCvImage(faceImage, false);
         int nose, leftMouth, rightMouth;
         std::vector<cv::Point2f> landmarks, alignedLandmarks;
         switch (faceLandmarks.type)
