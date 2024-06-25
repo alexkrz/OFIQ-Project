@@ -91,8 +91,10 @@ ReturnStatus OFIQImpl::scalarQuality(const OFIQ::Image& face, double& quality)
 void previewWindow(std::string title, cv::Mat& image)
 {
     cv::namedWindow(title, cv::WINDOW_NORMAL);
+    cv::resizeWindow(title, 800, 800);
     cv::imshow(title, image);
     cv::waitKey(0);
+    cv::destroyAllWindows();
 }
 
 void drawBoundingBox(cv::Mat& image, OFIQ::BoundingBox& bb, cv::Scalar& color)

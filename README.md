@@ -21,50 +21,45 @@ how to compile and run __OFIQ__.
 1. Install miniconda
 2. Create conda environment with
 
-```bash
-conda env create -n ofiq -f environment.yml
-```
+    ```bash
+    conda env create -n ofiq -f environment.yml
+    ```
 
-3. Install pre-commit
+3. Install pre-commit and build dependencies
 
-```bash
-pre-commit install
-```
+    ```bash
+    conda activate ofiq
+    pre-commit install
+    cd scripts
+    sh build_debug.sh
+    ```
 
-4. Build dependencies
+4. Build project with VSCode CMake Tools
 
-```bash
-conda activate ofiq
-cd scripts
-sh build_debug.sh
-```
+    When building the project for the first time, make sure you download images and models. \
+    Configure `.vscode/settings.json` as follows:
 
-5. Build project with VSCode CMake Tools
+    ```json
+    {
+        "cmake.cmakePath": "${userHome}/miniconda3/envs/ofiq/bin/cmake",
+        "cmake.buildDirectory": "${workspaceFolder}/build/build_linux",
+        "cmake.configureArgs": [
+            "-DCMAKE_INSTALL_PREFIX=${workspaceFolder}/install_x86_64_linux",
+            "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
+            "-DDOWNLOAD_MODELS=ON",
+            "-DDOWNLOAD_IMAGES=ON"
+        ],
+    }
+    ```
 
-When building the project for the first time, make sure you download images and models. \
-Configure `.vscode/settings.json` as follows:
+5. CMake Configure Project
 
-```json
-{
-    "cmake.cmakePath": "${userHome}/miniconda3/envs/ofiq/bin/cmake",
-    "cmake.buildDirectory": "${workspaceFolder}/build/build_linux",
-    "cmake.configureArgs": [
-        "-DCMAKE_INSTALL_PREFIX=${workspaceFolder}/install_x86_64_linux",
-        "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
-        "-DDOWNLOAD_MODELS=ON",
-        "-DDOWNLOAD_IMAGES=ON"
-    ],
-}
-```
+    In VSCode, press `Ctrl + Shift + P` and select `CMake: Configure`
 
-6. CMake Configure Project
+6. Debug project
 
-In VSCode, press `Ctrl + Shift + P` and select `CMake: Configure`
-
-7. Debug project
-
-Make sure your CMake configuration looks as in the following image and select "Debug":
-<img src="assets/cmake_config.png" alt="CMake Config" width="300">
+    Make sure your CMake configuration looks as in the following image and select "Debug": \
+    <img src="assets/cmake_config.png" alt="CMake Config" width="300">
 
 ## Run sample app
 
