@@ -56,11 +56,11 @@ repos:
           # - mdformat-black
 
   # word spelling linter
-  - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.6
-    hooks:
-      - id: codespell
-        args:
-          - --skip=logs/**,data/**,*.ipynb
-          - --ignore-words-list=bund
-          - -w # Write changes automatically
+  # - repo: https://github.com/codespell-project/codespell
+  #   rev: v2.2.6
+  #   hooks:
+  #     - id: codespell
+  #       args:
+  #         - --skip=logs/**,data/**,*.ipynb
+  #         - --ignore-words-list=bund
+  #         - -w # Write changes automatically
