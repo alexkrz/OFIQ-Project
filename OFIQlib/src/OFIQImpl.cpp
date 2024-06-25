@@ -384,19 +384,32 @@ cv::Mat YOLOv8resizeImage(cv::Mat srcimg, int *newh, int *neww, int *padh, int *
 	return dstimg;
 }
 
+
 void YOLOv8drawResults(float conf, int left, int top, int right, int bottom, cv::Mat& frame, std::vector<cv::Point> landmark)   // Draw the predicted bounding box
 {
+
 	//Draw a rectangle displaying the bounding box
-	cv::rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), cv::Scalar(0, 0, 255), 3);
+	cv::rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), cv::Scalar(0, 0, 255), 8);
+
+    std::cout << "bin in YOLOV, I drew a rectangle" << endl;;
 
 	//Get the label for the class name and its confidence
 	std::string label = cv::format("face:%.2f", conf);
 
-	putText(frame, label, cv::Point(left, top-5), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 2);
+	putText(frame, label, cv::Point(left, top-5), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(0, 255, 0), 2);
 	for (int i = 0; i < 5; i++)
 	{
 		circle(frame, landmark[i], 4, cv::Scalar(0, 255, 0), -1);
 	}
+}
+
+void YOLOv8showWindow(cv::Mat &srcimg){
+
+    static const string kWinName = "Deep learning face detection use OpenCV";
+	cv::namedWindow(kWinName, cv::WINDOW_NORMAL);
+    cv::imshow(kWinName, srcimg);
+    cv::waitKey(0);
+    cv::destroyAllWindows();
 }
 
 void YOLOv8softMax(const float* x, float* y, int length)
@@ -424,6 +437,10 @@ void YOLOv8evalResults(cv::Mat out, std::vector<cv::Rect>& boxes, std::vector<fl
 	float* ptr = (float*)out.data;
 	float* ptr_cls = ptr + area * 16 * 4;
 	float* ptr_kp = ptr + area * (16 * 4 + 1);
+
+
+    std::cout << "bin in YOLOV, in evalResult: " << endl;;
+
 
 	for (int i = 0; i < feat_h; i++)
 	{
@@ -489,14 +506,25 @@ void YOLOv8evalResults(cv::Mat out, std::vector<cv::Rect>& boxes, std::vector<fl
 
 void YOLOv8detect(cv::Mat& srcimg, cv::dnn::Net net)
 {
+    std::cout << "bin in YOLOV: " << endl;;
+
+    if (srcimg.empty()) {
+        std::cerr << "Fehler: Das Eingangsbild ist leer." << std::endl;
+        return;
+    }
 	int newh = 0, neww = 0, padh = 0, padw = 0;
 	cv::Mat dst = YOLOv8resizeImage(srcimg, &newh, &neww, &padh, &padw);
+    std::cout << "bin in YOLOV, habe resized: " << endl;;
+
 	cv::Mat blob;
 	cv::dnn::blobFromImage(dst, blob, 1 / 255.0, cv::Size(640, 640), cv::Scalar(0, 0, 0), true, false);
 	net.setInput(blob);
 	std::vector<cv::Mat> outs;
-	
+	std::cout << "bin in YOLOV, habe blob erstellt und input: " << endl;;
+
 	net.forward(outs, net.getUnconnectedOutLayersNames());
+    std::cout << "bin in YOLOV, habe forward: " << endl;;
+
 
 	//generate proposals
 	std::vector<cv::Rect> boxes;
@@ -507,17 +535,23 @@ void YOLOv8detect(cv::Mat& srcimg, cv::dnn::Net net)
 	YOLOv8evalResults(outs[0], boxes, confidences, landmarks, srcimg.rows, srcimg.cols, ratioh, ratiow, padh, padw);
 	YOLOv8evalResults(outs[1], boxes, confidences, landmarks, srcimg.rows, srcimg.cols, ratioh, ratiow, padh, padw);
 	YOLOv8evalResults(outs[2], boxes, confidences, landmarks, srcimg.rows, srcimg.cols, ratioh, ratiow, padh, padw);
+    std::cout << "bin after YOLOVevalResult " << endl;;
 
 	// Perform non maximum suppression to eliminate redundant overlapping boxes with
 	// lower confidences
 	std::vector<int> indices;
 	cv::dnn::NMSBoxes(boxes, confidences, 0.45f, 0.5f, indices);
+    std::cout << "bin in YOLOV, habe boxes erstellt " << endl;;
+
 	for (size_t i = 0; i < indices.size(); ++i)
 	{
 		int idx = indices[i];
 		cv::Rect box = boxes[idx];
+        std::cout << "bin in YOLOV, I want to draw boxes" << endl;;
+
 		YOLOv8drawResults(confidences[idx], box.x, box.y, box.x + box.width, box.y + box.height, srcimg, landmarks[idx]);
 	}
+
 }
 
 void OFIQImpl::performPreprocessing(Session& session, const std::string& detector)
@@ -611,9 +645,12 @@ void OFIQImpl::performPreprocessing(Session& session, const std::string& detecto
     }
     else
     {
+        std::cout << "bin in else YOLO: " << endl;;
         cv::Mat srcimg = copyToCvImage(session.image());
-        cv::dnn::Net net = cv::dnn::readNet("/home/samuel/vc/OFIQ-Project/OFIQ-Project/data/models/face_detection/yolov8n-face.onnx");
+        cv::dnn::Net net = cv::dnn::readNet("/home/ale/Documents/Praktikum_FR/OFIQ-Project/data/models/face_detection/yolov8n-face.onnx");
+        std::cout << "habe die Network gelesen" << endl;
         YOLOv8detect(srcimg, net);
+        YOLOv8showWindow(srcimg);
     }
 
 }
@@ -635,10 +672,11 @@ ReturnStatus OFIQImpl::vectorQuality(
     const OFIQ::Image& image, OFIQ::FaceImageQualityAssessment& assessments, const std::string& detector)
 {
     auto session = Session(image, assessments);
-
+    std::cout << "bin in vectorQuality: " << endl;;
     try
     {
         log("perform preprocessing:\n");
+         std::cout << "bin in vectorQuality try: " << endl;;
         performPreprocessing(session, detector);
     }
     catch (const OFIQError& e)
