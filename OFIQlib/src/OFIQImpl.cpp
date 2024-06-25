@@ -402,7 +402,7 @@ void YOLOv8drawResults(float conf, int left, int top, int right, int bottom, cv:
     putText(frame, label, cv::Point(left, top - 5), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(0, 255, 0), 2);
     for (int i = 0; i < 5; i++)
     {
-        circle(frame, landmark[i], 4, cv::Scalar(0, 255, 0), -1);
+        circle(frame, landmark[i], 15, cv::Scalar(0, 255, 0), -1);
     }
 }
 
