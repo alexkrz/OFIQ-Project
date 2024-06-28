@@ -682,12 +682,12 @@ ReturnStatus OFIQImpl::vectorQuality(
 {
     auto session = Session(image, assessments);
     std::cout << "bin in vectorQuality: " << endl;
-    ;
+
     try
     {
         log("perform preprocessing:\n");
         std::cout << "bin in vectorQuality try: " << endl;
-        ;
+
         performPreprocessing(session, detector);
     }
     catch (const OFIQError& e)

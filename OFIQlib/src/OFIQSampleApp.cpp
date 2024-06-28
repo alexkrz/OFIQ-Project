@@ -28,29 +28,28 @@
 #undef OFIQ_EXPORTS
 #endif
 
-#include "ofiq_lib.h"
 #include "image_io.h"
+#include "ofiq_lib.h"
 #include "utils.h"
-#include <cstring>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <iterator>
+// #include <yolov8_face_detector.h>
 #include <algorithm>
 #include <cmath>
-#include <magic_enum.hpp>
+#include <cstring>
 #include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <magic_enum.hpp>
+#include <sstream>
 
 constexpr int SUCCESS = 0;
 constexpr int FAILURE = 1;
-
 
 namespace fs = std::filesystem;
 
 using namespace std;
 using namespace OFIQ;
 using namespace OFIQ_LIB;
-
 
 int getQualityAssessmentResults(
     std::shared_ptr<Interface>& implPtr,
@@ -71,7 +70,7 @@ std::vector<std::string> readFileLines(const std::string& inputFile)
     std::ifstream ifs(inputFile);
     std::string line;
 
-    while(ifs)
+    while (ifs)
     {
         std::getline(ifs, line);
         // ignore empty lines and comment lines
@@ -86,7 +85,8 @@ std::vector<std::string> readFileLines(const std::string& inputFile)
 std::string to_lower(std::string data)
 {
     std::transform(data.begin(), data.end(), data.begin(),
-        [](unsigned char c) { return std::tolower(c); });
+                   [](unsigned char c)
+                   { return std::tolower(c); });
     return data;
 }
 
@@ -107,17 +107,18 @@ std::vector<std::string> readImageFilesFromDirectory(const std::string& inputDir
 }
 
 bool isStringContained(
-    const std::vector<std::string>& strings, 
+    const std::vector<std::string>& strings,
     const std::string& str,
-    bool isCaseSensitive=false)
+    bool isCaseSensitive = false)
 {
     std::string s = str;
-    if(!isCaseSensitive)
+    if (!isCaseSensitive)
         std::transform(s.begin(), s.end(), s.begin(),
-            [](unsigned char c) { return std::tolower(c); });
+                       [](unsigned char c)
+                       { return std::tolower(c); });
 
     return (!s.empty() &&
-        std::find(strings.begin(), strings.end(), s) != strings.end());
+            std::find(strings.begin(), strings.end(), s) != strings.end());
 }
 
 int runQuality(
@@ -134,7 +135,7 @@ int runQuality(
         imageFiles = readImageFilesFromDirectory(inputFile);
     }
     else if (std::string fileExt = inputFilePath.extension().string();
-        isStringContained({ ".txt", ".csv" }, fileExt))
+             isStringContained({".txt", ".csv"}, fileExt))
         // a list of image files
         imageFiles = readFileLines(inputFile);
     else
@@ -142,7 +143,7 @@ int runQuality(
         imageFiles.push_back(inputFile);
 
     // process image file(s)
-    for (auto const& imageFile: imageFiles)
+    for (auto const& imageFile : imageFiles)
     {
         FaceImageQualityAssessment assessment;
         int resCode = getQualityAssessmentResults(implPtr, imageFile, assessment, detector);
@@ -157,19 +158,20 @@ int runQuality(
 
         cout << "raw scores:" << strQAresRaw << std::endl;
         cout << "scalar scores:" << strQAresScalar << std::endl;
-
     }
 
     if (faceImageQAs.empty())
     {
-        cerr << "[ERROR] " << "empty result list" << "." << endl;
+        cerr << "[ERROR] "
+             << "empty result list"
+             << "." << endl;
         return FAILURE;
     }
 
     if (faceImageQAs.size() != imageFiles.size())
     {
-        cerr << "[ERROR] " << "invalid number of measurement results. Is " << imageFiles.size() <<
-            ", has to be " << faceImageQAs.size() << endl;
+        cerr << "[ERROR] "
+             << "invalid number of measurement results. Is " << imageFiles.size() << ", has to be " << faceImageQAs.size() << endl;
         return FAILURE;
     }
 
@@ -178,22 +180,22 @@ int runQuality(
     // Filename,      Measurement1.raw, ..., MeasurementN.raw, Measurement1.scalar, ..., MeasurementN.scalar
     vector<string> measureNames;
     vector<string> measureNamesScalar;
-    for (const auto& [measure, measure_result]: faceImageQAs[0].qAssessments)
+    for (const auto& [measure, measure_result] : faceImageQAs[0].qAssessments)
     {
         auto mName = static_cast<std::string>(magic_enum::enum_name(measure));
         measureNames.push_back(mName);
-        measureNamesScalar.push_back(mName+string(".scalar"));
+        measureNamesScalar.push_back(mName + string(".scalar"));
     }
 
     *p_outStream << "Filename;";
-    for(const auto& mn: measureNames)
+    for (const auto& mn : measureNames)
         *p_outStream << mn << ';';
     for (const auto& mn : measureNamesScalar)
         *p_outStream << mn << ';';
-    //for (size_t i = 0; i < measureNames.size(); i++)
-    //    *outStream << measureNames[i] << ';';
-    //for (size_t i = 0; i < measureNamesScalar.size(); i++)
-    //    *outStream << measureNames[i] << ';';
+    // for (size_t i = 0; i < measureNames.size(); i++)
+    //     *outStream << measureNames[i] << ';';
+    // for (size_t i = 0; i < measureNamesScalar.size(); i++)
+    //     *outStream << measureNames[i] << ';';
     *p_outStream << std::endl;
 
     for (size_t i = 0; i < imageFiles.size(); i++)
@@ -202,12 +204,12 @@ int runQuality(
             faceImageQAs[i], false);
         string strQAresScalar = exportAssessmentResultsToString(
             faceImageQAs[i], true);
-        
+
         *p_outStream << imageFiles[i] << ';' << strQAresRaw << ';' << strQAresScalar << std::endl;
 
-#if 1                
+#if 1
         std::cout << "-------------------------------------------------------" << std::endl;
-        std::cout << "Image file: '" << imageFiles[i] << "' has attributes:" << std::endl; 
+        std::cout << "Image file: '" << imageFiles[i] << "' has attributes:" << std::endl;
         for (const auto& [measure, measure_result] : faceImageQAs[i].qAssessments)
         {
             auto mName = static_cast<std::string>(magic_enum::enum_name(measure));
@@ -222,9 +224,9 @@ int runQuality(
                       << std::endl;
         }
         std::cout << "-------------------------------------------------------" << std::endl;
-#endif        
+#endif
     }
-    
+
     return SUCCESS;
 }
 
@@ -235,7 +237,7 @@ int getQualityAssessmentResults(
     const std::string& detector)
 {
     Image image;
-    //loading images 
+    // loading images
     ReturnStatus retStatus = readImage(inputFile, image);
 
     if (retStatus.code != ReturnCode::Success)
@@ -251,11 +253,11 @@ int getQualityAssessmentResults(
 }
 
 string exportAssessmentResultsToString(
-    const FaceImageQualityAssessment& assessments, 
+    const FaceImageQualityAssessment& assessments,
     bool doExportScalar)
 {
     std::string resultStr;
-    for ( auto it = assessments.qAssessments.begin() ; it != assessments.qAssessments.end() ; )
+    for (auto it = assessments.qAssessments.begin(); it != assessments.qAssessments.end();)
     {
         const auto& [measure, measure_result] = *it;
         const QualityMeasureResult& qaResult = measure_result;
@@ -284,10 +286,9 @@ string exportAssessmentResultsToString(
         }
     }
     // replace decimal point for german MS Excel
-    //std::replace(resultStr.begin(), resultStr.end(), '.', ',');    
+    // std::replace(resultStr.begin(), resultStr.end(), '.', ',');
     return resultStr;
 }
-
 
 void usage(const string& executable)
 {
@@ -306,7 +307,7 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    string configDir{ "config" };
+    string configDir{"config"};
     char* outputFile = nullptr;
     string inputFile;
     string configFile;
@@ -322,7 +323,7 @@ int main(int argc, char* argv[])
             inputFile = argv[requiredArgs + (++i)];
         else if (strcmp(argv[requiredArgs + i], "-cf") == 0)
             configFile = argv[requiredArgs + (++i)];
-        else if(strcmp(argv[requiredArgs + i], "-yolo") == 0)
+        else if (strcmp(argv[requiredArgs + i], "-yolo") == 0)
             detector = "yolo";
         else
         {
@@ -343,8 +344,41 @@ int main(int argc, char* argv[])
         configFile = fs::path(configDir).filename().generic_string();
         configDir = fs::path(configDir).parent_path().generic_string();
     }
-    
+
     /* Get implementation pointer */
+    /*
+    if(detector == "yolo")
+    {
+        YOLOv8_face YOLOv8_face_model("../../data/models/face_detection/yolov8n-face.onnx", 0.45, 0.5);
+
+        vector<std::string> images = readImageFilesFromDirectory(inputFile);
+        std::string kWinName = "YOLO_V8 Face Detection for image: ";
+
+        for (auto const& imageFile: images)
+        {
+            cv::Mat srcimg = cv::imread(imageFile);
+            YOLOv8_face_model.detect(srcimg);
+
+            kWinName += imageFile;
+            cv::namedWindow(kWinName, WINDOW_NORMAL);
+            cv::imshow(kWinName, srcimg);
+            cv::waitKey(0);
+            cv::destroyAllWindows();
+        }
+        string imgpath = "images/2.jpg";
+        Mat srcimg = imread(imgpath);
+        YOLOv8_face_model.detect(srcimg);
+
+        static const string kWinName = "YOLO_V8 Face Detection";
+        namedWindow(kWinName, WINDOW_NORMAL);
+        imshow(kWinName, srcimg);
+        waitKey(0);
+        destroyAllWindows();
+    }
+
+    else
+    {
+    */
     auto implPtr = Interface::getImplementation();
     /* Initialization */
     auto ret = implPtr->initialize(
@@ -368,15 +402,18 @@ int main(int argc, char* argv[])
         }
         else
         {
-        cerr << "[ERROR] Could not open '" << outputFile << "'." << endl
-             << ret.info << endl;
-        return FAILURE;
+            cerr << "[ERROR] Could not open '" << outputFile << "'." << endl
+                 << ret.info << endl;
+            return FAILURE;
         }
     }
     else
     {
         runQuality(implPtr, inputFile, detector, &std::cout);
     }
+    /*
+    }
+    */
 
     return 0;
 }
