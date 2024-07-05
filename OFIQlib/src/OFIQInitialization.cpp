@@ -29,9 +29,9 @@
 #include "AllMeasures.h"
 #include "AllPoseEstimators.h"
 #include "MeasureFactory.h"
-#include "ofiq_lib_impl.h"
-#include "OFIQError.h"
 #include "NeuronalNetworkContainer.h"
+#include "OFIQError.h"
+#include "ofiq_lib_impl.h"
 #include <magic_enum.hpp>
 
 namespace OFIQ_LIB
@@ -89,17 +89,17 @@ namespace OFIQ_LIB
 
         std::vector<OFIQ::QualityMeasure> measures =
             parse_config_measure_names(requested_measurs,
-                invalid_measure_names);
+                                       invalid_measure_names);
 
         for (const auto& m : invalid_measure_names)
         {
             // create log output with level warning
             std::cout << "invalid measure name detected in config file: "
-                << m << std::endl;
+                      << m << std::endl;
         }
 
         // initialise measures
-        
+
         return std::make_unique<Executor>(create_measures(
             measures, *config, session));
     }
@@ -112,10 +112,17 @@ namespace OFIQ_LIB
             return std::make_shared<SSDFaceDetector>(*config);
         };
 
+        // creating Yolo Face Detector
+        auto getYoloFaceDetector =
+            [&]() -> std::shared_ptr<FaceDetectorInterface>
+        {
+            return std::make_shared<YoloFaceDetector>(*config);
+        };
+
         auto getLandmarkExtractor =
             [&]() -> std::shared_ptr<FaceLandmarkExtractorInterface>
         {
-            return std::make_shared <ADNetFaceLandmarkExtractor> (*config);
+            return std::make_shared<ADNetFaceLandmarkExtractor>(*config);
         };
 
         auto getSegmentationExtractor =
@@ -133,16 +140,16 @@ namespace OFIQ_LIB
         auto getPoseEstimator =
             [&]() -> std::shared_ptr<PoseEstimatorInterface>
         {
-            return std::make_shared < HeadPose3DDFAV2 > (*config);
+            return std::make_shared<HeadPose3DDFAV2>(*config);
         };
 
         networks.release();
         networks = std::make_unique<NeuronalNetworkContainer>(
             getFaceDetector(),
+            getYoloFaceDetector(),
             getLandmarkExtractor(),
             getSegmentationExtractor(),
             getPoseEstimator(),
-            getFaceOcclusionExtractor()
-            );
+            getFaceOcclusionExtractor());
     }
 }

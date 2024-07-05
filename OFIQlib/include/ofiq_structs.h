@@ -35,9 +35,9 @@
 #include <utility>
 #include <vector>
 
- /**
-  * Namespace for OFIQ API.
-  */
+/**
+ * Namespace for OFIQ API.
+ */
 namespace OFIQ
 {
     /**
@@ -48,25 +48,25 @@ namespace OFIQ
     {
 
         /** Number of pixels horizontally */
-        uint16_t width{ 0 };
+        uint16_t width{0};
         /** Number of pixels vertically */
-        uint16_t height{ 0 };
+        uint16_t height{0};
         /** Number of bits per pixel. Legal values are 8 and 24. */
-        uint8_t depth{ 24 };
+        uint8_t depth{24};
         /** Managed pointer to raster scanned data.
          * Either RGB color or intensity.
          * If image_depth == 24 this points to  3WH bytes  RGBRGBRGB...
          * If image_depth ==  8 this points to  WH bytes  IIIIIII */
         std::shared_ptr<uint8_t> data;
 
-        /** 
-         * @brief Constructor 
+        /**
+         * @brief Constructor
          */
         Image() = default;
 
         /**
          * @brief Constructor
-         * 
+         *
          * @param width of the image.
          * @param height of the image.
          * @param depth of the image
@@ -83,7 +83,6 @@ namespace OFIQ
         /** @brief This function returns the size of the image data. */
         size_t size() const { return (static_cast<size_t>(width) * height * (depth / 8)); }
     };
-
 
     /**
      * @brief
@@ -150,13 +149,13 @@ namespace OFIQ
     struct ReturnStatus
     {
         /** @brief Return status code */
-        ReturnCode code{ ReturnCode::UnknownError };
+        ReturnCode code{ReturnCode::UnknownError};
         /** @brief Optional information string */
         std::string info;
 
         /**
          * @brief Default constructor
-         * 
+         *
          */
         ReturnStatus() = default;
 
@@ -187,7 +186,7 @@ namespace OFIQ
         /** IlluminationUniformity*/
         IlluminationUniformity = 0x43,
         /** the common measure implementation for LuminanceMean, LuminanceVariance */
-        Luminance = -0x44 ,
+        Luminance = -0x44,
         /** LuminanceMean*/
         LuminanceMean = 0x44,
         /** LuminanceVariance*/
@@ -201,13 +200,13 @@ namespace OFIQ
         /** Sharpness*/
         Sharpness = 0x49,
         /** CompressionArtifacts*/
-        CompressionArtifacts = 0x4a ,
+        CompressionArtifacts = 0x4a,
         /** NaturalColour*/
         NaturalColour = 0x4b,
         /** SingleFacePresent */
-        SingleFacePresent = 0x4c ,
+        SingleFacePresent = 0x4c,
         /** EyesOpen*/
-        EyesOpen = 0x4d ,
+        EyesOpen = 0x4d,
         /** MouthClosed*/
         MouthClosed = 0x4e,
         /** EyesVisible*/
@@ -221,7 +220,7 @@ namespace OFIQ
         /** HeadSize*/
         HeadSize = 0x53,
         /** CropOfTheFaceImage: common measure for {Left,Right,Up,Down}wardCropOfTheFaceImage */
-        CropOfTheFaceImage = -0x54, 
+        CropOfTheFaceImage = -0x54,
         /** LeftwardCropOfTheFaceImage*/
         LeftwardCropOfTheFaceImage = 0x54,
         /** RightwardCropOfTheFaceImage*/
@@ -262,28 +261,28 @@ namespace OFIQ
 
     /**
      * @brief Data structure to handle the results of a quality measure.
-     * 
+     *
      */
     struct QualityMeasureResult
     {
         /** @brief Raw value as computed by the quality measure implementation */
-        double rawScore{ -1 };
+        double rawScore{-1};
         /** @brief A scalar value from the interval [0,100]
          * Higher values mean higher quality. A value of -1.0 indicates a failed
          * attempt to calculate a quality score or the value is unassigned */
-        double scalar{ -1 };
+        double scalar{-1};
         /** @brief Return status code */
-        QualityMeasureReturnCode code{ QualityMeasureReturnCode::NotInitialized };
+        QualityMeasureReturnCode code{QualityMeasureReturnCode::NotInitialized};
 
         /**
          * @brief Default constructor
-         * 
+         *
          */
         QualityMeasureResult() = default;
 
         /**
          * @brief Parameterized constructor
-         * 
+         *
          * @param[in] rawScore Computed raw score.
          * @param[in] scalar Computed scalar score.
          * @param[in] code QualityMeasureReturnCode describing the state of the computation.
@@ -305,47 +304,48 @@ namespace OFIQ
 
     /**
      * @brief Enum describing the different face detector implementations
-     * 
+     *
      */
     enum class FaceDetectorType
     {
         /** face detector based on the ssd implementation in opencv.*/
         OPENCVSSD,
+        /** face detector based on the Yolov8n implementation in opencv.*/
+        OPENCVYOLO,
         /** unknown face detector*/
         NotSet
     };
 
-    
     /**
      * @brief Data structure for descibing bounding boxes,
      * e.g. the face region of the faces found by a face detector.
-     * 
+     *
      */
     struct BoundingBox
     {
         /** @brief leftmost point on head, typically subject's right ear
          *  value must be on [0, imageWidth-1] */
-        int16_t xleft{ -1 };
+        int16_t xleft{-1};
         /** @brief high point of head, typically top of hair;
          *  value must be on [0, imageHeight-1] */
-        int16_t ytop{ -1 };
+        int16_t ytop{-1};
         /** @brief bounding box width */
-        int16_t width{ -1 };
+        int16_t width{-1};
         /** @brief bounding box height */
-        int16_t height{ -1 };
+        int16_t height{-1};
 
         /** @brief Description of the face detector used. */
         FaceDetectorType faceDetector = FaceDetectorType::NotSet;
 
         /**
          * @brief Default constructor
-         * 
+         *
          */
         BoundingBox() = default;
 
         /**
          * @brief Parameterized constructor
-         * 
+         *
          * @param xleft x coordinate of the upper left point of the bounding box.
          * @param ytop  y coordinate of the upper left point of the bounding box.
          * @param width width of the bounding box.
@@ -364,30 +364,30 @@ namespace OFIQ
 
     /**
      * @brief Data structure to describe the x and y coordinate of a landmark.
-     * 
+     *
      */
     struct LandmarkPoint
     {
         /**
          * @brief x - coordinate
-         * 
+         *
          */
-        int16_t x{ -1 };
+        int16_t x{-1};
         /**
          * @brief y - coordinate
-         * 
+         *
          */
-        int16_t y{-1 };
+        int16_t y{-1};
 
         /**
          * @brief Default constructor.
-         * 
+         *
          */
         LandmarkPoint() = default;
 
         /**
          * @brief Parameterized constructor
-         * 
+         *
          * @param i_x x - coordinate of the landmark.
          * @param i_y  y - coordinate of the landmark.
          */
@@ -399,14 +399,14 @@ namespace OFIQ
     };
 
     /**
-     * @brief container for a collection of landmarks, e.g. belonging to all the landmarks detected on a face image. 
-     * 
+     * @brief container for a collection of landmarks, e.g. belonging to all the landmarks detected on a face image.
+     *
      */
     using Landmarks = std::vector<LandmarkPoint>;
 
     /**
-     * @brief Enum describing the different implementations of landmarks. 
-     * 
+     * @brief Enum describing the different implementations of landmarks.
+     *
      */
     enum class LandmarkType
     {
@@ -416,16 +416,14 @@ namespace OFIQ
         NotSet
     };
 
-
-
     /**
      * @brief Data structure for storing facial landmarks
-     * 
+     *
      */
     struct FaceLandmarks
     {
         /** Enum describing the type of the landmarks.*/
-        LandmarkType type{ LandmarkType::NotSet };
+        LandmarkType type{LandmarkType::NotSet};
         /** container for all detected landmarks. */
         Landmarks landmarks;
 
@@ -435,34 +433,34 @@ namespace OFIQ
 
     /**
      * @brief Data structure storing the results of the different measurement computations.
-     * 
+     *
      */
     struct FaceImageQualityAssessment
     {
 
         /**
          * @brief Container for storing the resuls of the different measure computations.
-         * 
+         *
          */
         QualityAssessments qAssessments;
 
         /**
-         * @brief Face region described by bounding box. 
-         * 
+         * @brief Face region described by bounding box.
+         *
          */
         BoundingBox boundingBox;
 
         /**
          * @brief Default contructor
-         * 
+         *
          */
         FaceImageQualityAssessment() = default;
 
         /**
          * @brief Parameterized constructor
-         * 
-         * @param[in] qAssessments 
-         * @param[in] boundingBox 
+         *
+         * @param[in] qAssessments
+         * @param[in] boundingBox
          */
         FaceImageQualityAssessment(
             const QualityAssessments& qAssessments, const BoundingBox& boundingBox)

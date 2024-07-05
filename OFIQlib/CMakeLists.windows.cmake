@@ -30,20 +30,21 @@ find_package(magic_enum REQUIRED)
 add_definitions(-DOFIQ_EXPORTS)
 add_definitions(-DOFIQ_SINGLE_FACE_PRESENT_WITH_TMETRIC)
 
-list(APPEND PUBLIC_HEADER_LIST 
+list(APPEND PUBLIC_HEADER_LIST
 	${OFIQLIB_SOURCE_DIR}/include/ofiq_lib.h
 	${OFIQLIB_SOURCE_DIR}/include/ofiq_structs.h
 )
 
-list(APPEND libImplementationSources 
+list(APPEND libImplementationSources
 	${OFIQLIB_SOURCE_DIR}/src/OFIQImpl.cpp
 	${OFIQLIB_SOURCE_DIR}/src/OFIQInitialization.cpp
 )
 
-list(APPEND module_sources 
+list(APPEND module_sources
 	${libImplementationSources}
 	${OFIQLIB_SOURCE_DIR}/modules/detectors/src/detectors.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/detectors/src/opencv_ssd_face_detector.cpp
+	${OFIQLIB_SOURCE_DIR}/modules/detectors/src/opencv_yolo_face_detector.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/landmarks/src/adnet_landmarks.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/landmarks/src/FaceMeasures.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/landmarks/src/landmarks.cpp
@@ -93,6 +94,7 @@ list(APPEND module_headers
 	${OFIQLIB_SOURCE_DIR}/modules/detectors/AllDetectors.h
 	${OFIQLIB_SOURCE_DIR}/modules/detectors/detectors.h
 	${OFIQLIB_SOURCE_DIR}/modules/detectors/opencv_ssd_face_detector.h
+	${OFIQLIB_SOURCE_DIR}/modules/detectors/opencv_yolo_face_detector.h
 	${OFIQLIB_SOURCE_DIR}/modules/landmarks/AllLandmarks.h
 	${OFIQLIB_SOURCE_DIR}/modules/landmarks/adnet_landmarks.h
 	${OFIQLIB_SOURCE_DIR}/modules/landmarks/FaceMeasures.h
@@ -139,7 +141,7 @@ list(APPEND module_headers
 	${OFIQLIB_SOURCE_DIR}/modules/utils/utils.h
 )
 
-list(APPEND OFIQ_LINK_LIB_LIST 
+list(APPEND OFIQ_LINK_LIB_LIST
 	opencv::opencv
 	spdlog::spdlog
 	taocpp::json
@@ -188,7 +190,7 @@ target_link_libraries(OFIQSampleApp
 )
 
 
-set_target_properties(ofiq_lib 
+set_target_properties(ofiq_lib
         PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADER_LIST}"
         )
 

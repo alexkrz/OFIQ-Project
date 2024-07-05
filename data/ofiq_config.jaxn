@@ -43,6 +43,11 @@
           "confidence_thr": 0.4,
           "min_rel_face_size": 0.05,
           "padding": 0.2
+        },
+        "yolo": {
+          "model_path": "yolov8n-face.onnx",
+          "confidence_thr": 0.45,
+          "nms_thr": 0.5
         }
       },
       "landmarks": {
