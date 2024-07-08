@@ -27,16 +27,16 @@
 #pragma once
 #include "detectors.h"
 #include "landmarks.h"
-#include "segmentations.h"
 #include "poseEstimators.h"
- 
+#include "segmentations.h"
+
 /**
  * @brief Namespace for OFIQ implementations.
  */
 namespace OFIQ_LIB
 {
     /**
-     * @brief Neural network container for OFIQ's preprocessing steps. 
+     * @brief Neural network container for OFIQ's preprocessing steps.
      */
     struct NeuronalNetworkContainer
     {
@@ -54,12 +54,13 @@ namespace OFIQ_LIB
          */
         NeuronalNetworkContainer(
             std::shared_ptr<FaceDetectorInterface> faceDetector,
+            std::shared_ptr<FaceDetectorInterface> yolofaceDetector,
             std::shared_ptr<FaceLandmarkExtractorInterface> landmarkExtractor,
             std::shared_ptr<SegmentationExtractorInterface> segmentationExtractor,
             std::shared_ptr<PoseEstimatorInterface> poseEstimator,
-            std::shared_ptr<SegmentationExtractorInterface> faceOcclusionExtractor
-            )
+            std::shared_ptr<SegmentationExtractorInterface> faceOcclusionExtractor)
             : faceDetector{faceDetector},
+              yolofaceDetector{yolofaceDetector},
               landmarkExtractor{landmarkExtractor},
               segmentationExtractor{segmentationExtractor},
               poseEstimator{poseEstimator},
@@ -71,6 +72,11 @@ namespace OFIQ_LIB
          * @brief Pointer to a \link OFIQ_LIB::FaceDetectorInterface FaceDetectorInterface \endlink
          */
         std::shared_ptr<FaceDetectorInterface> faceDetector;
+
+        /**
+         * @brief Pointer to a \link OFIQ_LIB::FaceDetectorInterface FaceDetectorInterface \endlink
+         */
+        std::shared_ptr<FaceDetectorInterface> yolofaceDetector;
 
         /**
          * @brief Pointer to a \link OFIQ_LIB::FaceLandmarkExtractorInterface FaceLandmarkExtractorInterface \endlink
@@ -92,7 +98,7 @@ namespace OFIQ_LIB
         std::shared_ptr<SegmentationExtractorInterface> faceOcclusionExtractor;
 
         /**
-         * @brief Pointer to a \link OFIQ_LIB::SegmentationExtractorInterface SegmentationExtractorInterface \endlink 
+         * @brief Pointer to a \link OFIQ_LIB::SegmentationExtractorInterface SegmentationExtractorInterface \endlink
          */
         std::shared_ptr<PoseEstimatorInterface> poseEstimator;
     };

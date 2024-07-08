@@ -102,11 +102,6 @@ namespace OFIQ_LIB::modules::detectors
         }
     }
 
-    float YoloFaceDetector::sigmoid(float x)
-    {
-        return 1.0f / (1.0f + std::exp(-x));
-    }
-
     void YoloFaceDetector::generateProposal(const cv::Mat& out, std::vector<cv::Rect>& boxes, std::vector<float>& confidences, std::vector<std::vector<cv::Point>>& landmarks, int imgHeight, int imgWidth, float ratioHeight, float ratioWidth, int padHeight, int padWidth)
     {
         const int feat_h = out.size[2];
