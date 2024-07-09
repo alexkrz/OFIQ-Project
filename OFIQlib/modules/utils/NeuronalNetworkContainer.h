@@ -54,17 +54,21 @@ namespace OFIQ_LIB
          */
         NeuronalNetworkContainer(
             std::shared_ptr<FaceDetectorInterface> faceDetector,
-            std::shared_ptr<FaceDetectorInterface> yolofaceDetector,
             std::shared_ptr<FaceLandmarkExtractorInterface> landmarkExtractor,
             std::shared_ptr<SegmentationExtractorInterface> segmentationExtractor,
             std::shared_ptr<PoseEstimatorInterface> poseEstimator,
             std::shared_ptr<SegmentationExtractorInterface> faceOcclusionExtractor)
             : faceDetector{faceDetector},
-              yolofaceDetector{yolofaceDetector},
               landmarkExtractor{landmarkExtractor},
               segmentationExtractor{segmentationExtractor},
               poseEstimator{poseEstimator},
               faceOcclusionExtractor{faceOcclusionExtractor}
+        {
+        }
+
+        NeuronalNetworkContainer(
+            std::shared_ptr<FaceDetectorInterface> yolofaceDetector)
+            : yolofaceDetector{yolofaceDetector}
         {
         }
 

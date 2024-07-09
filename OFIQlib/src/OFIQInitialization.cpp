@@ -106,50 +106,59 @@ namespace OFIQ_LIB
 
     void OFIQImpl::CreateNetworks()
     {
-        auto getFaceDetector =
-            [&]() -> std::shared_ptr<FaceDetectorInterface>
+        if ("yolo" != config->GetString("detector"))
         {
-            return std::make_shared<SSDFaceDetector>(*config);
-        };
+            auto getFaceDetector =
+                [&]() -> std::shared_ptr<FaceDetectorInterface>
+            {
+                return std::make_shared<SSDFaceDetector>(*config);
+            };
 
-        // creating Yolo Face Detector
-        auto getYoloFaceDetector =
-            [&]() -> std::shared_ptr<FaceDetectorInterface>
+            auto getLandmarkExtractor =
+                [&]() -> std::shared_ptr<FaceLandmarkExtractorInterface>
+            {
+                return std::make_shared<ADNetFaceLandmarkExtractor>(*config);
+            };
+
+            auto getSegmentationExtractor =
+                [&]() -> std::shared_ptr<SegmentationExtractorInterface>
+            {
+                return std::make_shared<FaceParsing>(*config);
+            };
+
+            auto getFaceOcclusionExtractor =
+                [&]() -> std::shared_ptr<SegmentationExtractorInterface>
+            {
+                return std::make_shared<FaceOcclusionSegmentation>(*config);
+            };
+
+            auto getPoseEstimator =
+                [&]() -> std::shared_ptr<PoseEstimatorInterface>
+            {
+                return std::make_shared<HeadPose3DDFAV2>(*config);
+            };
+
+            networks.release();
+
+            networks = std::make_unique<NeuronalNetworkContainer>(
+                getFaceDetector(),
+                getLandmarkExtractor(),
+                getSegmentationExtractor(),
+                getPoseEstimator(),
+                getFaceOcclusionExtractor());
+        }
+        else
         {
-            return std::make_shared<YoloFaceDetector>(*config);
-        };
+            auto getYoloFaceDetector =
+                [&]() -> std::shared_ptr<FaceDetectorInterface>
+            {
+                return std::make_shared<YoloFaceDetector>(*config);
+            };
 
-        auto getLandmarkExtractor =
-            [&]() -> std::shared_ptr<FaceLandmarkExtractorInterface>
-        {
-            return std::make_shared<ADNetFaceLandmarkExtractor>(*config);
-        };
+            networks.release();
 
-        auto getSegmentationExtractor =
-            [&]() -> std::shared_ptr<SegmentationExtractorInterface>
-        {
-            return std::make_shared<FaceParsing>(*config);
-        };
-
-        auto getFaceOcclusionExtractor =
-            [&]() -> std::shared_ptr<SegmentationExtractorInterface>
-        {
-            return std::make_shared<FaceOcclusionSegmentation>(*config);
-        };
-
-        auto getPoseEstimator =
-            [&]() -> std::shared_ptr<PoseEstimatorInterface>
-        {
-            return std::make_shared<HeadPose3DDFAV2>(*config);
-        };
-
-        networks.release();
-        networks = std::make_unique<NeuronalNetworkContainer>(
-            getFaceDetector(),
-            getYoloFaceDetector(),
-            getLandmarkExtractor(),
-            getSegmentationExtractor(),
-            getPoseEstimator(),
-            getFaceOcclusionExtractor());
+            networks = std::make_unique<NeuronalNetworkContainer>(
+                getYoloFaceDetector());
+        }
     }
 }

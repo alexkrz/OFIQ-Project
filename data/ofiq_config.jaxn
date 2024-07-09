@@ -8,7 +8,7 @@
 
 // python config start
   "config": {
-    "detector": "ssd",
+    "detector": "yolo",
     "landmarks": "ADNet",
     "measures": [
       "HeadPose",
@@ -45,7 +45,7 @@
           "padding": 0.2
         },
         "yolo": {
-          "model_path": "yolov8n-face.onnx",
+          "model_path": "models/face_detection/yolov8n-face.onnx",
           "confidence_thr": 0.45,
           "nms_thr": 0.5
         }

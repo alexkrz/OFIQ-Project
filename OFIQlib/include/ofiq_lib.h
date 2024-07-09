@@ -34,13 +34,13 @@
 #include <ofiq_structs.h>
 
 #ifdef _WIN32
-#    ifdef OFIQ_EXPORTS
-#        define OFIQ_EXPORT __declspec(dllexport)
-#    else
-#        define OFIQ_EXPORT __declspec(dllimport)
-#    endif
+#ifdef OFIQ_EXPORTS
+#define OFIQ_EXPORT __declspec(dllexport)
 #else
-#    define OFIQ_EXPORT
+#define OFIQ_EXPORT __declspec(dllimport)
+#endif
+#else
+#define OFIQ_EXPORT
 #endif
 
 /**
@@ -61,7 +61,7 @@ namespace OFIQ
     public:
         /**
          * @brief Default Destructor
-         * 
+         *
          */
         virtual ~Interface() = default;
 
@@ -70,15 +70,15 @@ namespace OFIQ
          * The implementation under test should set all parameters.
          *
          * @param[in] configDir
-         * string representation of the directory containing the configuration 
+         * string representation of the directory containing the configuration
          * file specified by
          * configFileName
          * @param[in] configFileName
-         * An string value encoding the JAXN configuration file name         
+         * An string value encoding the JAXN configuration file name
          * @return OFIQ::ReturnStatus indicating if the initialization was successful.
          */
         virtual OFIQ::ReturnStatus
-            initialize(const std::string& configDir, const std::string& configFileName) = 0;
+        initialize(const std::string& configDir, const std::string& configFileName) = 0;
 
         /**
          * @brief This function takes an image and outputs a quality scalar.
@@ -109,7 +109,7 @@ namespace OFIQ
          * 2) those items in the QualityAssessments object that the
          * developer chooses to implement
          * 3) face landmarks
-         * 
+         *
          * @return OFIQ::ReturnStatus
          */
         virtual OFIQ::ReturnStatus vectorQuality(
@@ -127,7 +127,7 @@ namespace OFIQ
          * @note
          * A possible implementation might be:
          * return (std::make_shared<Implementation>());
-         * 
+         *
          * @return std::shared_ptr<Interface> pointer to the implementation of the interface.
          */
         OFIQ_EXPORT static std::shared_ptr<Interface> getImplementation();

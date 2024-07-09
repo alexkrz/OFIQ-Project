@@ -5,9 +5,15 @@
  */
 
 #include "opencv_yolo_face_detector.h"
+#include "OFIQError.h"
+#include "utils.h"
 #include <iostream>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
+
+using namespace OFIQ;
+using namespace cv;
+using namespace std;
 
 namespace OFIQ_LIB::modules::detectors
 {
@@ -23,15 +29,17 @@ namespace OFIQ_LIB::modules::detectors
         const auto fileNameModel = config.getDataDir() + "/" + config.GetString(paramModel);
 
         // Load the YOLOv8 model
-        net = std::make_shared<cv::dnn::Net>(cv::dnn::readNet(paramModel));
-
-        /*catch (const std::exception&)
+        try
+        {
+            /* code */
+            net = std::make_shared<cv::dnn::Net>(cv::dnn::readNet(fileNameModel));
+        }
+        catch (const std::exception&)
         {
             throw OFIQError(
                 ReturnCode::FaceDetectionError,
                 "failed to initialize Yolo face detector");
         }
-        */
     }
 
     cv::Mat YoloFaceDetector::resizeImage(const cv::Mat& srcImg, int* newHeight, int* newWidth, int* padHeight, int* padWidth)
@@ -70,7 +78,7 @@ namespace OFIQ_LIB::modules::detectors
     void YoloFaceDetector::drawPrediction(float conf, int left, int top, int right, int bottom, cv::Mat& frame, const std::vector<cv::Point>& landmark)
     {
         // Draw a rectangle displaying the bounding box
-        rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), cv::Scalar(0, 0, 255), 3);
+        rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), cv::Scalar(191, 0, 207), cv::LINE_AA);
 
         // Get the label for the class name and its confidence
         std::string label = cv::format("face:%.2f", conf);
@@ -80,10 +88,10 @@ namespace OFIQ_LIB::modules::detectors
         Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
         top = max(top, labelSize.height);
         rectangle(frame, Point(left, top - int(1.5 * labelSize.height)), Point(left + int(1.5 * labelSize.width), top + baseLine), Scalar(0, 255, 0), FILLED);*/
-        putText(frame, label, cv::Point(left, top - 5), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 2);
+        putText(frame, label, cv::Point(left, top - 5), cv::FONT_HERSHEY_PLAIN, 3, cv::Scalar(0, 0, 0), 3);
         for (int i = 0; i < 5; i++)
         {
-            circle(frame, landmark[i], 4, cv::Scalar(0, 255, 0), -1);
+            circle(frame, landmark[i], 9, cv::Scalar(224, 110, 0), cv::FILLED);
         }
     }
 
@@ -212,8 +220,21 @@ namespace OFIQ_LIB::modules::detectors
     std::vector<OFIQ::BoundingBox> YoloFaceDetector::UpdateFaces(OFIQ_LIB::Session& session)
     {
 
-        std::vector<OFIQ::BoundingBox> boundingBoxes; // empty the whole time
+        cv::Mat image = copyToCvImage(session.image());
 
+        detect(image);
+
+        std::string title = "YoloV8 Face Detection";
+
+        namedWindow(title, WINDOW_NORMAL);
+        cv::resizeWindow(title, 800, 800);
+        imshow(title, image);
+
+        waitKey(0);
+        destroyAllWindows();
+
+        // empty the whole time
+        std::vector<OFIQ::BoundingBox> boundingBoxes;
         // Returning an empty vector of bounding boxes
         return boundingBoxes;
     }
