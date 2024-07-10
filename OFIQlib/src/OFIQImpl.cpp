@@ -511,7 +511,10 @@ ReturnStatus OFIQImpl::vectorQuality(
     }
 
     log("execute assessments:\n");
-    m_executorPtr->ExecuteAll(session);
+    if ("yolo" != this->config.get()->GetString("detector"))
+    {
+        m_executorPtr->ExecuteAll(session);
+    }
 
     return ReturnStatus(ReturnCode::Success);
 }
