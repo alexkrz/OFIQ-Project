@@ -1,6 +1,6 @@
 /**
  * @file AllDetectors.h
- * 
+ *
  * @copyright Copyright (c) 2024  Federal Office for Information Security, Germany
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,9 +20,10 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
+ *
  * @brief Provides the include statements to all classes derived from
  * \link OFIQ_LIB::FaceDetectorInterface FaceDetectorInterface\endlink.
  * @author OFIQ development team
  */
 #include "opencv_ssd_face_detector.h"
+#include "opencv_yolo_face_detector.h"

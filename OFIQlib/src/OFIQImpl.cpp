@@ -29,6 +29,7 @@
 #include "FaceMeasures.h"
 #include "OFIQError.h"
 #include "image_io.h"
+#include "ofiq_lib.h"
 #include "ofiq_lib_impl.h"
 #include "utils.h"
 
@@ -366,6 +367,8 @@ void OFIQImpl::performPreprocessing(Session& session)
 
     visualizeBoundingBoxes(session, faces);
 
+    // networks->yolofaceDetector->detectFaces(session);
+
     log("2. estimatePose ");
     session.setPose(networks->poseEstimator->estimatePose(session));
 
@@ -502,6 +505,7 @@ ReturnStatus OFIQImpl::vectorQuality(
     }
 
     log("execute assessments:\n");
+
     m_executorPtr->ExecuteAll(session);
 
     return ReturnStatus(ReturnCode::Success);

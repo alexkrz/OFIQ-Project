@@ -69,10 +69,9 @@ namespace OFIQ_LIB::modules::landmarks
         {
             m_ort_session = std::make_unique<Ort::Session>(
                 m_ortenv,
-                i_model_data.data(), 
+                i_model_data.data(),
                 i_model_data.size(),
                 Ort::SessionOptions{nullptr});
-
 
             get_parameter_from_model(
                 m_expected_image_width,
@@ -156,7 +155,6 @@ namespace OFIQ_LIB::modules::landmarks
                 m_expected_image_height,
                 m_expected_image_width};
 
-
             // define Tensor
             auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
             auto inputTensor = Ort::Value::CreateTensor<float>(
@@ -165,7 +163,6 @@ namespace OFIQ_LIB::modules::landmarks
                 i_image.size(),
                 inputShape.data(),
                 inputShape.size());
-
 
             // define names
             Ort::AllocatorWithDefaultOptions ort_alloc;
@@ -182,7 +179,6 @@ namespace OFIQ_LIB::modules::landmarks
             }
 
             inputName.release();
-
 
             // run inference
             try
@@ -201,8 +197,6 @@ namespace OFIQ_LIB::modules::landmarks
                 auto element = results[useThisOutput].GetTensorTypeAndShapeInfo();
                 std::vector<int64_t> shape = element.GetShape();
 
-
-
                 auto elementPtr = results[useThisOutput].GetTensorMutableData<float>();
 
                 std::vector<float> landmarks(elementPtr, elementPtr + element.GetElementCount());
@@ -212,7 +206,8 @@ namespace OFIQ_LIB::modules::landmarks
                     landmarks.cbegin(),
                     landmarks.cend(),
                     landmarks.begin(),
-                    [](float i_landmark) { return (i_landmark + 1.) / 2 * 255; });
+                    [](float i_landmark)
+                    { return (i_landmark + 1.) / 2 * 255; });
 
                 return landmarks;
             }
@@ -225,7 +220,6 @@ namespace OFIQ_LIB::modules::landmarks
 
             return std::vector<float>();
         }
-
 
     private:
         Ort::Env m_ortenv;
@@ -281,7 +275,7 @@ namespace OFIQ_LIB::modules::landmarks
             std::string err_msg = "no face found on given image: " + std::string(e.what());
             throw OFIQError(ReturnCode::FaceDetectionError, err_msg);
         }
-        
+
         if (faceRects.empty())
         {
             return landmarks;
@@ -291,20 +285,20 @@ namespace OFIQ_LIB::modules::landmarks
         OFIQ::BoundingBox detectedFace = faceRects[faceIndex];
 
         cv::Mat cvImage = copyToCvImage(session.image());
-        Point2i translationVector{ 0, 0 };
+        Point2i translationVector{0, 0};
 
-        if (detectedFace.faceDetector == FaceDetectorType::OPENCVSSD) {
+        if (detectedFace.faceDetector == FaceDetectorType::OPENCVSSD)
+        {
             // SSD bounding box does not have to be quadratic -> check and make it square
             cv::Mat cvImage_maybe_padded;
             OFIQ::BoundingBox detectedFaceSquare;
-            
+
             OFIQ_LIB::makeSquareBoundingBoxWithPadding(
                 detectedFace,
                 cvImage,
                 cvImage_maybe_padded,
                 detectedFaceSquare,
-                translationVector
-            );
+                translationVector);
             cvImage = cvImage_maybe_padded;
             detectedFace = detectedFaceSquare;
 
@@ -331,7 +325,7 @@ namespace OFIQ_LIB::modules::landmarks
             auto x = static_cast<int>(
                 std::round(landmarks_from_net[i] * scalingFactor));
             auto y = static_cast<int>(
-                std::round(landmarks_from_net[i+1] * scalingFactor));
+                std::round(landmarks_from_net[i + 1] * scalingFactor));
             x += offset_x;
             y += offset_y;
             landmarks.landmarks.emplace_back(
@@ -344,14 +338,13 @@ namespace OFIQ_LIB::modules::landmarks
     }
 
 #ifdef OFIQ_SINGLE_FACE_PRESENT_WITH_TMETRIC
-#pragma message ("WARNING: This is needed for SingleFacePresent measure based on T-metric which is slow. This should be removed after adjustment of 29794-5 standard.")
-// TODO: If 29794-5 is adujusted as suggested, then remove all code
-//     within OFIQ_SINGLE_FACE_PRESENT_WITH_TMETRIC and keep 
-//     alternative variant within #else block.
-    
+#pragma message("WARNING: This is needed for SingleFacePresent measure based on T-metric which is slow. This should be removed after adjustment of 29794-5 standard.")
+    // TODO: If 29794-5 is adujusted as suggested, then remove all code
+    //     within OFIQ_SINGLE_FACE_PRESENT_WITH_TMETRIC and keep
+    //     alternative variant within #else block.
+
     // protected override
-    std::vector<OFIQ::FaceLandmarks> ADNetFaceLandmarkExtractor::updateLandmarksAllFaces
-    (OFIQ_LIB::Session& session, const std::vector<OFIQ::BoundingBox>& faces)
+    std::vector<OFIQ::FaceLandmarks> ADNetFaceLandmarkExtractor::updateLandmarksAllFaces(OFIQ_LIB::Session& session, const std::vector<OFIQ::BoundingBox>& faces)
     {
         std::vector<OFIQ::FaceLandmarks> landmarksList;
 
@@ -361,24 +354,22 @@ namespace OFIQ_LIB::modules::landmarks
             OFIQ::FaceLandmarks landmarks;
 
             cv::Mat cvImage = copyToCvImage(session.image());
-            Point2i translationVector{ 0, 0 };
+            Point2i translationVector{0, 0};
 
-            if (detectedFace.faceDetector == FaceDetectorType::OPENCVSSD) {
-                // SSD bounding box does not have to be quadratic -> check and make it square
-                cv::Mat cvImage_maybe_padded;
-                OFIQ::BoundingBox detectedFaceSquare;
+            // if (detectedFace.faceDetector == FaceDetectorType::OPENCVSSD) {
+            //  SSD bounding box does not have to be quadratic -> check and make it square
+            cv::Mat cvImage_maybe_padded;
+            OFIQ::BoundingBox detectedFaceSquare;
 
-                OFIQ_LIB::makeSquareBoundingBoxWithPadding(
-                    detectedFace,
-                    cvImage,
-                    cvImage_maybe_padded,
-                    detectedFaceSquare,
-                    translationVector
-                );
-                cvImage = cvImage_maybe_padded;
-                detectedFace = detectedFaceSquare;
-
-            } // if opencvssd
+            OFIQ_LIB::makeSquareBoundingBoxWithPadding(
+                detectedFace,
+                cvImage,
+                cvImage_maybe_padded,
+                detectedFaceSquare,
+                translationVector);
+            cvImage = cvImage_maybe_padded;
+            detectedFace = detectedFaceSquare;
+            //} // if opencvssd
 
             // crop image
             // Define the region of interest (ROI) for cropping
@@ -411,7 +402,7 @@ namespace OFIQ_LIB::modules::landmarks
             landmarks.type = LandmarkType::LM_98;
             landmarksList.push_back(landmarks);
         }
-    
+
         return landmarksList;
     }
 #endif

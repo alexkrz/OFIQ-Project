@@ -29,61 +29,59 @@
 
 #include "Configuration.h"
 #include "Executor.h"
-#include "ofiq_lib.h"
 #include "NeuronalNetworkContainer.h"
+#include "ofiq_lib.h"
 
- /**
-  * @brief Namespace for OFIQ implementations.
-  */
+/**
+ * @brief Namespace for OFIQ implementations.
+ */
 namespace OFIQ_LIB
 {
     /**
      * @brief Implementation of the OFIQ_LIB.
-     * 
+     *
      */
     class OFIQImpl : public OFIQ::Interface
     {
     public:
         /**
          * @brief Constructor
-         * 
+         *
          */
         OFIQImpl();
 
         /**
          * @brief Destructor
-         * 
+         *
          */
         ~OFIQImpl() override = default;
 
         /**
          * @brief Initialize the lib by reading the configuration file.
-         * 
+         *
          * @param configDir Path to the configuration file.
          * @param configValue Name of the configuration file.
-         * @return OFIQ::ReturnStatus 
+         * @return OFIQ::ReturnStatus
          */
         OFIQ::ReturnStatus
-            initialize(const std::string& configDir, const std::string& configValue) override;
+        initialize(const std::string& configDir, const std::string& configValue) override;
 
-        
         /**
          * @brief Compute an overall quality score for the image provided.
-         * @details The overall quality score will be equal to the measure ualityMeasure::UnifiedQualityScore if it is activated. 
+         * @details The overall quality score will be equal to the measure ualityMeasure::UnifiedQualityScore if it is activated.
          * Otherwise, the overall quality score will be the mean of all active measure scores.
          * @param[in] face Input image.
          * @param[out] quality Computed UnifiedQualityScore.
-         * @return OFIQ::ReturnStatus 
+         * @return OFIQ::ReturnStatus
          */
         OFIQ::ReturnStatus scalarQuality(const OFIQ::Image& face, double& quality) override;
 
-
         /**
          * @brief Run the computation of all measures set in the configuration.
-         * 
+         *
          * @param[in] image Input image.
          * @param[out] assessments Container to store the resulting scores.
-         * @return OFIQ::ReturnStatus 
+         * @return OFIQ::ReturnStatus
          */
         OFIQ::ReturnStatus vectorQuality(
             const OFIQ::Image& image, OFIQ::FaceImageQualityAssessment& assessments) override;
@@ -91,70 +89,68 @@ namespace OFIQ_LIB
     private:
         /**
          * @brief Pointer to the executor instance, see \link OFIQ_LIB::modules::measures::Executor \endlink.
-         * 
+         *
          */
         std::unique_ptr<OFIQ_LIB::modules::measures::Executor> m_executorPtr;
 
         /**
          * @brief required to suit Session constructor
-         * 
+         *
          */
         OFIQ::FaceImageQualityAssessment dummyAssement;
-        
+
         /**
          * @brief required to suit Session constructor
-         * 
+         *
          */
         OFIQ::Image dummyImage;
 
         /**
          * @brief required to suit Session constructor
-         * 
+         *
          */
         OFIQ_LIB::Session m_emptySession;
 
-
         /**
          * @brief Pointer to the cinfiguration
-         * 
+         *
          */
         std::unique_ptr<Configuration> config;
 
         /**
          * @brief Pointer to the different neural network instances, used during the preprocesing.
-         * 
+         *
          */
         std::unique_ptr<NeuronalNetworkContainer> networks;
 
         /**
          * @brief Create a Executor object
-         * 
+         *
          * @param session Session object containing the original facial image and pre-processing results
          * computed by the \link OFIQ_LIB::OFIQImpl::performPreprocessing()
          * OFIQImpl::performPreprocessing()\endlink method
-         * @return std::unique_ptr<OFIQ_LIB::modules::measures::Executor> 
+         * @return std::unique_ptr<OFIQ_LIB::modules::measures::Executor>
          */
         std::unique_ptr<OFIQ_LIB::modules::measures::Executor> CreateExecutor(Session& session);
-        
-        
+
         /**
          * @brief Create a NeuronalNetworkContainer
-         * 
+         *
          */
         void CreateNetworks();
 
         /**
          * @brief Perform the preprocessing.
-         * 
+         *
          * @param session Session object containing the original facial image and pre-processing results
          * computed by the \link OFIQ_LIB::OFIQImpl::performPreprocessing()
          * OFIQImpl::performPreprocessing()\endlink method
          */
         void performPreprocessing(Session& session);
-        
+
         /**
          * @brief Perform the face alignment.
-         * 
+         *
          * @param session Session object containing the original facial image and pre-processing results
          * computed by the \link OFIQ_LIB::OFIQImpl::performPreprocessing()
          * OFIQImpl::performPreprocessing()\endlink method

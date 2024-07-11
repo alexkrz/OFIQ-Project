@@ -1,4 +1,4 @@
-list(APPEND CMAKE_MODULE_PATH 
+list(APPEND CMAKE_MODULE_PATH
 	"${CMAKE_CURRENT_SOURCE_DIR}/build/conan"
 	"${CMAKE_SOURCE_DIR}/cmake"
 )
@@ -35,19 +35,20 @@ add_definitions(-DOFIQ_SINGLE_FACE_PRESENT_WITH_TMETRIC)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-list(APPEND PUBLIC_HEADER_LIST 
+list(APPEND PUBLIC_HEADER_LIST
 	${OFIQLIB_SOURCE_DIR}/include/ofiq_lib.h
 	${OFIQLIB_SOURCE_DIR}/include/ofiq_structs.h
 )
 
-list(APPEND libImplementationSources 
+list(APPEND libImplementationSources
 	${OFIQLIB_SOURCE_DIR}/src/OFIQImpl.cpp
 	${OFIQLIB_SOURCE_DIR}/src/OFIQInitialization.cpp
 )
 
-list(APPEND module_sources 
+list(APPEND module_sources
 	${OFIQLIB_SOURCE_DIR}/modules/detectors/src/detectors.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/detectors/src/opencv_ssd_face_detector.cpp
+	${OFIQLIB_SOURCE_DIR}/modules/detectors/src/opencv_yolo_face_detector.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/landmarks/src/adnet_landmarks.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/landmarks/src/FaceMeasures.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/landmarks/src/landmarks.cpp
@@ -92,7 +93,7 @@ list(APPEND module_sources
 )
 
 
-list(APPEND OFIQ_LINK_LIB_LIST 
+list(APPEND OFIQ_LINK_LIB_LIST
 	opencv::opencv
 	spdlog::spdlog
 	taocpp::json
@@ -133,7 +134,7 @@ target_link_libraries(OFIQSampleApp
 )
 
 
-set_target_properties(ofiq_lib 
+set_target_properties(ofiq_lib
         PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADER_LIST}"
         )
 
@@ -158,7 +159,7 @@ install(TARGETS ofiq_lib
     PUBLIC_HEADER DESTINATION include/
 )
 
-install(TARGETS ofiq_lib 
+install(TARGETS ofiq_lib
 	CONFIGURATIONS Release
 	DESTINATION Release/bin
 	PUBLIC_HEADER DESTINATION include/
