@@ -367,8 +367,6 @@ void OFIQImpl::performPreprocessing(Session& session)
 
     visualizeBoundingBoxes(session, faces);
 
-    // networks->yolofaceDetector->detectFaces(session);
-
     log("2. estimatePose ");
     session.setPose(networks->poseEstimator->estimatePose(session));
 

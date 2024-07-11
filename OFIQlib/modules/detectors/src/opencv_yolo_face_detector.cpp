@@ -209,7 +209,17 @@ namespace OFIQ_LIB::modules::detectors
         std::vector<int> indices;
         cv::dnn::NMSBoxes(boxes, confidences, this->confThreshold, this->nmsThreshold, indices);
         std::vector<OFIQ::BoundingBox> bb;
-        bb.push_back(OFIQ::BoundingBox(boxes[0].x, boxes[0].y, boxes[0].width, boxes[0].height, FaceDetectorType::OPENCVYOLO));
+
+        for (size_t i = 0; i < indices.size(); ++i)
+        {
+            int idx = indices[i];
+            Rect box = boxes[idx];
+
+            if (confidences[idx] >= confThreshold)
+            {
+                bb.push_back(OFIQ::BoundingBox(box.x, box.y, box.width, box.height, FaceDetectorType::OPENCVYOLO));
+            }
+        }
 
         return bb;
     }
