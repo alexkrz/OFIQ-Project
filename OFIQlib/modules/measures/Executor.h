@@ -28,19 +28,19 @@
 
 #include "Measure.h"
 
- /**
-  * @brief Provides measures implemented in OFIQ.
-  */
+/**
+ * @brief Provides measures implemented in OFIQ.
+ */
 namespace OFIQ_LIB::modules::measures
 {
     /**
      * @brief This variable enables logging to std::cout for debug purposes. By default the logging is switched off.
      */
-    const static bool execLogActive = false;
+    const static bool execLogActive = true;
 
     /**
      * @brief Logging function for writing debug messages to std::cout.
-     * 
+     *
      * @param msg Message to be logged.
      */
     void log(const std::string_view& msg);
@@ -53,7 +53,7 @@ namespace OFIQ_LIB::modules::measures
     public:
         /**
          * @brief Construct a new Executor object
-         * 
+         *
          * @param measures Provide access to the activated measures.
          */
         explicit Executor(std::vector<std::unique_ptr<Measure>> measures)
@@ -63,10 +63,10 @@ namespace OFIQ_LIB::modules::measures
 
         /**
          * @brief Run the computation of the activated measures on the data of the provided session.
-         * 
+         *
          * @param i_currentSession Container providing the data required for the computation of the measures.
          */
-        void ExecuteAll(Session & i_currentSession) const;
+        void ExecuteAll(Session& i_currentSession) const;
 
         /**
          * @brief Return the list of the activated measures.
@@ -77,7 +77,7 @@ namespace OFIQ_LIB::modules::measures
     private:
         /**
          * @brief Container for access to the measures to be computed.
-         * 
+         *
          */
         std::vector<std::unique_ptr<Measure>> measures;
     };
