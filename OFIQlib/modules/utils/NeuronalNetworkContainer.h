@@ -66,12 +66,6 @@ namespace OFIQ_LIB
         {
         }
 
-        NeuronalNetworkContainer(
-            std::shared_ptr<FaceDetectorInterface> yolofaceDetector)
-            : yolofaceDetector{yolofaceDetector}
-        {
-        }
-
         /**
          * @brief Pointer to a \link OFIQ_LIB::FaceDetectorInterface FaceDetectorInterface \endlink
          */

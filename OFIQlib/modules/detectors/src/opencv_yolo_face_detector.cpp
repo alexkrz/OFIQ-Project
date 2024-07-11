@@ -183,7 +183,7 @@ namespace OFIQ_LIB::modules::detectors
         }
     }
 
-    void YoloFaceDetector::detect(cv::Mat& srcImg)
+    std::vector<OFIQ::BoundingBox> YoloFaceDetector::detect(cv::Mat& srcImg)
     {
         int newh = 0, neww = 0, padh = 0, padw = 0;
         cv::Mat dst = this->resizeImage(srcImg, &newh, &neww, &padh, &padw);
@@ -208,13 +208,10 @@ namespace OFIQ_LIB::modules::detectors
         // lower confidences
         std::vector<int> indices;
         cv::dnn::NMSBoxes(boxes, confidences, this->confThreshold, this->nmsThreshold, indices);
-        for (size_t i = 0; i < indices.size(); ++i)
-        {
-            int idx = indices[i];
-            cv::Rect box = boxes[idx];
-            this->drawPrediction(confidences[idx], box.x, box.y,
-                                 box.x + box.width, box.y + box.height, srcImg, landmarks[idx]);
-        }
+        std::vector<OFIQ::BoundingBox> bb;
+        bb.push_back(OFIQ::BoundingBox(boxes[0].x, boxes[0].y, boxes[0].width, boxes[0].height, FaceDetectorType::OPENCVYOLO));
+
+        return bb;
     }
 
     std::vector<OFIQ::BoundingBox> YoloFaceDetector::UpdateFaces(OFIQ_LIB::Session& session)
@@ -222,19 +219,8 @@ namespace OFIQ_LIB::modules::detectors
 
         cv::Mat image = copyToCvImage(session.image());
 
-        detect(image);
+        std::vector<OFIQ::BoundingBox> boundingBoxes = detect(image);
 
-        std::string title = "YoloV8 Face Detection";
-
-        namedWindow(title, WINDOW_NORMAL);
-        cv::resizeWindow(title, 800, 800);
-        imshow(title, image);
-
-        waitKey(0);
-        destroyAllWindows();
-
-        // empty the whole time
-        std::vector<OFIQ::BoundingBox> boundingBoxes;
         // Returning an empty vector of bounding boxes
         return boundingBoxes;
     }

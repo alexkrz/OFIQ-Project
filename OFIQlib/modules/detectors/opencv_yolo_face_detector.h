@@ -120,7 +120,7 @@ namespace OFIQ_LIB::modules::detectors
          */
         void drawPrediction(float conf, int left, int top, int right, int bottom, cv::Mat& frame, const std::vector<cv::Point>& landmark);
 
-        void detect(cv::Mat& srcImg);
+        std::vector<OFIQ::BoundingBox> detect(cv::Mat& srcImg);
 
         /**
          * @brief Instance of an OpenCV dnn::Net.
