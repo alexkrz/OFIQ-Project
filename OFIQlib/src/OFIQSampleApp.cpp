@@ -54,7 +54,8 @@ using namespace OFIQ_LIB;
 int getQualityAssessmentResults(
     std::shared_ptr<Interface>& implPtr,
     const string& inputFile,
-    FaceImageQualityAssessment& assessments);
+    FaceImageQualityAssessment& assessments,
+    bool showImages);
 
 std::vector<std::string> readFileLines(
     const std::string& inputFile);
@@ -121,7 +122,7 @@ bool isStringContained(
 }
 
 int runQuality(
-    std::shared_ptr<Interface>& implPtr, const string& inputFile, std::ostream* p_outStream = &std::cout)
+    std::shared_ptr<Interface>& implPtr, const string& inputFile, std::ostream* p_outStream = &std::cout, bool showImages = true)
 {
     std::vector<std::string> imageFiles;
     std::vector<FaceImageQualityAssessment> faceImageQAs;
@@ -145,7 +146,7 @@ int runQuality(
     for (auto const& imageFile : imageFiles)
     {
         FaceImageQualityAssessment assessment;
-        int resCode = getQualityAssessmentResults(implPtr, imageFile, assessment);
+        int resCode = getQualityAssessmentResults(implPtr, imageFile, assessment, showImages);
 
         faceImageQAresultCodes.push_back(resCode);
 
@@ -233,7 +234,8 @@ int runQuality(
 int getQualityAssessmentResults(
     std::shared_ptr<Interface>& implPtr,
     const string& inputFile,
-    FaceImageQualityAssessment& assessments)
+    FaceImageQualityAssessment& assessments,
+    bool showImages)
 {
     Image image;
     // loading images
@@ -246,7 +248,7 @@ int getQualityAssessmentResults(
     }
 
     std::cout << "--> Start processing image file: " << inputFile << std::endl;
-    retStatus = implPtr->vectorQuality(image, assessments);
+    retStatus = implPtr->vectorQuality(image, assessments, showImages);
 
     return retStatus.code == ReturnCode::Success ? SUCCESS : FAILURE;
 }
@@ -311,6 +313,7 @@ int main(int argc, char* argv[])
     char* outputFile = nullptr;
     string inputFile;
     string configFile;
+    bool showImages = true;
 
     for (int i = 0; i < argc - requiredArgs; i++)
     {
@@ -322,6 +325,10 @@ int main(int argc, char* argv[])
             inputFile = argv[requiredArgs + (++i)];
         else if (strcmp(argv[requiredArgs + i], "-cf") == 0)
             configFile = argv[requiredArgs + (++i)];
+        else if (strcmp(argv[requiredArgs + i], "show_images=true") == 0)
+            showImages = true;
+        else if (strcmp(argv[requiredArgs + i], "show_images=false") == 0)
+            showImages = false;
         else
         {
             cerr << "[ERROR] Unrecognized flag: " << argv[requiredArgs + i] << endl;
@@ -362,7 +369,7 @@ int main(int argc, char* argv[])
         std::ofstream ofs(outputFile);
         if (ofs.good())
         {
-            runQuality(implPtr, inputFile, &ofs);
+            runQuality(implPtr, inputFile, &ofs, showImages);
         }
         else
         {
@@ -373,7 +380,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        runQuality(implPtr, inputFile, &std::cout);
+        runQuality(implPtr, inputFile, &std::cout, showImages);
     }
 
     return 0;

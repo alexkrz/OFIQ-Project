@@ -16,6 +16,7 @@
             "${workspaceFolder}/data/tests/images/c-06-glasses.png",
             "-o",
             "${workspaceFolder}/results/out.csv",
+            "show_images=true"
         ]
     },
     "cmake.configureOnOpen": true,
