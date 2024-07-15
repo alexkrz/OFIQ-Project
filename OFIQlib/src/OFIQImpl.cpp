@@ -364,7 +364,7 @@ void OFIQImpl::performPreprocessing(Session& session, bool showImages)
         throw OFIQError(ReturnCode::FaceDetectionError, "No faces were detected");
     }
     session.setDetectedFaces(faces);
-    std::cout << "Show Images " << to_string(showImages) << std::endl;
+    // std::cout << "Show Images " << to_string(showImages) << std::endl;
 
     if (showImages)
         visualizeBoundingBoxes(session, faces);
