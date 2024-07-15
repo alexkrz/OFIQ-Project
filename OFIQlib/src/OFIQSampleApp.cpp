@@ -313,7 +313,7 @@ int main(int argc, char* argv[])
     char* outputFile = nullptr;
     string inputFile;
     string configFile;
-    bool showImages = true;
+    bool showImages = false;
 
     for (int i = 0; i < argc - requiredArgs; i++)
     {
