@@ -74,7 +74,7 @@ namespace OFIQ_LIB
          * @param[out] quality Computed UnifiedQualityScore.
          * @return OFIQ::ReturnStatus
          */
-        OFIQ::ReturnStatus scalarQuality(const OFIQ::Image& face, double& quality) override;
+        OFIQ::ReturnStatus scalarQuality(const OFIQ::Image& face, double& quality, bool showImages) override;
 
         /**
          * @brief Run the computation of all measures set in the configuration.
@@ -84,7 +84,7 @@ namespace OFIQ_LIB
          * @return OFIQ::ReturnStatus
          */
         OFIQ::ReturnStatus vectorQuality(
-            const OFIQ::Image& image, OFIQ::FaceImageQualityAssessment& assessments) override;
+            const OFIQ::Image& image, OFIQ::FaceImageQualityAssessment& assessments, bool showImages) override;
 
     private:
         /**
@@ -146,7 +146,7 @@ namespace OFIQ_LIB
          * computed by the \link OFIQ_LIB::OFIQImpl::performPreprocessing()
          * OFIQImpl::performPreprocessing()\endlink method
          */
-        void performPreprocessing(Session& session);
+        void performPreprocessing(Session& session, bool showImages);
 
         /**
          * @brief Perform the face alignment.
