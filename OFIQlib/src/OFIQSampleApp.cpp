@@ -325,9 +325,9 @@ int main(int argc, char* argv[])
             inputFile = argv[requiredArgs + (++i)];
         else if (strcmp(argv[requiredArgs + i], "-cf") == 0)
             configFile = argv[requiredArgs + (++i)];
-        else if (strcmp(argv[requiredArgs + i], "show_images=true") == 0)
+        else if (strcmp(argv[requiredArgs + i], "-imshow=true") == 0)
             showImages = true;
-        else if (strcmp(argv[requiredArgs + i], "show_images=false") == 0)
+        else if (strcmp(argv[requiredArgs + i], "-imshow=false") == 0)
             showImages = false;
         else
         {
