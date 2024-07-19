@@ -38,13 +38,13 @@ namespace OFIQ_LIB::modules::measures
     NoHeadCoverings::NoHeadCoverings(
         const Configuration& configuration,
         Session& session)
-        : Measure{ configuration, session, qualityMeasure }
+        : Measure{configuration, session, qualityMeasure}
     {
         if (!configuration.GetNumber(paramThreshold, this->threshold))
             this->threshold = 0.02;
     }
 
-    void NoHeadCoverings::Execute(OFIQ_LIB::Session & session)
+    void NoHeadCoverings::Execute(OFIQ_LIB::Session& session)
     {
         cv::Mat M = session.getFaceParsingImage();
 
@@ -62,7 +62,16 @@ namespace OFIQ_LIB::modules::measures
         // set all values above and below Segment::hat to 0
         cv::threshold(mask, hatMask, static_cast<uchar>(Segment::hat) - 1, 255, cv::THRESH_TOZERO);
         cv::threshold(hatMask, hatMask, static_cast<uchar>(Segment::hat), 255, cv::THRESH_TOZERO_INV);
+        // Convert to grayscale if the input image has multiple channels
+        if (clothMask.channels() > 1)
+        {
+            cv::cvtColor(clothMask, clothMask, cv::COLOR_BGR2GRAY);
+        }
         auto clothPixels = cv::countNonZero(clothMask);
+        if (hatMask.channels() > 1)
+        {
+            cv::cvtColor(hatMask, hatMask, cv::COLOR_BGR2GRAY);
+        }
         auto hatPixels = cv::countNonZero(hatMask);
 
         // Output n/m where m is the number of pixels in M
@@ -80,6 +89,6 @@ namespace OFIQ_LIB::modules::measures
             scalarScore = 100;
         }
 
-        session.assessment().qAssessments[qualityMeasure] = { rawScore, scalarScore, OFIQ::QualityMeasureReturnCode::Success };
+        session.assessment().qAssessments[qualityMeasure] = {rawScore, scalarScore, OFIQ::QualityMeasureReturnCode::Success};
     }
 }
