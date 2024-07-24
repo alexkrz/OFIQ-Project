@@ -8,6 +8,7 @@
 #include "OFIQError.h"
 #include "utils.h"
 #include <iostream>
+#include <opencv2/core/utils/logger.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
@@ -28,10 +29,13 @@ namespace OFIQ_LIB::modules::detectors
         this->nmsThreshold = config.GetNumber(paramNmsThreshold);
         const auto fileNameModel = config.getDataDir() + "/" + config.GetString(paramModel);
 
-        // Load the YOLOv8 model
+        // Try loading the YOLOv8 model
         try
         {
-            /* code */
+            // std::cout << "Read Yolov8 ONNX model" << std::endl;
+            // Set logging level to silent
+            cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_SILENT);
+            // Read the model
             net = std::make_shared<cv::dnn::Net>(cv::dnn::readNet(fileNameModel));
         }
         catch (const std::exception&)
@@ -114,7 +118,7 @@ namespace OFIQ_LIB::modules::detectors
     {
         const int feat_h = out.size[2];
         const int feat_w = out.size[3];
-        std::cout << out.size[1] << "," << out.size[2] << "," << out.size[3] << std::endl;
+        // std::cout << out.size[1] << "," << out.size[2] << "," << out.size[3] << std::endl;
         const int stride = (int)ceil((float)inpHeight / feat_h);
         const int area = feat_h * feat_w;
         float* ptr = (float*)out.data;
