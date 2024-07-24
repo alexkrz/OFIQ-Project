@@ -296,7 +296,7 @@ void usage(const string& executable)
 {
     cerr << "Usage: " << executable
          << " -c configDir "
-            "-o outputFile -h outputStem -i inputFile -t numForks"
+            "-o outputFile -h outputStem -i inputFile -cf configFile"
          << endl;
 }
 
@@ -310,7 +310,7 @@ int main(int argc, char* argv[])
     }
 
     string configDir{"config"};
-    char* outputFile = nullptr;
+    const char* outputFile = nullptr;
     string inputFile;
     string configFile;
     bool showImages = false;
