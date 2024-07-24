@@ -31,7 +31,7 @@ how to compile and run __OFIQ__.
     conda activate ofiq
     pre-commit install
     cd scripts
-    sh build_debug.sh
+    sh build_linux_debug.sh
     ```
 
 4. Build project with VSCode CMake Tools

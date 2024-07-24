@@ -27,19 +27,19 @@
 #include "FaceParsing.h"
 #include "OFIQError.h"
 #include "utils.h"
-#include <string>
 #include <fstream>
-#include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
+#include <opencv2/opencv.hpp>
+#include <string>
 
 namespace OFIQ_LIB::modules::segmentations
 {
 
     FaceParsing::FaceParsing(const Configuration& config)
     {
-        std::string modelPath = config.getDataDir() + "/" + config.GetString(modelConfigItem);
-        
+        std::string modelPath = config.getDataDir() + "/" + config.GetString(m_modelConfigItem);
+
         try
         {
             std::ifstream instream(modelPath, std::ios::in | std::ios::binary);
@@ -47,24 +47,26 @@ namespace OFIQ_LIB::modules::segmentations
             std::vector<uint8_t> modelData(
                 (std::istreambuf_iterator<char>(instream)),
                 std::istreambuf_iterator<char>());
-            m_onnxRuntimeEnv.initialize(modelData, imageSize, imageSize);
+            m_onnxRuntimeEnv.initialize(modelData, m_imageSize, m_imageSize);
         }
         catch (const std::exception& e)
         {
             throw OFIQError(
                 OFIQ::ReturnCode::FaceParsingError,
                 std::string("Loading model for FaceParsing failed: " + modelPath +
-                ". Config dir: " + config.getDataDir() + 
-                    ". Original exception: " + std::string(e.what())));
+                            ". Config dir: " + config.getDataDir() +
+                            ". Original exception: " + std::string(e.what())));
         }
     }
 
     void FaceParsing::SetImage(OFIQ_LIB::Session& session)
     {
         cv::Mat inputImage = session.getAlignedFace();
-        cv::Mat croppedImage = inputImage(cv::Range(0, inputImage.rows - cropBottom), cv::Range(cropLeft, inputImage.cols - cropRight));
+        cv::Mat croppedImage = inputImage(
+            cv::Range(0, inputImage.rows - m_cropBottom),
+            cv::Range(m_cropLeft, inputImage.cols - m_cropRight));
         cv::cvtColor(croppedImage, croppedImage, cv::COLOR_BGR2RGB);
-        auto blob = FaceParsing::CreateBlob(croppedImage, imageSize);
+        auto blob = FaceParsing::CreateBlob(croppedImage, m_imageSize);
 
         // Convert cv::Mat to std::vector<float>
         std::vector<float> net_input;
@@ -72,13 +74,13 @@ namespace OFIQ_LIB::modules::segmentations
 
         size_t nbOutputNodes = m_onnxRuntimeEnv.getNumberOfOutputNodes();
         auto results = m_onnxRuntimeEnv.run(net_input);
-        
-        size_t useThisOutput = 0;// nbOutputNodes - 1;
+
+        size_t useThisOutput = 0;
 
         auto element = results[useThisOutput].GetTensorTypeAndShapeInfo();
         std::vector<int64_t> shape = element.GetShape();
         auto elementPtr = results[useThisOutput].GetTensorMutableData<float>();
-    
+
         // Assuming 'tensorDims' contains dimensions like {batchSize, channels, height, width}
         auto batchSize = static_cast<int>(shape[0]);
         auto nbChannels = static_cast<int>(shape[1]);
@@ -86,21 +88,19 @@ namespace OFIQ_LIB::modules::segmentations
         auto width = static_cast<int>(shape[3]);
 
         // Create a cv::Mat from the tensor data
-        int size[] = { batchSize, nbChannels, height, width};
+        int size[] = {batchSize, nbChannels, height, width};
         auto mat = cv::Mat(4, size, CV_32FC1, elementPtr);
-        
+
         std::vector<cv::Mat> out;
         cv::dnn::imagesFromBlob(mat, out);
 
-        segmentationImage = FaceParsing::CalculateClassIds(
+        m_segmentationImage = FaceParsing::CalculateClassIds(
             out[0],
-            imageSize);
-
+            m_imageSize);
     }
 
-
     OFIQ::Image
-        FaceParsing::UpdateMask(OFIQ_LIB::Session& session, SegmentClassLabels faceSegment)
+    FaceParsing::UpdateMask(OFIQ_LIB::Session& session, SegmentClassLabels faceSegment)
     {
         try
         {
@@ -114,34 +114,33 @@ namespace OFIQ_LIB::modules::segmentations
         }
 
         cv::Mat mask;
-        
-        OFIQ::Image maskImage = OFIQ_LIB::MakeGreyImage(segmentationImage->cols, segmentationImage->rows);
-        
+        OFIQ::Image maskImage = OFIQ_LIB::MakeGreyImage(m_segmentationImage->cols, m_segmentationImage->rows);
 
-        if (OFIQ_LIB::modules::segmentations::SegmentClassLabels::face == faceSegment) {
-            memcpy(maskImage.data.get(), segmentationImage->data, maskImage.size());
+        if (OFIQ_LIB::modules::segmentations::SegmentClassLabels::face == faceSegment)
+        {
+            memcpy(maskImage.data.get(), m_segmentationImage->data, maskImage.size());
         }
-        else {
+        else
+        {
             if (auto channel = static_cast<uchar>(faceSegment); channel != 0)
             {
-                cv::threshold(*segmentationImage, mask, channel, 255, cv::THRESH_TOZERO_INV);
+                cv::threshold(*m_segmentationImage, mask, channel, 255, cv::THRESH_TOZERO_INV);
                 cv::threshold(mask, mask, channel - 1, 255, cv::THRESH_BINARY);
             }
             else
-                cv::threshold(*segmentationImage, mask, channel, 255, cv::THRESH_BINARY_INV);
+                cv::threshold(*m_segmentationImage, mask, channel, 255, cv::THRESH_BINARY_INV);
 
             auto kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, {3, 3});
             cv::morphologyEx(mask, mask, cv::MORPH_OPEN, kernel);
             cv::morphologyEx(mask, mask, cv::MORPH_CLOSE, kernel);
 
             memcpy(maskImage.data.get(), mask.data, maskImage.size());
- 
         }
         return maskImage;
     }
 
     cv::Mat FaceParsing::CreateBlob(const cv::Mat& image, int imageSize)
-    {     
+    {
         cv::Scalar mean(0.485, 0.456, 0.406);
         cv::Scalar std(0.229, 0.224, 0.225);
 
@@ -149,12 +148,12 @@ namespace OFIQ_LIB::modules::segmentations
 
         mean *= 255;
         float scaleFactor = 1 / 255.0f;
-        cv::Mat blob = cv::dnn::blobFromImage({ image }, scaleFactor, size, mean);
+        cv::Mat blob = cv::dnn::blobFromImage({image}, scaleFactor, size, mean);
         std::vector<cv::Mat> images;
         cv::dnn::imagesFromBlob(blob, images);
         cv::Mat out = images[0];
         out /= std;
-        blob = cv::dnn::blobFromImage({ out });
+        blob = cv::dnn::blobFromImage({out});
 
         return blob;
     }
@@ -169,7 +168,9 @@ namespace OFIQ_LIB::modules::segmentations
 
         cv::split(resultImage, channels);
 
-        #define FOREACHPIXEL for (int i = 0; i < imageSize_one_dim; i++) for (int j = 0; j < imageSize_one_dim; j++)
+#define FOREACHPIXEL                            \
+    for (int i = 0; i < imageSize_one_dim; i++) \
+        for (int j = 0; j < imageSize_one_dim; j++)
 
         for (uchar channelId = 0; channelId < channels.size(); channelId++)
         {
