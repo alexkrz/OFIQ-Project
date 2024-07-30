@@ -287,22 +287,17 @@ namespace OFIQ_LIB::modules::landmarks
         cv::Mat cvImage = copyToCvImage(session.image());
         Point2i translationVector{0, 0};
 
-        if (detectedFace.faceDetector == FaceDetectorType::OPENCVSSD)
-        {
-            // SSD bounding box does not have to be quadratic -> check and make it square
-            cv::Mat cvImage_maybe_padded;
-            OFIQ::BoundingBox detectedFaceSquare;
+        cv::Mat cvImage_maybe_padded;
+        OFIQ::BoundingBox detectedFaceSquare;
 
-            OFIQ_LIB::makeSquareBoundingBoxWithPadding(
-                detectedFace,
-                cvImage,
-                cvImage_maybe_padded,
-                detectedFaceSquare,
-                translationVector);
-            cvImage = cvImage_maybe_padded;
-            detectedFace = detectedFaceSquare;
-
-        } // if opencvssd
+        OFIQ_LIB::makeSquareBoundingBoxWithPadding(
+            detectedFace,
+            cvImage,
+            cvImage_maybe_padded,
+            detectedFaceSquare,
+            translationVector);
+        cvImage = cvImage_maybe_padded;
+        detectedFace = detectedFaceSquare;
 
         // crop image
         // Define the region of interest (ROI) for cropping
