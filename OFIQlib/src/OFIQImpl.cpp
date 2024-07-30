@@ -375,16 +375,14 @@ void OFIQImpl::performPreprocessing(Session& session, bool showImages)
         std::string(" ms "));
 
     session.setDetectedFaces(faces);
-    // std::cout << "Show Images " << to_string(showImages) << std::endl;
 
+    // std::cout << "Show Images " << to_string(showImages) << std::endl;
     if (showImages)
         visualizeBoundingBoxes(session, faces);
 
     log("2. estimatePose ");
     tic = hrclock::now();
-
     session.setPose(networks->poseEstimator->estimatePose(session));
-
     log(std::to_string(
             std::chrono::duration_cast<std::chrono::milliseconds>(
                 hrclock::now() - tic)
@@ -407,12 +405,12 @@ void OFIQImpl::performPreprocessing(Session& session, bool showImages)
 #else
     session.setLandmarks(networks->landmarkExtractor->extractLandmarks(session));
 #endif
+
     log(std::to_string(
             std::chrono::duration_cast<std::chrono::milliseconds>(
                 hrclock::now() - tic)
                 .count()) +
         std::string(" ms "));
-
     if (showImages)
         visualizeLandmarks(session, session.getLandmarks());
 
@@ -425,7 +423,6 @@ void OFIQImpl::performPreprocessing(Session& session, bool showImages)
                 hrclock::now() - tic)
                 .count()) +
         std::string(" ms "));
-
     if (showImages)
         visualizeFaceAlignment(session);
 
@@ -437,15 +434,13 @@ void OFIQImpl::performPreprocessing(Session& session, bool showImages)
             session,
             OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
         true));
-
-    if (showImages)
-        visualizeSegmentationMask(session);
-
     log(std::to_string(
             std::chrono::duration_cast<std::chrono::milliseconds>(
                 hrclock::now() - tic)
                 .count()) +
         std::string(" ms "));
+    if (showImages)
+        visualizeSegmentationMask(session);
 
     log("6. getFaceOcclusionMask ");
     tic = hrclock::now();
@@ -454,15 +449,13 @@ void OFIQImpl::performPreprocessing(Session& session, bool showImages)
             session,
             OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
         true));
-
-    if (showImages)
-        visualizeOcclusionMask(session);
-
     log(std::to_string(
             std::chrono::duration_cast<std::chrono::milliseconds>(
                 hrclock::now() - tic)
                 .count()) +
         std::string(" ms "));
+    if (showImages)
+        visualizeOcclusionMask(session);
 
     static const std::string alphaParamPath = "params.measures.FaceRegion.alpha";
     double alpha = 0.0f;
@@ -477,22 +470,19 @@ void OFIQImpl::performPreprocessing(Session& session, bool showImages)
 
     log("7. getAlignedFaceMask ");
     tic = hrclock::now();
-
     session.setAlignedFaceLandmarkedRegion(
         OFIQ_LIB::modules::landmarks::FaceMeasures::GetFaceMask(
             session.getAlignedFaceLandmarks(),
             session.getAlignedFace().rows,
             session.getAlignedFace().cols,
             (float)alpha));
-
-    if (showImages)
-        visualizeLandmarkRegion(session);
-
     log(std::to_string(
             std::chrono::duration_cast<std::chrono::milliseconds>(
                 hrclock::now() - tic)
                 .count()) +
         std::string(" ms "));
+    if (showImages)
+        visualizeLandmarkRegion(session);
 
     log("\npreprocessing finished\n");
 }
