@@ -32,6 +32,8 @@
 #include "ofiq_lib.h"
 #include "ofiq_lib_impl.h"
 #include "utils.h"
+#include <chrono>
+using hrclock = std::chrono::high_resolution_clock;
 
 using namespace std;
 using namespace OFIQ;
@@ -211,7 +213,7 @@ cv::Vec3b determineColor(int i)
     }
 }
 
-void visualizeLandmarks(Session& session, const std::vector<OFIQ::FaceLandmarks>& landmarks)
+void visualizeLandmarks(Session& session, const OFIQ::FaceLandmarks faceLandmarks)
 {
     cv::Mat image = copyToCvImage(session.image());
 
@@ -220,14 +222,10 @@ void visualizeLandmarks(Session& session, const std::vector<OFIQ::FaceLandmarks>
 
     // go through all detected facelandmarks for each face on the image
     int index = 0;
-    for (FaceLandmarks fl : landmarks)
+    for (LandmarkPoint fp : faceLandmarks.landmarks)
     {
-        // go through eacht specific landmark point and draw it onto the image
-        for (LandmarkPoint fp : fl.landmarks)
-        {
-            drawLandmarkPoint(image, fp, lightblue, index);
-            index++;
-        }
+        drawLandmarkPoint(image, fp, lightblue, index);
+        index++;
     }
     // open window
     previewWindow("Landmark Preview", image);
@@ -244,7 +242,7 @@ void visualizeSegmentationMask(Session& session)
     double alpha, beta;
     int row, col;
 
-    alpha = 0.7;
+    alpha = 0.55f;
     beta = 1 - alpha;
 
     cv::Mat image, segmentation, layered;
@@ -252,6 +250,8 @@ void visualizeSegmentationMask(Session& session)
     segmentation = session.getFaceParsingImage();
     image = session.getAlignedFace();
     cv::Mat croppedImage = image(cv::Range(0, image.rows - 60), cv::Range(30, image.cols - 30));
+
+    cv::cvtColor(segmentation, segmentation, cv::COLOR_GRAY2BGR);
 
     cv::resize(croppedImage, croppedImage, segmentation.size(), 0.0, 0.0, cv::INTER_NEAREST);
 
@@ -278,8 +278,7 @@ void visualizeSegmentationMask(Session& session)
             segmentation.at<cv::Vec3b>(row, col) = color;
         }
     }
-
-    cv::addWeighted(segmentation, alpha, croppedImage, beta, 0.0, layered);
+    cv::addWeighted(segmentation, alpha, croppedImage, beta, 0.0f, layered);
 
     previewWindow("Segmentation Face Mask", layered);
 }
@@ -293,6 +292,8 @@ void visualizeOcclusionMask(Session& session)
     beta = 1 - alpha;
 
     occlusion = session.getFaceOcclusionSegmentationImage() * 255.0f;
+    cv::cvtColor(occlusion, occlusion, cv::COLOR_GRAY2BGR);
+
     image = session.getAlignedFace();
 
     for (col = 0; col < occlusion.cols; col++)
@@ -354,8 +355,12 @@ void visualizeLandmarkRegion(Session& session)
 
 void OFIQImpl::performPreprocessing(Session& session, bool showImages)
 {
+    std::chrono::time_point<hrclock> tic;
+
     log("\t1. detectFaces ");
     // find Bounding Boxes
+    tic = hrclock::now();
+
     std::vector<OFIQ::BoundingBox> faces = networks->faceDetector->detectFaces(session);
 
     if (faces.empty())
@@ -363,16 +368,30 @@ void OFIQImpl::performPreprocessing(Session& session, bool showImages)
         log("\n\tNo faces were detected, abort preprocessing\n");
         throw OFIQError(ReturnCode::FaceDetectionError, "No faces were detected");
     }
-    session.setDetectedFaces(faces);
-    // std::cout << "Show Images " << to_string(showImages) << std::endl;
+    log(std::to_string(
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                hrclock::now() - tic)
+                .count()) +
+        std::string(" ms "));
 
+    session.setDetectedFaces(faces);
+
+    // std::cout << "Show Images " << to_string(showImages) << std::endl;
     if (showImages)
         visualizeBoundingBoxes(session, faces);
 
     log("2. estimatePose ");
+    tic = hrclock::now();
     session.setPose(networks->poseEstimator->estimatePose(session));
+    log(std::to_string(
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                hrclock::now() - tic)
+                .count()) +
+        std::string(" ms "));
 
     log("3. extractLandmarks ");
+    tic = hrclock::now();
+
 #ifdef OFIQ_SINGLE_FACE_PRESENT_WITH_TMETRIC
     session.setLandmarksAllFaces(networks->landmarkExtractor->extractLandmarksAllFaces(session, session.getDetectedFaces()));
     if (!session.getLandmarksAllFaces().empty())
@@ -387,34 +406,54 @@ void OFIQImpl::performPreprocessing(Session& session, bool showImages)
     session.setLandmarks(networks->landmarkExtractor->extractLandmarks(session));
 #endif
 
+    log(std::to_string(
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                hrclock::now() - tic)
+                .count()) +
+        std::string(" ms "));
     if (showImages)
-        visualizeLandmarks(session, session.getLandmarksAllFaces());
+        visualizeLandmarks(session, session.getLandmarks());
 
     log("4. alignFaceImage ");
+    tic = hrclock::now();
     // aligned face requires the landmarks of the face thus it must come after the landmark extraction.
     alignFaceImage(session);
-
+    log(std::to_string(
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                hrclock::now() - tic)
+                .count()) +
+        std::string(" ms "));
     if (showImages)
         visualizeFaceAlignment(session);
 
     log("5. getSegmentationMask ");
+    tic = hrclock::now();
     // segmentation results for face_parsing
     session.setFaceParsingImage(OFIQ_LIB::copyToCvImage(
         networks->segmentationExtractor->GetMask(
             session,
             OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
-        false));
-
+        true));
+    log(std::to_string(
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                hrclock::now() - tic)
+                .count()) +
+        std::string(" ms "));
     if (showImages)
         visualizeSegmentationMask(session);
 
     log("6. getFaceOcclusionMask ");
+    tic = hrclock::now();
     session.setFaceOcclusionSegmentationImage(OFIQ_LIB::copyToCvImage(
         networks->faceOcclusionExtractor->GetMask(
             session,
             OFIQ_LIB::modules::segmentations::SegmentClassLabels::face),
-        false));
-
+        true));
+    log(std::to_string(
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                hrclock::now() - tic)
+                .count()) +
+        std::string(" ms "));
     if (showImages)
         visualizeOcclusionMask(session);
 
@@ -430,14 +469,18 @@ void OFIQImpl::performPreprocessing(Session& session, bool showImages)
     }
 
     log("7. getAlignedFaceMask ");
-
+    tic = hrclock::now();
     session.setAlignedFaceLandmarkedRegion(
         OFIQ_LIB::modules::landmarks::FaceMeasures::GetFaceMask(
             session.getAlignedFaceLandmarks(),
             session.getAlignedFace().rows,
             session.getAlignedFace().cols,
             (float)alpha));
-
+    log(std::to_string(
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                hrclock::now() - tic)
+                .count()) +
+        std::string(" ms "));
     if (showImages)
         visualizeLandmarkRegion(session);
 
@@ -450,9 +493,9 @@ void OFIQImpl::alignFaceImage(Session& session)
     OFIQ::FaceLandmarks alignedFaceLandmarks;
     alignedFaceLandmarks.type = landmarks.type;
     cv::Mat transformationMatrix;
-    cv::Mat aligned = alignImage(session.image(), landmarks, alignedFaceLandmarks, transformationMatrix);
+    cv::Mat alignedBGRimage = alignImage(session.image(), landmarks, alignedFaceLandmarks, transformationMatrix);
 
-    session.setAlignedFace(aligned);
+    session.setAlignedFace(alignedBGRimage);
     session.setAlignedFaceLandmarks(alignedFaceLandmarks);
     session.setAlignedFaceTransformationMatrix(transformationMatrix);
 }
