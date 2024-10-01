@@ -74,19 +74,16 @@ namespace OFIQ_LIB
         }
     }
 
-    OFIQ_EXPORT OFIQ::ReturnStatus readImageFromBuffer(const char* buffer, OFIQ::Image& image)
+    OFIQ_EXPORT OFIQ::ReturnStatus readImageFromByteArray(const std::vector<unsigned char>& byteArray, OFIQ::Image& image)
     {
         try
         {
-            std::string decoded = base64Decode(buffer);
-            std::vector<uchar> data(decoded.begin(), decoded.end());
-            cv::Mat cvImage = cv::imdecode(cv::Mat(data), cv::IMREAD_COLOR);
-
+            cv::Mat cvImage = cv::imdecode(cv::Mat(byteArray), cv::IMREAD_COLOR);
             return copyImageData(cvImage, image);
         }
         catch (const std::exception&)
         {
-            return ReturnStatus(ReturnCode::ImageReadingError, std::string("failed to decode image from buffer"));
+            return ReturnStatus(ReturnCode::ImageReadingError, std::string("failed to read image from byte array"));
         }
     }
 }
