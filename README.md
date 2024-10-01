@@ -46,8 +46,8 @@ how to compile and run __OFIQ__.
         "cmake.configureArgs": [
             "-DCMAKE_INSTALL_PREFIX=${workspaceFolder}/install_x86_64_linux",
             "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
-            "-DDOWNLOAD_MODELS=ON",
-            "-DDOWNLOAD_IMAGES=ON"
+            "-DDOWNLOAD_ONNX=ON",
+            "-DDOWNLOAD_MODELS_AND_IMAGES=ON",
         ],
     }
     ```
