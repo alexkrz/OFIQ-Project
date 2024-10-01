@@ -35,11 +35,12 @@ repos:
       - id: isort
         args: ["--profile", "black", "--filter-files"]
 
-  - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v17.0.6
-    hooks:
-      - id: clang-format
-        args: ["-i"] # Adjust inplace
+  # We do not enforce clang-format, as it is not enforced on the main branch
+  # - repo: https://github.com/pre-commit/mirrors-clang-format
+  #   rev: v17.0.6
+  #   hooks:
+  #     - id: clang-format
+  #       args: ["-i"] # Adjust inplace
 
   # md formatting
   # - repo: https://github.com/executablebooks/mdformat
