@@ -30,10 +30,36 @@
 #include "utils.h"
 #include <opencv2/core.hpp>
 
+/*
+void previewWindow(std::string title, cv::Mat& image)
+{
+    cv::namedWindow(title, cv::WINDOW_NORMAL);
+    cv::resizeWindow(title, 800, 800);
+    cv::imshow(title, image);
+    cv::waitKey(0);
+    cv::destroyAllWindows();
+}
+
+void visualizeMasks(OFIQ_LIB::Session& session)
+{
+    cv::Mat image = session.getAlignedFace();
+    cv::Mat mask = session.getAlignedFaceLandmarkedRegion() * 255.0f;
+    cv::Mat faceOcclusionMask = session.getFaceOcclusionSegmentationImage() * 255.0f;
+    cv::Mat occlusionMask = mask.mul(1 - faceOcclusionMask) * 255.0f;
+
+    previewWindow("image", image);
+    previewWindow("mask", mask);
+    previewWindow("faceOcclusionMask", faceOcclusionMask);
+    previewWindow("occlusionMask", occlusionMask);
+
+    std::cout << "Debug" << std::endl;
+}
+*/
+
 namespace OFIQ_LIB::modules::measures
 {
     static const auto qualityMeasure = OFIQ::QualityMeasure::FaceOcclusionPrevention;
-    
+
     FaceOcclusionPrevention::FaceOcclusionPrevention(
         const Configuration& configuration)
         : Measure{ configuration, qualityMeasure }
@@ -46,9 +72,13 @@ namespace OFIQ_LIB::modules::measures
         int G = cv::countNonZero(mask);
         if ( G == 0)
             return SetQualityMeasure(session, qualityMeasure, 0, OFIQ::QualityMeasureReturnCode::FailureToAssess);
-        
+
         cv::Mat faceOcclusionMask = session.getFaceOcclusionSegmentationImage();
         cv::Mat occlusionMask = mask.mul(1 - faceOcclusionMask);
+
+        // visualizeMasks(session);
+
+        // Score calculation
         double rawScore = cv::countNonZero(occlusionMask) / (double)G;
         double scalarScore = round(100 * (1 - rawScore));
         if (scalarScore < 0)

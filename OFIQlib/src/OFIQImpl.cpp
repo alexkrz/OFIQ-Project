@@ -66,7 +66,7 @@ ReturnStatus OFIQImpl::scalarQuality(const OFIQ::Image& face, double& quality)
 {
     FaceImageQualityAssessment assessments;
 
-    if (auto result = vectorQuality(face, assessments); 
+    if (auto result = vectorQuality(face, assessments);
         result.code != ReturnCode::Success)
         return result;
 
@@ -89,6 +89,44 @@ ReturnStatus OFIQImpl::scalarQuality(const OFIQ::Image& face, double& quality)
     }
 
     return ReturnStatus(ReturnCode::Success);
+}
+
+void previewWindow(std::string title, cv::Mat& image)
+{
+    cv::namedWindow(title, cv::WINDOW_NORMAL);
+    cv::resizeWindow(title, 800, 800);
+    cv::imshow(title, image);
+    cv::waitKey(0);
+    cv::destroyAllWindows();
+}
+
+void drawLandmarkPoint(cv::Mat& image, OFIQ::LandmarkPoint& fp, cv::Scalar& color, int index)
+{
+    // create center point (just for readability)
+    cv::Point2i center = cv::Point2i(fp.x, fp.y);
+    cv::Point2i text_origin = cv::Point2i(fp.x + 5, fp.y + 5);
+    // draw landmark point
+    cv::circle(image, center, 3, color, cv::FILLED);
+    cv::putText(image, std::to_string(index), text_origin, cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar(0, 0, 0), 1);
+}
+
+void visualizeLandmarks(OFIQ_LIB::Session& session)
+{
+    cv::Mat image = session.getAlignedFace();
+    OFIQ::FaceLandmarks faceLandmarks = session.getAlignedFaceLandmarks();
+
+    // NOTE: color values are in BGR!
+    cv::Scalar lightblue = cv::Scalar(224, 110, 0);
+
+    // go through all detected facelandmarks for each face on the image
+    int index = 0;
+    for (OFIQ::LandmarkPoint fp : faceLandmarks.landmarks)
+    {
+        drawLandmarkPoint(image, fp, lightblue, index);
+        index++;
+    }
+    // open window
+    previewWindow("Landmark Preview", image);
 }
 
 void OFIQImpl::performPreprocessing(Session& session)
@@ -170,8 +208,10 @@ void OFIQImpl::performPreprocessing(Session& session)
     }
 
     log("7. getAlignedFaceMask ");
-    tic = hrclock::now();
 
+    // visualizeLandmarks(session);
+
+    tic = hrclock::now();
     session.setAlignedFaceLandmarkedRegion(
          OFIQ_LIB::modules::landmarks::FaceMeasures::GetFaceMask(
             session.getAlignedFaceLandmarks(),
