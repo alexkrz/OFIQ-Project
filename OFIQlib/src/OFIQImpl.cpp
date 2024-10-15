@@ -91,6 +91,7 @@ ReturnStatus OFIQImpl::scalarQuality(const OFIQ::Image& face, double& quality)
     return ReturnStatus(ReturnCode::Success);
 }
 
+/*
 void previewWindow(std::string title, cv::Mat& image)
 {
     cv::namedWindow(title, cv::WINDOW_NORMAL);
@@ -128,6 +129,7 @@ void visualizeLandmarks(OFIQ_LIB::Session& session)
     // open window
     previewWindow("Landmark Preview", image);
 }
+*/
 
 void OFIQImpl::performPreprocessing(Session& session)
 {

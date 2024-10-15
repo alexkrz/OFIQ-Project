@@ -30,7 +30,7 @@
 #include "utils.h"
 #include <opencv2/core.hpp>
 
-/*
+
 void previewWindow(std::string title, cv::Mat& image)
 {
     cv::namedWindow(title, cv::WINDOW_NORMAL);
@@ -54,7 +54,7 @@ void visualizeMasks(OFIQ_LIB::Session& session)
 
     std::cout << "Debug" << std::endl;
 }
-*/
+
 
 namespace OFIQ_LIB::modules::measures
 {
