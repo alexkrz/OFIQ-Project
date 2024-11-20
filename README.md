@@ -64,5 +64,5 @@ how to compile and run __OFIQ__.
 ## Run sample app
 
 ```bash
-./install_x86_64_linux/Debug/bin/OFIQSampleApp -c data/ofiq_config.jaxn -i data/tests/images -o results/out.csv
+./install_x86_64_linux/Debug/bin/OFIQSampleApp -c data/ofiq_config.jaxn -o results/out.csv -i data/tests/images
 ```
