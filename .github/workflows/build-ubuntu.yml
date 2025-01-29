@@ -1,0 +1,24 @@
+name: Build Ubuntu
+
+on:
+  workflow_dispatch:  # Workflow can be trigerred manually
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install conan
+      run: |
+        pip install conan==2.0.17
+        conan --version
+
+    - name: Run build script
+      run: |
+        cd scripts
+        chmod +x build.sh
+        ./build.sh --no-download
