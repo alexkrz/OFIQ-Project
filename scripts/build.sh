@@ -7,7 +7,7 @@ config=Release
 os=linux
 
 while [ -n "$1" ]
-do  
+do
 if [ "$1" = "--no-conan" ]; then
     use_conan=OFF
 elif [ "$1" = "--no-download" ]; then
@@ -78,15 +78,15 @@ else
     cd ..
 fi
 
-# echo "Attempting to build the real implementation"
+echo "Attempting to build the real implementation"
 
-# cd ../
-# echo "Removing $build_dir"
-# rm -r $build_dir
+cd ../
+echo "Removing $build_dir"
+rm -r $build_dir
 
 echo "Generating build files"
 cmake -S ./ -B $build_dir -DCMAKE_INSTALL_PREFIX=$install_dir -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
     -DDOWNLOAD_ONNX=$use_conan -DUSE_CONAN=$use_conan -DOS=$os -DCMAKE_BUILD_TYPE=$config -DDOWNLOAD_MODELS_AND_IMAGES=$download
 cmake --build $build_dir --target install -j 8
 
-# echo "Building finished"
+echo "Building finished"
