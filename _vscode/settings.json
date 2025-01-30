@@ -1,12 +1,13 @@
 {
-    //"cmake.cmakePath": "${userHome}/miniconda3/envs/ofiq/bin/cmake",
+    "files.insertFinalNewline": false,
+    "editor.formatOnSave": false,
     "cmake.buildDirectory": "${workspaceFolder}/build/build_linux",
     "cmake.configureArgs": [
         "-DCMAKE_INSTALL_PREFIX=${workspaceFolder}/install_x86_64_linux",
-        // "-DCMAKE_BUILD_TYPE=Release",
         "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
         "-DDOWNLOAD_ONNX=OFF",
         "-DDOWNLOAD_MODELS_AND_IMAGES=OFF",
+        // "-DCMAKE_BUILD_TYPE=Release",
     ],
     "cmake.debugConfig": {
         "args": [
