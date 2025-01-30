@@ -27,8 +27,8 @@
 #include "FaceMeasures.h"
 #include "FaceParts.h"
 #include <math.h>
-#include <unordered_set>
 #include <opencv2/imgproc.hpp>
+#include <unordered_set>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -93,7 +93,6 @@ namespace OFIQ_LIB::modules::landmarks
         return distance;
     }
 
-
     cv::Mat FaceMeasures::GetFaceMask(
         const OFIQ::FaceLandmarks& faceLandmarks, const int height, const int width, const float alpha)
     {
@@ -102,7 +101,8 @@ namespace OFIQ_LIB::modules::landmarks
         {
             landmarkPoints.emplace_back(landmark.x, landmark.y);
         }
-        // optional: expand convex hull
+
+        // Optional: expand convex hull
         if (alpha > 0)
         {
             std::vector<cv::Point2i> contour;
@@ -121,7 +121,7 @@ namespace OFIQ_LIB::modules::landmarks
             {
                 int chinIndex = 16;
                 chin = landmarkPoints[chinIndex];
-                std::vector<int> contourIndices = { 0, 7, 25, 32 };
+                std::vector<int> contourIndices = {0, 7, 25, 32};
                 for (int i = 0; i < contourIndices.size(); i++)
                 {
                     contour.push_back(landmarkPoints[contourIndices[i]]);
@@ -131,27 +131,37 @@ namespace OFIQ_LIB::modules::landmarks
                 throw std::invalid_argument("Unknown LandmarkType");
 
             cv::Point2f chinMidpointVector = eyesMidpoint - chin;
-            cv::Point2i topOfForehead{ (int)(eyesMidpoint.x + alpha * chinMidpointVector.x), (int)(eyesMidpoint.y + alpha * chinMidpointVector.y) };
-            std::vector <cv::Point2i> ellipsePoints = contour;
+            cv::Point2i topOfForehead{(int)(eyesMidpoint.x + alpha * chinMidpointVector.x), (int)(eyesMidpoint.y + alpha * chinMidpointVector.y)};
+            std::vector<cv::Point2i> ellipsePoints = contour;
             ellipsePoints.push_back(chin);
             ellipsePoints.push_back(topOfForehead);
             cv::RotatedRect ellipse = cv::fitEllipse(ellipsePoints);
             std::vector<cv::Point2i> polyPoints;
-            cv::Point2i ellipseCenter{ (int)ellipse.center.x, (int)ellipse.center.y };
-            cv::Size ellipseSize = { (int)(ellipse.size.width / 2), (int)(ellipse.size.height / 2) };
+            cv::Point2i ellipseCenter{(int)ellipse.center.x, (int)ellipse.center.y};
+            cv::Size ellipseSize = {(int)(ellipse.size.width / 2), (int)(ellipse.size.height / 2)};
             // Get landmarks for the ellipse
             cv::ellipse2Poly(ellipseCenter, ellipseSize, (int)ellipse.angle, 0, 360, 10, polyPoints);
             // discard ellipse points which are not on forehead
             polyPoints.erase(std::remove_if(polyPoints.begin(), polyPoints.end(), [chin, chinMidpointVector](cv::Point2f p)
-            {
-                return (p - chin).dot(chinMidpointVector) <= 1.1 * chinMidpointVector.dot(chinMidpointVector);
-            }), polyPoints.end());
+                                            { return (p - chin).dot(chinMidpointVector) <= 1.1 * chinMidpointVector.dot(chinMidpointVector); }),
+                             polyPoints.end());
             landmarkPoints.reserve(landmarkPoints.size() + polyPoints.size());
             landmarkPoints.insert(landmarkPoints.end(), polyPoints.begin(), polyPoints.end());
         }
 
+        // Compute hullPoints from landmarkPoints
         std::vector<cv::Point2i> hullPoints;
         cv::convexHull(landmarkPoints, hullPoints);
+
+        // Generate mask from hullPoints
+        cv::Mat mask = cv::Mat::zeros(cv::Size(height, width), CV_8UC1);
+        cv::fillConvexPoly(mask, hullPoints, cv::Scalar(1));
+
+        return mask;
+
+        /***
+         * This whole re-sizing code is not necessary
+
         cv::Rect rect = cv::boundingRect(hullPoints);
         auto b = (int)(rect.y - rect.height * 0.05);
         auto d = (int)(rect.y + rect.height * 1.05);
@@ -204,6 +214,7 @@ namespace OFIQ_LIB::modules::landmarks
         cv::Mat crop = maskRescaled(cv::Range(top, bottom), cv::Range(left, right));
         crop.copyTo(faceRegion(cv::Range(bn, dn), cv::Range(an, cn)));
         return faceRegion;
+        ***/
     }
 
     double FaceMeasures::GetMaxPairDistance(
