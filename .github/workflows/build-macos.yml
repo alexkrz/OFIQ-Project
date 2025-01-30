@@ -1,0 +1,26 @@
+name: Build MacOS
+
+on:
+  workflow_dispatch:  # Workflow can be trigerred manually
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure system
+      run: | # First print system info, then install conan
+        sw_vers
+        cmake --version
+        pip install conan==2.0.17
+        conan --version
+
+    - name: Run build script
+      run: |
+        cd scripts
+        chmod +x build.sh
+        ./build.sh --no-download --os macos
