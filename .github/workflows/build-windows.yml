@@ -14,7 +14,7 @@ jobs:
 
     - name: Configure system
       run: | # First print system info, then install conan
-        ver
+        cmd /c ver
         cmake --version
         pip install conan==2.0.17
         conan --version
