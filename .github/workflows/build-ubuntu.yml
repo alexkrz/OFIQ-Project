@@ -12,11 +12,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Install conan
-      run: |
+    - name: Configure system
+      run: | # First print system info, then install conan
+        lsb_release -sd
+        cmake --version
         pip install conan==2.0.17
         conan --version
-        cmake --version
 
     - name: Run build script
       run: |
