@@ -15,6 +15,7 @@ jobs:
     - name: Configure system
       run: | # First print system info, then install conan
         cmd /c ver
+        vswhere
         cmake --version
         pip install conan==2.0.17
         conan --version
@@ -22,4 +23,4 @@ jobs:
     - name: Run build script
       run: |
         cd scripts
-        .\build.cmd --no-download
+        .\build.cmd --no-download  --set-compiler 17
