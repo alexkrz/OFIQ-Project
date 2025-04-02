@@ -2,6 +2,8 @@ name: Build Ubuntu
 
 on:
   workflow_dispatch:  # Workflow can be trigerred manually
+  pull_request:
+    branches: [main, "release/*", "dev"]
 
 jobs:
   build:
@@ -12,8 +14,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Configure system
-      run: | # First print system info, then install conan
+    - name: Print system info
+      run: |
+        lsb_release -sd
+        cmake --version
+
+    - name: Setup cmake
+      uses: jwlawson/actions-setup-cmake@v2
+      with:
+        cmake-version: '3.31.6'
+
+    - name: Install conan
+      run: | 
         lsb_release -sd
         cmake --version
         pip install conan==2.0.17
