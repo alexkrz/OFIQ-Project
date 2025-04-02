@@ -18,8 +18,7 @@ jobs:
       run: | # First print system info, then install conan
         lsb_release -sd
         cmake --version
-        snap list cmake
-        sudo snap remove cmake
+        which cmake
         sudo snap install cmake --channel=3.31/stable --classic
         cmake --version
         pip install conan==2.0.17
