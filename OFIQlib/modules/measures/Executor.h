@@ -36,7 +36,7 @@ namespace OFIQ_LIB::modules::measures
     /**
      * @brief This variable enables logging to std::cout for debug purposes. By default the logging is switched off.
      */
-    const static bool ExecutorLogActive = false;
+    const static bool ExecutorLogActive = true;
 
     /**
      * @brief Logging function for writing debug messages to std::cout.

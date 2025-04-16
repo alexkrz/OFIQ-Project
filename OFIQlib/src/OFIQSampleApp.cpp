@@ -95,7 +95,7 @@ std::vector<std::string> readImageFilesFromDirectory(const std::string& inputDir
 {
     std::vector<std::string> filenames;
 
-    for (const auto& entry : fs::directory_iterator(inputDirectory))
+    for (const auto& entry : fs::recursive_directory_iterator(inputDirectory))
     {
         std::string extension = to_lower(entry.path().extension().generic_string());
         if (extension == ".jpg" || extension == ".jpeg" || extension == ".png")

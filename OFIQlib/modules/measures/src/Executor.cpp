@@ -32,7 +32,7 @@ namespace OFIQ_LIB::modules::measures
     void log(const std::string_view& msg)
     {
         if (ExecutorLogActive)
-            std::cout << msg;
+            std::cout << msg << std::flush; // Need to explicitly flush the buffer to instantly show debug messages
     }
 
     void Executor::ExecuteAll(Session & i_currentSession) const
