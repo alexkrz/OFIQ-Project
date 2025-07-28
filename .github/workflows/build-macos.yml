@@ -16,7 +16,7 @@ jobs:
       run: | # First print system info, then install conan
         sw_vers
         cmake --version
-        pip install conan==2.0.17
+        pip install conan==2.18.1
         conan --version
 
     - name: Run build script
