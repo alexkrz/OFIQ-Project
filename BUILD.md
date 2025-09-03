@@ -392,15 +392,14 @@ NOTE: At the date of publication, the link to the full OFIQ release were not ava
 To build OFIQ without conan (described below), we need to extract the archive so that file structure
 matches the following:
 <table>
- <tr><td>/path/to/OFIQ-Project/extern/di/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/flatbuffers/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/googletest/*</td></tr>
+ <tr><td>/path/to/OFIQ-Project/extern/gzip-hpp/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/json/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/magic_enum/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/onnxruntime/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/openvc-4.5.5/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/PEGTL/*</td></tr>
- <tr><td>/path/to/OFIQ-Project/extern/spdlog/*</td></tr>
 </table>
 Here, <code>/path/to/OFIQ-Project/</code> denotes the path to OFIQ's root folder.
 <br/><br/>

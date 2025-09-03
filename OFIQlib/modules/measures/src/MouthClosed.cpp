@@ -33,9 +33,8 @@ namespace OFIQ_LIB::modules::measures
 {
     static const auto qualityMeasure = OFIQ::QualityMeasure::MouthClosed;
 
-    MouthClosed::MouthClosed(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+    MouthClosed::MouthClosed(const Configuration& configuration)
+        : Measure{configuration, qualityMeasure}
     {
         SigmoidParameters defaultValues;
         defaultValues.setInverse();
@@ -49,10 +48,11 @@ namespace OFIQ_LIB::modules::measures
     {
         auto faceLandmarks = session.getLandmarks();
         auto maxMouthOpening = landmarks::FaceMeasures::GetMaxPairDistance(
-            faceLandmarks, landmarks::FaceParts::MOUTH_INNER);
+            faceLandmarks,
+            landmarks::FaceParts::MOUTH_INNER);
 
         auto t = tmetric(faceLandmarks);
-        
+
         double rawScore;
         OFIQ::QualityMeasureReturnCode returnCode;
         if (t == 0.0)

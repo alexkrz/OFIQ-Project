@@ -25,12 +25,14 @@
  */
 
 #include "opencv_ssd_face_detector.h"
+#include "DataStream.h"
 #include "OFIQError.h"
 #include "utils.h"
+#include <cmath>
+#include <iterator>
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include <cmath>
 
 using namespace OFIQ;
 using namespace cv;
@@ -53,14 +55,20 @@ namespace OFIQ_LIB::modules::detectors
         m_confidenceThreshold = config.GetNumber(paramConfidenceThreshold);
         m_padding = config.GetNumber(paramPadding);
         m_minimalRelativeFaceSize = config.GetNumber(paramMinimalRelativeFaceSize);
-        const auto fileNameProtoTxt = config.getDataDir() + "/" + config.GetString(paramPrototxt);
-        const auto fileNameCaffeModel =
-            config.getDataDir() + "/" + config.GetString(paramCaffemodel);
+        auto fileNameProtoTxt = config.GetFullPath(paramPrototxt);
+        auto fileNameCaffeModel = config.GetFullPath(paramCaffemodel);
 
         try
         {
-            m_dnnNet =
-                make_shared<dnn::Net>(dnn::readNetFromCaffe(fileNameProtoTxt, fileNameCaffeModel));
+            DataStream protostream(fileNameProtoTxt);
+            std::vector<unsigned char> prototxt(
+                (std::istreambuf_iterator<char>(protostream)),
+                std::istreambuf_iterator<char>());
+            DataStream caffestream(fileNameCaffeModel, std::ios_base::binary);
+            std::vector<unsigned char> caffemodel(
+                (std::istreambuf_iterator<char>(caffestream)),
+                std::istreambuf_iterator<char>());
+            m_dnnNet = make_shared<dnn::Net>(dnn::readNetFromCaffe(prototxt, caffemodel));
         }
         catch (const std::exception&)
         {
@@ -99,13 +107,20 @@ namespace OFIQ_LIB::modules::detectors
             cv::Mat paddedImage{
                 cvImage.rows + paddingVertical * 2,
                 cvImage.cols + paddingHorizontal * 2,
-                cvImage.type() };
-            cv::copyMakeBorder(cvImage, paddedImage, paddingVertical, paddingVertical, paddingHorizontal, paddingHorizontal, BORDER_CONSTANT);
+                cvImage.type()};
+            cv::copyMakeBorder(
+                cvImage,
+                paddedImage,
+                paddingVertical,
+                paddingVertical,
+                paddingHorizontal,
+                paddingHorizontal,
+                BORDER_CONSTANT);
             cvImage = paddedImage;
         }
 
         auto meanBGR = Scalar(104, 117, 123);
-        bool doSwapRB = true; // need to swap RB for RGB images
+        bool doSwapRB = false; // need to swap RB for RGB images
         bool doCrop = false;
 
         // Create a 4D blob from the image.
@@ -130,30 +145,32 @@ namespace OFIQ_LIB::modules::detectors
             for (size_t i = 0; i < output.total(); i += 7)
             {
                 float confidence = data[i + 2];
-                float l = data[i + 3]; 
-                float t = data[i + 4]; 
+                float l = data[i + 3];
+                float t = data[i + 4];
                 float r = data[i + 5];
                 float b = data[i + 6];
 
-                if ((double)confidence >= m_confidenceThreshold &&
-                    l > 0 &&
-                    t > 0 &&
-                    r < 1 &&
-                    b < 1 &&
-                    r - l > m_minimalRelativeFaceSize)
+                if ((double)confidence >= m_confidenceThreshold && l > 0 && t > 0 && r < 1 &&
+                    b < 1 && r - l > m_minimalRelativeFaceSize)
                 {
-                    auto left = static_cast<int>(round(l * static_cast<float>(cvImage.cols))) - paddingHorizontal;
-                    auto top = static_cast<int>(round(t * static_cast<float>(cvImage.rows))) - paddingVertical;
-                    auto width = static_cast<int>(round((r - l) * static_cast<float>(cvImage.cols)));
-                    auto height = static_cast<int>(round((b - t) * static_cast<float>(cvImage.rows)));
-                    
+                    auto left = static_cast<int>(round(l * static_cast<float>(cvImage.cols))) -
+                                paddingHorizontal;
+                    auto top = static_cast<int>(round(t * static_cast<float>(cvImage.rows))) -
+                               paddingVertical;
+                    auto width =
+                        static_cast<int>(round((r - l) * static_cast<float>(cvImage.cols)));
+                    auto height =
+                        static_cast<int>(round((b - t) * static_cast<float>(cvImage.rows)));
+
                     classIds.push_back((int)(data[i + 1]) - 1); // Skip 0th background class id.
                     confidences.push_back(confidence);
 
-                    faceRects.push_back
-                        (BoundingBox(static_cast<int16_t>(left), static_cast<int16_t>(top), 
-                                     static_cast<int16_t>(width), static_cast<int16_t>(height),
-                                     FaceDetectorType::OPENCVSSD));
+                    faceRects.push_back(BoundingBox(
+                        static_cast<int16_t>(left),
+                        static_cast<int16_t>(top),
+                        static_cast<int16_t>(width),
+                        static_cast<int16_t>(height),
+                        FaceDetectorType::OPENCVSSD));
                 }
             }
         }

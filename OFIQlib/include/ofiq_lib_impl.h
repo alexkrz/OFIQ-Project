@@ -165,6 +165,15 @@ namespace OFIQ_LIB
         void alignFaceImage(Session& session) const;
 
         /**
+         * @brief Compute luminance image for aligned face image
+         *
+         * @param session Session object containing the original facial image and pre-processing results
+         * computed by the \link OFIQ_LIB::OFIQImpl::preprocess
+         * OFIQImpl::preprocess()\endlink method
+         */
+        void computeAlignedFaceLuminanceImage(Session& session) const;
+
+        /**
          * @brief Processes and image and outputs its quality assessment; optionally, 
          * if requested, pre-processing data can be output by the function.
          * @param[in] session Session object containing the original facial image

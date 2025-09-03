@@ -33,9 +33,7 @@ namespace OFIQ_LIB::modules::measures
 {
     static const auto qualityMeasure = OFIQ::QualityMeasure::EyesOpen;
 
-    EyesOpen::EyesOpen(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+    EyesOpen::EyesOpen(const Configuration& configuration) : Measure{configuration, qualityMeasure}
     {
         SigmoidParameters defaultValues;
         defaultValues.h = 100;
@@ -45,7 +43,7 @@ namespace OFIQ_LIB::modules::measures
         AddSigmoid(qualityMeasure, defaultValues);
     }
 
-    void EyesOpen::Execute(OFIQ_LIB::Session & session)
+    void EyesOpen::Execute(OFIQ_LIB::Session& session)
     {
         auto landmarks = session.getAlignedFaceLandmarks();
         auto leftMaxOpening =
@@ -55,6 +53,10 @@ namespace OFIQ_LIB::modules::measures
         auto smallerEyeOpening = std::min(leftMaxOpening, rightMaxOpening);
         auto t = tmetric(landmarks);
         auto rawScore = smallerEyeOpening / t;
-        SetQualityMeasure(session, qualityMeasure, rawScore, OFIQ::QualityMeasureReturnCode::Success);
+        SetQualityMeasure(
+            session,
+            qualityMeasure,
+            rawScore,
+            OFIQ::QualityMeasureReturnCode::Success);
     }
 }

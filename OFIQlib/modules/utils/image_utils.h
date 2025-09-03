@@ -44,7 +44,7 @@ namespace OFIQ_LIB {
 	 * @return If \f$v>0.04045\f$, then \f$((v+0.055)/1.055)^{2.4}\f$ is returned; 
 	 * otherwise, if \f$v\leq 0.04045\f$, then \f$v/12.92\f$ is returned.
 	 */
-	OFIQ_EXPORT double ColorConvert(double v);
+	double ColorConvert(double v);
 
 	/**
 	 * @brief Cubic flattening function.
@@ -54,7 +54,7 @@ namespace OFIQ_LIB {
 	 * @return If \f$x\leq\epsilon\f$, then \f$(k\cdot x+16)/116\f$ is returned;
 	 * otherwise, if \f$x>\epsilon\f$, then \f$\sqrt[3]{x}\f$ is returned.
 	 */
-	OFIQ_EXPORT double Cubic(double x, double k, double eps);
+	double Cubic(double x, double k, double eps);
 
 	/**
 	 * @brief Computes CIELAB values \f$a^*\f$ and \f$b^*\f$ from a BGR image.
@@ -62,7 +62,7 @@ namespace OFIQ_LIB {
 	 * @param[out] a CIELAB value \f$a^*\f$
 	 * @param[out] b CIELAB value \f$b^*\f$
 	 */
-	OFIQ_EXPORT void ConvertBGRToCIELAB(const cv::Mat& bgrImage, double& a, double& b);
+	void ConvertBGRToCIELAB(const cv::Mat& bgrImage, double& a, double& b);
 
 	/**
 	 * @brief Converts a BGR image to the luminance image.
@@ -71,7 +71,7 @@ namespace OFIQ_LIB {
 	 * @param bgrImage BGR image
 	 * @return Luminance image.
 	 */
-	OFIQ_EXPORT cv::Mat GetLuminanceImageFromBGR(const cv::Mat& bgrImage );
+	cv::Mat GetLuminanceImageFromBGR(const cv::Mat& bgrImage );
 
 	/**
 	 * @brief Computes the left eye center, the right eye center, the (planar) inter-eye-distance
@@ -82,7 +82,7 @@ namespace OFIQ_LIB {
 	 * @param[out] interEyeDistance Inter-eye distance computed from landmarks (does not consider the yaw angle).
 	 * @param[out] eyeMouthDistance Distance from the eyes' midpoint to the mouth.
 	 */
-	OFIQ_EXPORT void CalculateReferencePoints(const OFIQ::FaceLandmarks& landmarks, 
+	void CalculateReferencePoints(const OFIQ::FaceLandmarks& landmarks, 
 		OFIQ::LandmarkPoint& leftEyeCenter, 
 		OFIQ::LandmarkPoint& rightEyeCenter,
 		double& interEyeDistance, 
@@ -100,7 +100,7 @@ namespace OFIQ_LIB {
 	 * @param[in] interEyeDistance Planar inter-eye distance
 	 * @param[in] eyeMouthDistance Distance from the eyes' centers midpoint to the mouth
 	 */
-	OFIQ_EXPORT void CalculateRegionOfInterest(cv::Rect& leftRegionOfInterest,
+	void CalculateRegionOfInterest(cv::Rect& leftRegionOfInterest,
 		cv::Rect& rightRegionOfInterest, 
 		const OFIQ::LandmarkPoint& leftEyeCenter, 
 		const OFIQ::LandmarkPoint& rightEyeCenter,
@@ -113,7 +113,7 @@ namespace OFIQ_LIB {
 	 * @param[in] maskImage The histogram is computed on pixels where the values of maskImage are non-zero.
 	 * @param[out] histogram Array of length 256 where the histogram is stored.
 	 */
-	OFIQ_EXPORT void GetNormalizedHistogram(const cv::Mat& luminanceImage, const cv::Mat& maskImage, cv::Mat1f& histogram);
+	void GetNormalizedHistogram(const cv::Mat& luminanceImage, const cv::Mat& maskImage, cv::Mat1f& histogram);
 
 	/**
 	 * @brief Helper function for some measures.
@@ -128,7 +128,7 @@ namespace OFIQ_LIB {
 	 * @param exposureRange Range of pixels for which the aspect is computed.
 	 * @return Exposure computed from the inputs.
 	 */
-	OFIQ_EXPORT double CalculateExposure(const Session& session, const ExposureRange& exposureRange);
+	double CalculateExposure(const Session& session, const ExposureRange& exposureRange);
 
 	/**
 	 * @brief Helper function for some measures.
@@ -141,6 +141,6 @@ namespace OFIQ_LIB {
 	 * @param exposureRange Range of pixels for which the aspect is computed.
 	 * @return Brightness aspect computed from the inputs.
 	 */
-	OFIQ_EXPORT double ComputeBrightnessAspect(
+	double ComputeBrightnessAspect(
         const cv::Mat& luminanceImage, const cv::Mat& maskImage, const ExposureRange& exposureRange);
 }

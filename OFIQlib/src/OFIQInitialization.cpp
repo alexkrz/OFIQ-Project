@@ -29,9 +29,9 @@
 #include "AllMeasures.h"
 #include "AllPoseEstimators.h"
 #include "MeasureFactory.h"
-#include "ofiq_lib_impl.h"
-#include "OFIQError.h"
 #include "NeuronalNetworkContainer.h"
+#include "OFIQError.h"
+#include "ofiq_lib_impl.h"
 #include <magic_enum.hpp>
 
 namespace OFIQ_LIB
@@ -43,8 +43,7 @@ namespace OFIQ_LIB
     using namespace modules::poseEstimators;
 
     std::vector<OFIQ::QualityMeasure> parse_config_measure_names(
-        const std::vector<std::string>& measure_names,
-        std::vector<std::string>& invalid_names)
+        const std::vector<std::string>& measure_names, std::vector<std::string>& invalid_names)
     {
         std::vector<OFIQ::QualityMeasure> measures;
         for (auto measure_name : measure_names)
@@ -59,15 +58,12 @@ namespace OFIQ_LIB
     }
 
     std::vector<std::unique_ptr<Measure>> create_measures(
-        const std::vector<OFIQ::QualityMeasure>& measures,
-        const Configuration& configuration)
+        const std::vector<OFIQ::QualityMeasure>& measures, const Configuration& configuration)
     {
         std::vector<std::unique_ptr<Measure>> measure_instances;
         for (auto m : measures)
         {
-            measure_instances.emplace_back(
-                MeasureFactory::CreateMeasure(
-                    m, configuration));
+            measure_instances.emplace_back(MeasureFactory::CreateMeasure(m, configuration));
         }
         return measure_instances;
     }
@@ -75,8 +71,7 @@ namespace OFIQ_LIB
     std::unique_ptr<Executor> OFIQImpl::CreateExecutor()
     {
         std::vector<std::string> requested_measurs;
-        if (!config->GetStringList("measures", requested_measurs) ||
-            requested_measurs.empty())
+        if (!config->GetStringList("measures", requested_measurs) || requested_measurs.empty())
         {
             throw OFIQError(
                 OFIQ::ReturnCode::NotImplemented,
@@ -86,52 +81,39 @@ namespace OFIQ_LIB
         std::vector<std::string> invalid_measure_names;
 
         std::vector<OFIQ::QualityMeasure> measures =
-            parse_config_measure_names(requested_measurs,
-                invalid_measure_names);
+            parse_config_measure_names(requested_measurs, invalid_measure_names);
 
         for (const auto& m : invalid_measure_names)
         {
             // create log output with level warning
-            std::cout << "invalid measure name detected in config file: "
-                << m << std::endl;
+            std::cout << "invalid measure name detected in config file: " << m << std::endl;
         }
 
         // initialise measures
-        
-        return std::make_unique<Executor>(create_measures(
-            measures, *config));
+
+        return std::make_unique<Executor>(create_measures(measures, *config));
     }
 
     void OFIQImpl::CreateNetworks()
     {
-        auto getFaceDetector =
-            [&]() -> std::shared_ptr<FaceDetectorInterface>
-        {
+        auto getFaceDetector = [&]() -> std::shared_ptr<FaceDetectorInterface> {
             return std::make_shared<SSDFaceDetector>(*config);
         };
 
-        auto getLandmarkExtractor =
-            [&]() -> std::shared_ptr<FaceLandmarkExtractorInterface>
-        {
-            return std::make_shared <ADNetFaceLandmarkExtractor> (*config);
+        auto getLandmarkExtractor = [&]() -> std::shared_ptr<FaceLandmarkExtractorInterface> {
+            return std::make_shared<ADNetFaceLandmarkExtractor>(*config);
         };
 
-        auto getSegmentationExtractor =
-            [&]() -> std::shared_ptr<SegmentationExtractorInterface>
-        {
+        auto getSegmentationExtractor = [&]() -> std::shared_ptr<SegmentationExtractorInterface> {
             return std::make_shared<FaceParsing>(*config);
         };
 
-        auto getFaceOcclusionExtractor =
-            [&]() -> std::shared_ptr<SegmentationExtractorInterface>
-        {
+        auto getFaceOcclusionExtractor = [&]() -> std::shared_ptr<SegmentationExtractorInterface> {
             return std::make_shared<FaceOcclusionSegmentation>(*config);
         };
 
-        auto getPoseEstimator =
-            [&]() -> std::shared_ptr<PoseEstimatorInterface>
-        {
-            return std::make_shared < HeadPose3DDFAV2 > (*config);
+        auto getPoseEstimator = [&]() -> std::shared_ptr<PoseEstimatorInterface> {
+            return std::make_shared<HeadPose3DDFAV2>(*config);
         };
 
         networks.release();
@@ -140,7 +122,6 @@ namespace OFIQ_LIB
             getLandmarkExtractor(),
             getSegmentationExtractor(),
             getPoseEstimator(),
-            getFaceOcclusionExtractor()
-            );
+            getFaceOcclusionExtractor());
     }
 }

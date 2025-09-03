@@ -25,33 +25,36 @@
  */
 
 #include "ExpressionNeutrality.h"
+#include "DataStream.h"
 #include "FaceMeasures.h"
 #include "OFIQError.h"
-#include <fstream>
-#include <opencv2/ml.hpp>
 #include <cmath>
+#include <gzip/decompress.hpp>
+#include <opencv2/ml.hpp>
 
 namespace OFIQ_LIB::modules::measures
 {
     static const auto qualityMeasure = OFIQ::QualityMeasure::ExpressionNeutrality;
-    static const std::string modelConfigItemCNN1 = "params.measures.ExpressionNeutrality.cnn1_model_path";
-    static const std::string modelConfigItemCNN2 = "params.measures.ExpressionNeutrality.cnn2_model_path";
-    static const std::string modelConfigItemAdaboost = "params.measures.ExpressionNeutrality.adaboost_model_path";
+    static const std::string modelConfigItemCNN1 =
+        "params.measures.ExpressionNeutrality.cnn1_model_path";
+    static const std::string modelConfigItemCNN2 =
+        "params.measures.ExpressionNeutrality.cnn2_model_path";
+    static const std::string modelConfigItemAdaboost =
+        "params.measures.ExpressionNeutrality.adaboost_model_path";
 
     static const uint16_t dimCNN1 = 224;
     static const uint16_t dimCNN2 = 260;
 
-    ExpressionNeutrality::ExpressionNeutrality(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+    ExpressionNeutrality::ExpressionNeutrality(const Configuration& configuration)
+        : Measure{configuration, qualityMeasure}
     {
-        auto modelPathCNN1 = configuration.getDataDir() + "/" + configuration.GetString(modelConfigItemCNN1);
-        auto modelPathCNN2 = configuration.getDataDir() + "/" + configuration.GetString(modelConfigItemCNN2);
-        auto modelPathAdaboost = configuration.getDataDir() + "/" + configuration.GetString(modelConfigItemAdaboost);
-        
+        auto modelPathCNN1 = configuration.GetFullPath(modelConfigItemCNN1);
+        auto modelPathCNN2 = configuration.GetFullPath(modelConfigItemCNN2);
+        auto modelPathAdaboost = configuration.GetFullPath(modelConfigItemAdaboost);
+
         try
         {
-            std::ifstream instream(modelPathCNN1, std::ios::in | std::ios::binary);
+            DataStream instream(modelPathCNN1, std::ios::in | std::ios::binary);
 
             std::vector<uint8_t> modelData(
                 (std::istreambuf_iterator<char>(instream)),
@@ -67,7 +70,7 @@ namespace OFIQ_LIB::modules::measures
 
         try
         {
-            std::ifstream instream(modelPathCNN2, std::ios::in | std::ios::binary);
+            DataStream instream(modelPathCNN2, std::ios::in | std::ios::binary);
 
             std::vector<uint8_t> modelData(
                 (std::istreambuf_iterator<char>(instream)),
@@ -83,7 +86,12 @@ namespace OFIQ_LIB::modules::measures
 
         try
         {
-            m_classifier = cv::ml::Boost::load(modelPathAdaboost);
+            DataStream instream(modelPathAdaboost, std::ios::binary);
+            auto compressedData = std::vector<char>(
+                (std::istreambuf_iterator<char>(instream)),
+                std::istreambuf_iterator<char>());
+            std::string model = gzip::decompress(compressedData.data(), compressedData.size());
+            m_classifier = cv::ml::Boost::loadFromString<cv::ml::Boost>(cv::String(model));
         }
         catch (const std::exception&)
         {
@@ -102,10 +110,9 @@ namespace OFIQ_LIB::modules::measures
 
     void ExpressionNeutrality::Execute(OFIQ_LIB::Session& session)
     {
-        cv::Mat aligned = session.getAlignedFace();
+        const cv::Mat& aligned = session.getAlignedFace();
         auto cropped = aligned(cv::Rect(144, 148, 328, 340));
-
-        auto transformed = cropped;
+        cv::Mat transformed;
         cv::cvtColor(cropped, transformed, cv::COLOR_BGR2RGB);
 
         const cv::Scalar mean(0.485, 0.456, 0.406);
@@ -117,7 +124,7 @@ namespace OFIQ_LIB::modules::measures
         transformed /= std;
         cv::Mat resized1;
         cv::resize(transformed, resized1, cv::Size(dimCNN1, dimCNN1), 0, 0, cv::INTER_LINEAR);
-        cv::Mat blob = cv::dnn::blobFromImage({ resized1 });
+        cv::Mat blob = cv::dnn::blobFromImage({resized1});
 
         std::vector<float> net_input;
         net_input.assign(blob.begin<float>(), blob.end<float>());
@@ -126,7 +133,7 @@ namespace OFIQ_LIB::modules::measures
 
         cv::Mat resized2;
         cv::resize(transformed, resized2, cv::Size(dimCNN2, dimCNN2), 0, 0, cv::INTER_LINEAR);
-        blob = cv::dnn::blobFromImage({ resized2 });
+        blob = cv::dnn::blobFromImage({resized2});
 
         net_input.clear();
         net_input.assign(blob.begin<float>(), blob.end<float>());
@@ -135,10 +142,14 @@ namespace OFIQ_LIB::modules::measures
 
         cv::Mat features;
         cv::hconcat(features1, features2, features);
-        
+
         cv::Mat predResults;
         this->m_classifier->predict(features, predResults, cv::ml::DTrees::PREDICT_SUM);
         double rawScore = predResults.at<float>(0, 0);
-        SetQualityMeasure(session, qualityMeasure, rawScore, OFIQ::QualityMeasureReturnCode::Success);
+        SetQualityMeasure(
+            session,
+            qualityMeasure,
+            rawScore,
+            OFIQ::QualityMeasureReturnCode::Success);
     }
 }

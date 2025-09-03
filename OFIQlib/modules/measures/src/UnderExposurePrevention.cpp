@@ -26,22 +26,21 @@
 
 #include "UnderExposurePrevention.h"
 #include "FaceMeasures.h"
-#include "utils.h"
-#include <opencv2/imgproc.hpp>
 #include "OFIQError.h"
 #include "image_utils.h"
+#include "utils.h"
+#include <opencv2/imgproc.hpp>
 
 namespace OFIQ_LIB::modules::measures
 {
     /// @brief range of exposure values, borders are included {minValue, maxValue}
-    
+
     static const ExposureRange darkRange = {0, 25};
-    
+
     static const auto qualityMeasure = OFIQ::QualityMeasure::UnderExposurePrevention;
-    
-    UnderExposurePrevention::UnderExposurePrevention(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+
+    UnderExposurePrevention::UnderExposurePrevention(const Configuration& configuration)
+        : Measure{configuration, qualityMeasure}
     {
         SigmoidParameters defaultValues;
         defaultValues.h = 120;
@@ -53,14 +52,22 @@ namespace OFIQ_LIB::modules::measures
         AddSigmoid(qualityMeasure, defaultValues);
     }
 
-    void UnderExposurePrevention::Execute(OFIQ_LIB::Session & session)
+    void UnderExposurePrevention::Execute(OFIQ_LIB::Session& session)
     {
         double rawScore = CalculateExposure(session, darkRange);
         if (std::isnan(rawScore))
         {
-            SetQualityMeasure(session, qualityMeasure, rawScore, OFIQ::QualityMeasureReturnCode::FailureToAssess);
+            SetQualityMeasure(
+                session,
+                qualityMeasure,
+                rawScore,
+                OFIQ::QualityMeasureReturnCode::FailureToAssess);
             return;
         }
-        SetQualityMeasure(session, qualityMeasure, rawScore, OFIQ::QualityMeasureReturnCode::Success);
+        SetQualityMeasure(
+            session,
+            qualityMeasure,
+            rawScore,
+            OFIQ::QualityMeasureReturnCode::Success);
     }
 }

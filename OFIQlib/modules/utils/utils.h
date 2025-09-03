@@ -78,7 +78,7 @@ namespace OFIQ_LIB
      * @param o_bb Squarred bounding box.
      * @param o_translation_vector Translation vector.
      */
-    OFIQ_EXPORT void makeSquareBoundingBoxWithPadding(
+    void makeSquareBoundingBoxWithPadding(
         const OFIQ::BoundingBox& i_bb, 
         const cv::Mat& i_input_image,
         cv::Mat& o_output_image, 
@@ -92,7 +92,7 @@ namespace OFIQ_LIB
      * @param i_bb Input bounding box.
      * @return OFIQ::BoundingBox Squarred bounding box.
      */
-    OFIQ_EXPORT OFIQ::BoundingBox makeSquareBoundingBox(
+    OFIQ::BoundingBox makeSquareBoundingBox(
         const OFIQ::BoundingBox& i_bb);
 
     /**
@@ -101,8 +101,17 @@ namespace OFIQ_LIB
      * @param faceRects Vector containing bounding boxes.
      * @return size_t Position of the largest bounding box in the vector.
      */
-    OFIQ_EXPORT size_t findLargestBoundingBox(
+    size_t findLargestBoundingBox(
         const std::vector<OFIQ::BoundingBox>& faceRects);
+
+    /**
+     * @brief Find the bounding box that encloses the given landmarks.
+     *
+     * @param landmarks Face landmarks, a vector containing the landmark points.
+     * @return OFIQ::BoundingBox Bounding box enclosing the given landmarks
+     */
+    OFIQ::BoundingBox findLandmarksBoundingBox(
+        const OFIQ::Landmarks& landmarks);
 
     /**
      * @brief Convert images in OFIQ::Image format into the OpenCV cv::Mat format. The image can be converted from color to gray scale by setting the parameter asGrayImage to true.
@@ -111,7 +120,7 @@ namespace OFIQ_LIB
      * @param asGrayImage Switch for adding gray scale conversion.
      * @return cv::Mat Input image in cv::Mat format.
      */
-    OFIQ_EXPORT cv::Mat copyToCvImage(const OFIQ::Image& sourceImage, bool asGrayImage = false);
+    cv::Mat copyToCvImage(const OFIQ::Image& sourceImage, bool asGrayImage = false);
 
     /**
      * @brief This function transforms a face image so that the position of the eyes, nose and mouth are roughly at a pre-defined position. Face alignment is the translation, rotation and scaling of the image to do this.
@@ -122,7 +131,7 @@ namespace OFIQ_LIB
      * @param transformationMatrix Transformation matrix used to transform the landmarks.
      * @return cv::Mat Aligned face image with a resolution of 616x616.
      */
-    OFIQ_EXPORT cv::Mat alignImage(
+    cv::Mat alignImage(
         const OFIQ::Image& faceImage,
         const OFIQ::FaceLandmarks& faceLandmarks,
         OFIQ::FaceLandmarks& alignedFaceLandmarks,
@@ -135,7 +144,7 @@ namespace OFIQ_LIB
      * @param leftEyeCenter  Point coordinates of the left eye center.
      * @param rightEyeCenter Point coordinates of the right eye center.
      */
-    OFIQ_EXPORT void calculateEyeCenter(
+    void calculateEyeCenter(
         const OFIQ::FaceLandmarks& faceLandmarks,
         Point2f& leftEyeCenter,
         Point2f& rightEyeCenter);
@@ -147,7 +156,7 @@ namespace OFIQ_LIB
      * @param height Height of the generated image.
      * @return OFIQ::Image Generated gray scaled image.
      */
-    OFIQ_EXPORT OFIQ::Image MakeGreyImage(uint16_t width, uint16_t height);
+    OFIQ::Image MakeGreyImage(uint16_t width, uint16_t height);
 
     /**
      * @brief Based on the provided landmarks this function computes the distance between the point between the eyes and the chin.
@@ -155,7 +164,7 @@ namespace OFIQ_LIB
      * @param faceLandmarks Input face landmarks.
      * @return float Computed distance.
      */
-    OFIQ_EXPORT float tmetric(const OFIQ::FaceLandmarks& faceLandmarks);
+    float tmetric(const OFIQ::FaceLandmarks& faceLandmarks);
 }
 
 #endif

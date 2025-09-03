@@ -92,10 +92,29 @@ else
     cd ../googletest
     cmake -S ./ -B build -DBUILD_GMOCK=OFF -DINSTALL_GTEST=OFF -DBUILD_SHARED_LIBS=ON || exit 1
     cmake --build build/googletest --config $config || exit 1
-    # build onnxruntime
-    cd ../onnxruntime
-    sh ./build.sh --config $config --build_shared_lib --parallel --compile_no_warning_as_error --skip_submodule_sync --update --build || exit 1
-    cd ..
+    if [ "$os" = "linux" ]
+    then
+        # build onnxruntime
+        cd ../onnxruntime
+        sh ./build.sh --config $config --build_shared_lib --parallel --compile_no_warning_as_error --skip_submodule_sync --update --build || exit 1
+        cd ..
+    else # os is macos
+        # build protobuf
+        cd ..
+        cp onnxruntime/extern/protobuf-21.12.zip ./
+        unzip protobuf-21.12.zip
+        rm -f protobuf-21.12.zip
+        cd protobuf-21.12
+        cmake cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -Dprotobuf_BUILD_TESTS=OFF -Dprotobuf_WITH_ZLIB_DEFAULT=OFF \
+        -Dprotobuf_BUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release "-DCMAKE_INSTALL_PREFIX=../protobuf" || exit 1
+        make || exit 1
+        make install || exit 1
+        # build onnxruntime
+        cd ../onnxruntime
+        rm -rf ../protobuf-21.12
+        sh ./build.sh --config $config --path_to_protoc_exe ../protobuf/bin/protoc --build_shared_lib --parallel --compile_no_warning_as_error --skip_submodule_sync --update --build || exit 1
+        cd ..
+    fi
 fi
 
 echo "Attempting to build the real implementation"
@@ -108,7 +127,7 @@ fi
 
 echo "Generating build files"
 cmake -S ./ -B $build_dir -DCMAKE_INSTALL_PREFIX=$install_dir -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-    -DDOWNLOAD_ONNX=$use_conan -DUSE_CONAN=$use_conan -DOS=$os -DCMAKE_BUILD_TYPE=$config -DDOWNLOAD_MODELS_AND_IMAGES=$download
+    -DDOWNLOAD_ONNX=$use_conan -DUSE_CONAN=$use_conan -DOS=$os -DCMAKE_BUILD_TYPE=$config -DDOWNLOAD_MODELS_AND_IMAGES=$download -DUSE_GCOV_CODECOVERAGE=$useSonarWrapper
 
 cmakeBuildCommand="cmake --build $build_dir --target install -j 8"
 if [ "$useSonarWrapper" = "true" ]

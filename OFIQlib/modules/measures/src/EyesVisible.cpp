@@ -25,9 +25,9 @@
  */
 
 #include "EyesVisible.h"
-#include "OFIQError.h"
 #include "FaceMeasures.h"
 #include "FaceParts.h"
+#include "OFIQError.h"
 #include <opencv2/imgproc.hpp>
 
 using PartExtractor = OFIQ_LIB::modules::landmarks::PartExtractor;
@@ -37,26 +37,32 @@ namespace OFIQ_LIB::modules::measures
 {
     static const auto qualityMeasure = OFIQ::QualityMeasure::EyesVisible;
 
-    EyesVisible::EyesVisible(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+    EyesVisible::EyesVisible(const Configuration& configuration)
+        : Measure{configuration, qualityMeasure}
     {
     }
 
-    void EyesVisible::Execute(OFIQ_LIB::Session & session)
+    void EyesVisible::Execute(OFIQ_LIB::Session& session)
     {
-        auto alignedFaceLandmarks = session.getAlignedFaceLandmarks();
-        cv::Mat faceOcclusionMask = session.getFaceOcclusionSegmentationImage();
-        OFIQ::Landmarks leftEye = PartExtractor::getFacePart(alignedFaceLandmarks, FaceParts::LEFT_EYE);
-        OFIQ::Landmarks rightEye = PartExtractor::getFacePart(alignedFaceLandmarks, FaceParts::RIGHT_EYE);
+        const auto& alignedFaceLandmarks = session.getAlignedFaceLandmarks();
+        const auto& faceOcclusionMask = session.getFaceOcclusionSegmentationImage();
+        OFIQ::Landmarks leftEye =
+            PartExtractor::getFacePart(alignedFaceLandmarks, FaceParts::LEFT_EYE);
+        OFIQ::Landmarks rightEye =
+            PartExtractor::getFacePart(alignedFaceLandmarks, FaceParts::RIGHT_EYE);
 
         auto headPose = session.getPose();
-        auto interEyeDistance = landmarks::FaceMeasures::InterEyeDistance(alignedFaceLandmarks, headPose[1]);
+        auto interEyeDistance =
+            landmarks::FaceMeasures::InterEyeDistance(alignedFaceLandmarks, headPose[1]);
 
         if (std::isnan(interEyeDistance))
         {
             double rawScore = 1.0;
-            SetQualityMeasure(session, qualityMeasure, rawScore, OFIQ::QualityMeasureReturnCode::FailureToAssess);
+            SetQualityMeasure(
+                session,
+                qualityMeasure,
+                rawScore,
+                OFIQ::QualityMeasureReturnCode::FailureToAssess);
             return;
         }
 
@@ -65,37 +71,41 @@ namespace OFIQ_LIB::modules::measures
         std::vector<cv::Point2i> leftEyePoints;
         for (auto landmark : leftEye)
         {
-            cv::Point point{ landmark.x, landmark.y };
+            cv::Point point{landmark.x, landmark.y};
             leftEyePoints.push_back(point);
         }
         cv::Rect leftBoundingRect = cv::boundingRect(leftEyePoints);
-        std::vector<cv::Point2i> leftRect = { 
+        std::vector<cv::Point2i> leftRect = {
             cv::Point2i{leftBoundingRect.x - V, leftBoundingRect.y - V},
             cv::Point2i{leftBoundingRect.x + leftBoundingRect.width + V, leftBoundingRect.y - V},
-            cv::Point2i{leftBoundingRect.x + leftBoundingRect.width + V, leftBoundingRect.y + leftBoundingRect.height + V},
-            cv::Point2i{leftBoundingRect.x - V, leftBoundingRect.y + leftBoundingRect.height + V}
-        };
+            cv::Point2i{
+                leftBoundingRect.x + leftBoundingRect.width + V,
+                leftBoundingRect.y + leftBoundingRect.height + V},
+            cv::Point2i{leftBoundingRect.x - V, leftBoundingRect.y + leftBoundingRect.height + V}};
 
         std::vector<cv::Point2i> rightEyePoints;
-        for (auto landmark: rightEye)
+        for (auto landmark : rightEye)
         {
-            cv::Point point{ landmark.x, landmark.y };
+            cv::Point point{landmark.x, landmark.y};
             rightEyePoints.push_back(point);
         }
         cv::Rect rightBoundingRect = cv::boundingRect(rightEyePoints);
         std::vector<cv::Point2i> rightRect = {
             cv::Point2i{rightBoundingRect.x - V, rightBoundingRect.y - V},
             cv::Point2i{rightBoundingRect.x + rightBoundingRect.width + V, rightBoundingRect.y - V},
-            cv::Point2i{rightBoundingRect.x + rightBoundingRect.width + V, rightBoundingRect.y + rightBoundingRect.height + V},
-            cv::Point2i{rightBoundingRect.x - V, rightBoundingRect.y + rightBoundingRect.height + V}
-        };
+            cv::Point2i{
+                rightBoundingRect.x + rightBoundingRect.width + V,
+                rightBoundingRect.y + rightBoundingRect.height + V},
+            cv::Point2i{
+                rightBoundingRect.x - V,
+                rightBoundingRect.y + rightBoundingRect.height + V}};
 
-        std::vector<std::vector<cv::Point2i>> contours = { leftRect, rightRect };
+        std::vector<std::vector<cv::Point2i>> contours = {leftRect, rightRect};
         cv::Mat EVZMask = cv::Mat::zeros(faceOcclusionMask.size(), CV_8U);
         cv::drawContours(EVZMask, contours, -1, 1, -1);
-        
+
         // Compute proportion of occlusion of EVZ
-        cv::Mat occlusionMask = EVZMask.mul(1- faceOcclusionMask);
+        cv::Mat occlusionMask = EVZMask.mul(1 - faceOcclusionMask);
         double rawScore = cv::sum(occlusionMask).val[0] / cv::sum(EVZMask).val[0];
         double scalarScore = round(100 * (1 - rawScore));
         if (scalarScore < 0)
@@ -106,6 +116,9 @@ namespace OFIQ_LIB::modules::measures
         {
             scalarScore = 100;
         }
-        session.assessment().qAssessments[qualityMeasure] = { rawScore, scalarScore, OFIQ::QualityMeasureReturnCode::Success };
+        session.assessment().qAssessments[qualityMeasure] = {
+            rawScore,
+            scalarScore,
+            OFIQ::QualityMeasureReturnCode::Success};
     }
 }

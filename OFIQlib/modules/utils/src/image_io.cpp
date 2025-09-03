@@ -28,11 +28,11 @@
 #include "utils.h"
 
 #include <algorithm>
-#include <memory>
 #include <fstream>
+#include <memory>
 #include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
 
 using namespace OFIQ;
 
@@ -42,14 +42,13 @@ namespace OFIQ_LIB
     {
         ReturnCode retCode = ReturnCode::Success;
         std::string retStatusInfo{""};
-        if(cvImage.empty())
+        if (cvImage.empty())
         {
             retCode = ReturnCode::ImageReadingError;
             retStatusInfo = std::string("failed to read image or image is empty");
             return ReturnStatus(retCode, retStatusInfo);
         }
 
-        cv::cvtColor(cvImage, cvImage, cv::COLOR_BGR2RGB);
         image.width = static_cast<uint16_t>(cvImage.cols);
         image.height = static_cast<uint16_t>(cvImage.rows);
         image.depth = 24;
@@ -59,22 +58,21 @@ namespace OFIQ_LIB
 
         return ReturnStatus(retCode, retStatusInfo);
     }
-    
+
     OFIQ_EXPORT OFIQ::ReturnStatus readImage(const std::string& filename, OFIQ::Image& image)
     {
-        cv::Mat cvImage = cv::imread(filename, cv::IMREAD_COLOR);
+        cv::Mat cvImageBGR = cv::imread(filename, cv::IMREAD_COLOR);
 
-        if (cvImage.empty())
+        if (cvImageBGR.empty())
             return ReturnStatus(
                 ReturnCode::ImageReadingError,
                 std::string("failed to read image file: ") + filename);
 
-        return copyImageData(cvImage, image);
+        return copyImageData(cvImageBGR, image);
     }
 
-    OFIQ_EXPORT OFIQ::ReturnStatus readImageFromByteArray(
-        const std::vector<unsigned char>& byteArray,
-        OFIQ::Image& image)
+    OFIQ_EXPORT OFIQ::ReturnStatus
+        readImageFromByteArray(const std::vector<unsigned char>& byteArray, OFIQ::Image& image)
     {
         cv::Mat cvImage = cv::imdecode(cv::Mat(byteArray), cv::IMREAD_COLOR);
 

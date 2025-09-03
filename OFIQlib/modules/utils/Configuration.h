@@ -142,6 +142,14 @@ namespace OFIQ_LIB
          */
         void SetDataDir(std::string_view dataDir);
 
+        /**
+         * @brief Accesses a full path of a string configuration.
+         * @param key Key of the configuration.
+         * @return The combined path of the configuration directory and accessed string configuration.
+         * @throws OFIQ_LIB::OFIQError if the configuration was not successfully accessed.
+         */
+        std::string GetFullPath(const std::string& key) const;
+
     private:
         /**
          * @brief Map holding all configuration that can be accessed using a string key. 

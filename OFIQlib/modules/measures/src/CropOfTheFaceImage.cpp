@@ -40,9 +40,8 @@ namespace OFIQ_LIB::modules::measures
     static const auto qualityRight = OFIQ::QualityMeasure::RightwardCropOfTheFaceImage;
     static const auto qualityUp = OFIQ::QualityMeasure::MarginBelowOfTheFaceImage;
 
-    CropOfTheFaceImage::CropOfTheFaceImage(
-        const Configuration& configuration)
-        : Measure{ configuration, OFIQ::QualityMeasure::CropOfTheFaceImage }
+    CropOfTheFaceImage::CropOfTheFaceImage(const Configuration& configuration)
+        : Measure{configuration, OFIQ::QualityMeasure::CropOfTheFaceImage}
     {
         SigmoidParameters defaultValues;
         defaultValues.h = 100;
@@ -67,7 +66,7 @@ namespace OFIQ_LIB::modules::measures
         AddSigmoid(qualityDown, defaultValues);
     }
 
-    void CropOfTheFaceImage::Execute(OFIQ_LIB::Session & session)
+    void CropOfTheFaceImage::Execute(OFIQ_LIB::Session& session)
     {
         auto faceLandmarks = session.getLandmarks();
         auto leftEyePoints = landmarks::PartExtractor::getFacePart(
@@ -81,22 +80,35 @@ namespace OFIQ_LIB::modules::measures
         auto rightEyeCenter = landmarks::FaceMeasures::GetMiddle(rightEyePoints);
 
         auto eyeMidPoint =
-            landmarks::FaceMeasures::GetMiddle(OFIQ::Landmarks{ leftEyeCenter, rightEyeCenter });
+            landmarks::FaceMeasures::GetMiddle(OFIQ::Landmarks{leftEyeCenter, rightEyeCenter});
         auto chinPoint = PartExtractor::getFacePart(faceLandmarks, FaceParts::CHIN)[0];
         auto t = landmarks::FaceMeasures::GetDistance(eyeMidPoint, chinPoint);
-        
-        double interEyeDistance = landmarks::FaceMeasures::GetDistance(leftEyeCenter, rightEyeCenter);
+
+        double interEyeDistance =
+            landmarks::FaceMeasures::GetDistance(leftEyeCenter, rightEyeCenter);
 
         double rawScoreLeft = rightEyeCenter.x / interEyeDistance;
-        SetQualityMeasure(session, qualityLeft, rawScoreLeft, OFIQ::QualityMeasureReturnCode::Success);
+        SetQualityMeasure(
+            session,
+            qualityLeft,
+            rawScoreLeft,
+            OFIQ::QualityMeasureReturnCode::Success);
 
         double rawScoreRight = (session.image().width - leftEyeCenter.x) / interEyeDistance;
-        SetQualityMeasure(session, qualityRight, rawScoreRight, OFIQ::QualityMeasureReturnCode::Success);
+        SetQualityMeasure(
+            session,
+            qualityRight,
+            rawScoreRight,
+            OFIQ::QualityMeasureReturnCode::Success);
 
         double rawScoreUp = (session.image().height - eyeMidPoint.y) / t;
         SetQualityMeasure(session, qualityUp, rawScoreUp, OFIQ::QualityMeasureReturnCode::Success);
 
         double rawScoreDown = eyeMidPoint.y / t;
-        SetQualityMeasure(session, qualityDown, rawScoreDown, OFIQ::QualityMeasureReturnCode::Success);
+        SetQualityMeasure(
+            session,
+            qualityDown,
+            rawScoreDown,
+            OFIQ::QualityMeasureReturnCode::Success);
     }
 }

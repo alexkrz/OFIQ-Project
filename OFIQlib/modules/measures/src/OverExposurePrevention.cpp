@@ -26,45 +26,46 @@
 
 #include "OverExposurePrevention.h"
 #include "FaceMeasures.h"
-#include "utils.h"
-#include <opencv2/imgproc.hpp>
 #include "OFIQError.h"
 #include "image_utils.h"
+#include "utils.h"
+#include <opencv2/imgproc.hpp>
 
 namespace OFIQ_LIB::modules::measures
 {
     /// @brief range of exposure values, borders are included {minValue, maxValue}
-    
+
     static const ExposureRange lightRange = {247, 255};
 
     static const auto qualityMeasure = OFIQ::QualityMeasure::OverExposurePrevention;
 
-    OverExposurePrevention::OverExposurePrevention(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+    OverExposurePrevention::OverExposurePrevention(const Configuration& configuration)
+        : Measure{configuration, qualityMeasure}
     {
     }
 
-    void OverExposurePrevention::Execute(OFIQ_LIB::Session & session)
+    void OverExposurePrevention::Execute(OFIQ_LIB::Session& session)
     {
         double rawScore = CalculateExposure(session, lightRange);
 
         if (std::isnan(rawScore))
         {
-            session.assessment().qAssessments[qualityMeasure] = { rawScore,-1,OFIQ::QualityMeasureReturnCode::FailureToAssess };
+            session.assessment().qAssessments[qualityMeasure] = {
+                rawScore,
+                -1,
+                OFIQ::QualityMeasureReturnCode::FailureToAssess};
             return;
         }
 
-        double scalarScore = round(1.0/(rawScore+0.01));
+        double scalarScore = round(1.0 / (rawScore + 0.01));
         if (scalarScore < 0)
-        {
             scalarScore = 0;
-        }
         else if (scalarScore > 100)
-        {
             scalarScore = 100;
-        }
-        session.assessment().qAssessments[qualityMeasure] = 
-            { rawScore, scalarScore, OFIQ::QualityMeasureReturnCode::Success };
+
+        session.assessment().qAssessments[qualityMeasure] = {
+            rawScore,
+            scalarScore,
+            OFIQ::QualityMeasureReturnCode::Success};
     }
 }

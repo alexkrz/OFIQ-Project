@@ -25,33 +25,36 @@
  */
 
 #include "FaceOcclusionPrevention.h"
-#include "OFIQError.h"
 #include "FaceMeasures.h"
+#include "OFIQError.h"
 #include "utils.h"
 #include <opencv2/core.hpp>
 
 namespace OFIQ_LIB::modules::measures
 {
     static const auto qualityMeasure = OFIQ::QualityMeasure::FaceOcclusionPrevention;
-    
-    FaceOcclusionPrevention::FaceOcclusionPrevention(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+
+    FaceOcclusionPrevention::FaceOcclusionPrevention(const Configuration& configuration)
+        : Measure{configuration, qualityMeasure}
     {
     }
 
-    void FaceOcclusionPrevention::Execute(OFIQ_LIB::Session & session)
+    void FaceOcclusionPrevention::Execute(OFIQ_LIB::Session& session)
     {
-        cv::Mat mask = session.getAlignedFaceLandmarkedRegion();
+        const auto& mask = session.getAlignedFaceLandmarkedRegion();
         int G = cv::countNonZero(mask);
         if (G == 0)
         {
             double rawScore = 0.0;
-            SetQualityMeasure(session, qualityMeasure, rawScore, OFIQ::QualityMeasureReturnCode::FailureToAssess);
+            SetQualityMeasure(
+                session,
+                qualityMeasure,
+                rawScore,
+                OFIQ::QualityMeasureReturnCode::FailureToAssess);
             return;
         }
-        
-        cv::Mat faceOcclusionMask = session.getFaceOcclusionSegmentationImage();
+
+        const auto& faceOcclusionMask = session.getFaceOcclusionSegmentationImage();
         cv::Mat occlusionMask = mask.mul(1 - faceOcclusionMask);
         double rawScore = cv::countNonZero(occlusionMask) / (double)G;
         double scalarScore = round(100 * (1 - rawScore));
@@ -63,6 +66,9 @@ namespace OFIQ_LIB::modules::measures
         {
             scalarScore = 100;
         }
-        session.assessment().qAssessments[qualityMeasure] = { rawScore, scalarScore, OFIQ::QualityMeasureReturnCode::Success };
+        session.assessment().qAssessments[qualityMeasure] = {
+            rawScore,
+            scalarScore,
+            OFIQ::QualityMeasureReturnCode::Success};
     }
 }

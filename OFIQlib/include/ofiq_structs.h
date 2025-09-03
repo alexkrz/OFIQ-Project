@@ -56,8 +56,8 @@ namespace OFIQ
         /** Number of bits per pixel. Legal values are 8 and 24. */
         uint8_t depth{ 24 };
         /** Managed pointer to raster scanned data.
-         * Either RGB color or intensity.
-         * If image_depth == 24 this points to  3WH bytes  RGBRGBRGB...
+         * Either BGR color or intensity.
+         * If image_depth == 24 this points to  3WH bytes  BGRBGRBGR...
          * If image_depth ==  8 this points to  WH bytes  IIIIIII */
         std::shared_ptr<uint8_t[]> data;
 
@@ -126,6 +126,8 @@ namespace OFIQ
         ImageReadingError,
         /** failed to write an image to disk. */
         ImageWritingError,
+        /** A config file is missing or the given filename is invalid*/
+        MissingConfigFileError,
         /** A required config parameter is missing */
         MissingConfigParamError,
         /** A required config parameter is missing */

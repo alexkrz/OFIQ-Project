@@ -32,10 +32,8 @@
 namespace OFIQ_LIB::modules::measures
 {
     static const auto qualityMeasure = OFIQ::QualityMeasure::HeadSize;
-    
-    HeadSize::HeadSize(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure}
+
+    HeadSize::HeadSize(const Configuration& configuration) : Measure{configuration, qualityMeasure}
     {
         SigmoidParameters defaultValues;
         defaultValues.h = 200;
@@ -47,7 +45,7 @@ namespace OFIQ_LIB::modules::measures
         AddSigmoid(qualityMeasure, defaultValues);
     }
 
-    void HeadSize::Execute(OFIQ_LIB::Session & session)
+    void HeadSize::Execute(OFIQ_LIB::Session& session)
     {
         auto faceLandmarks = session.getLandmarks();
         double T = tmetric(faceLandmarks);
@@ -56,6 +54,9 @@ namespace OFIQ_LIB::modules::measures
         double convertedScore = abs(rawScore - 0.45);
 
         auto scalarScore = ExecuteScalarConversion(qualityMeasure, convertedScore);
-        session.assessment().qAssessments[qualityMeasure] = {rawScore, scalarScore, OFIQ::QualityMeasureReturnCode::Success};
+        session.assessment().qAssessments[qualityMeasure] = {
+            rawScore,
+            scalarScore,
+            OFIQ::QualityMeasureReturnCode::Success};
     }
 }
