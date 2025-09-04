@@ -25,6 +25,7 @@
 
 import SwiftUI
 import AVFoundation
+import os.log
 
 ///ViewModel of the CameraView. It takes pictures, changes the camera and requests the camera permission.
 class CameraViewModel: NSObject, ObservableObject {
@@ -67,7 +68,7 @@ class CameraViewModel: NSObject, ObservableObject {
         }
         
         guard let defaultCamera = backCamera else {
-            Logger.debug(caller: self, methodName: "configure", message: "No back camera available")
+            os_log(.debug, "No back camera available")
             return
         }
         
@@ -88,7 +89,7 @@ class CameraViewModel: NSObject, ObservableObject {
             self.session.startRunning()
             
         } catch {
-            Logger.error(caller: self, methodName: "configure", message: "Error setting up camera: \(error.localizedDescription)")
+            os_log(.debug, "Error setting up camera:  %{public}@", error.localizedDescription)
         }
     }
     
@@ -109,7 +110,7 @@ class CameraViewModel: NSObject, ObservableObject {
             isUsingFrontCamera.toggle()
             
         } catch {
-            Logger.error(caller: self, methodName: "switchCamera", message: "Error switching cameras: \(error.localizedDescription)")
+            os_log(.error, "Error switching cameras: %{public}@", error.localizedDescription)
         }
         
         self.session.commitConfiguration()

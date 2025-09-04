@@ -24,6 +24,7 @@
 //
 
 import SwiftUI
+import os.log
 
 ///Dims the app and puts the provided content in front of the dim.
 public struct Dim<Content: View>: View {
@@ -55,7 +56,7 @@ public struct Dim<Content: View>: View {
                     Color.gray
                         .opacity(0.5)
                         .onTapGesture {
-                            Logger.debug(caller: self, methodName: "onTapGesture", message: "Dimmed background pressed")
+                            os_log(.debug, "Dimmed background pressed")
                             onClick()
                         }
                     
@@ -66,7 +67,7 @@ public struct Dim<Content: View>: View {
                 Color.gray
                     .opacity(0.5)
                     .onTapGesture {
-                        Logger.debug(caller: self, methodName: "onTapGesture", message: "Dimmed background pressed")
+                        os_log(.debug, "Dimmed background pressed")
                         onClick()
                     }
                         
