@@ -39,7 +39,7 @@ jobs:
     - name: Build OFIQ
       run: |
         cd scripts
-        .\build.cmd --arch ${{ matrix.architecture }} --compiler 17 ${{ matrix.configuration == 'Debug' && '--debug' || '' }}
+        .\build.cmd --arch ${{ matrix.architecture }} --compiler 16 ${{ matrix.configuration == 'Debug' && '--debug' || '' }}
       shell: cmd
 
     - name: Run Conformance Tests
