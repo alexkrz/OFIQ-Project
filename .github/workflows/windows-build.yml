@@ -30,7 +30,6 @@ jobs:
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: ${{ matrix.architecture }}
-        toolset: 14.29
 
     - name: Install Conan
       run: |
