@@ -4,7 +4,7 @@ To build OFIQ you need to install Python with pip, cmake and conan.
 
 - Python (version 3.10.12 or higher)
 - [Download and install cmake](https://cmake.org/) (version 3.26 or higher)
-- [Download and install conan](https://conan.io/) (version 2.0.17)
+- [Download and install conan](https://conan.io/) (version 2.18.1)
 
 ## Linux
 
@@ -25,13 +25,13 @@ sudo snap install cmake --channel=3.26/stable --classic
 Conan can be installed via Python with
 
 ```
-pip install conan==2.0.17
+pip install conan==2.18.1
 ```
 
 In some cases the command above shows a warning *"Defaulting to user installation because normal site-packages is not writeable"*, to avoid this you can pass a `--user` argument:
 
 ```
-pip install --user conan==2.0.17
+pip install --user conan==2.18.1
 ```
 
 The conan binary will be installed in `$HOME/.local/bin` and this path will be added to your `~/.profile` file. You'll need to relogin or rload the `.profile` with
@@ -100,7 +100,7 @@ Then install conan as follows.
 
 ```
 source path/to/py_ofiq_env/bin/activate
-pip install conan==2.0.17
+pip install conan==2.18.1
 ```
 
 In order to build OFIQ and installing all required packages via conan run the following.
@@ -166,7 +166,7 @@ Then install conan as follows.
 
 ```
 source /path/to/py_ofiq_env/bin/activate
-pip install conan==2.0.17
+pip install conan==2.18.1
 ```
 
 In order to build OFIQ and installing all required packages via conan run the following.
@@ -222,7 +222,7 @@ of <b>cmake version 3.29</b> has been used. As the compiler, <b>Microsoft's Visu
 To install conan, run
 
 ```
- pip install conan==2.0.17
+ pip install conan==2.18.1
 ```
 
 from the command prompt.
@@ -324,7 +324,7 @@ where <code>/path/to/miniconda3</code> can be replaced by the path where Minicon
 Install conan.
 
 ```
-$ python -m pip install conan==2.0.17
+$ python -m pip install conan==2.18.1
 ```
 
 Finally, to build OFIQ run the following.

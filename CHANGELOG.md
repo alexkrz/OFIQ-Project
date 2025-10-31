@@ -1,5 +1,17 @@
 # Changes
 
+## Version 1.1.0 (2025-10-31)
+- Some runtime improvements have been implemented that affect conformance tests. In this way, the resulting OFIQ version is
+a conformant implementation by means of ISO/IEC 29794-5. However, it is not a reference implementation. Therfore, the minor version
+has been increased. The latest reference implementation is OFIQ v1.0.3.
+- Provides compilation scripts and demo apps for Android and iOS
+- Adds android asset-manager support (cf. https://github.com/BSI-OFIQ/OFIQ-Project/pull/70)
+- Links with libjpeg-turbo (previously, libjpeg was used) when compiled with Conan
+- Documentation that OFIQ uses openjpeg by default for JPEG2000 support
+- OFIQ can now be safely accessed by multiple threads
+- Switches building documentation from Conan 2.0.17 to 2.18.1
+- Fixes building script so that it does not download onnxruntime when the flag --no-download is specified
+
 ## Version 1.0.3 (2025-07-04)
 
 - Added a new interface method ```vectorQualityWithPreprocessingResults``` that works exactly as the existing ```vectorQuality``` method, but additionally returns image preprocessing results. The preprocessing result types are defined in the  struct ```PreprocessingResultType``` and include detected faces, face landmark points, face parsing segmentation mask, face occlusion mask and landmarked region mask.

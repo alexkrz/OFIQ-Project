@@ -1017,6 +1017,8 @@
  * This resulted in different behaviour of the OFIQSampleApp when processing JPEG images.
  * Therefore, as of version 1.0.4, both compilation approaches -with and without Conan- 
  * are linked against libjpeg-turbo.
+ * OFIQ is using the openjpeg library (https://www.openjpeg.org/) as JPEG2000 image decoder. This library is used by opencv 
+ * and has proven to be much faster and secure than the alternative library jasper (https://github.com/jasper-software/jasper).
  *
  * @section sec_exif EXIF flags
  * Using the function \link OFIQ_LIB::readImage OFIQ_LIB::readImage()\endlink image
@@ -1024,7 +1026,7 @@
  * supported in the same way as they are supported by the linked OpenCV compilation.
  *
  * @section sec_release_notes Release notes
- * This is OFIQ v1.0.4. 
+ * This is OFIQ v1.1.0. 
  * The following table lists all measures and its implementation provided by this release of OFIQ. Details on the 
  * configuration and on requesting measures can be found
  * @ref sec_default_config "here". Note, the QAA identifiers listed in the table are defined in ISO/IEC 29794-5.

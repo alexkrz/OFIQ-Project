@@ -43,6 +43,13 @@ fi
 shift
 done
 
+download_onnx=OFF
+if [ "$use_conan" = "ON" ]; then
+    if [ "$download" = "ON" ]; then
+        download_onnx="ON"
+    fi
+fi
+
 if [ "$use_conan" = "ON" ]
 then
     rm -rf ../build/conan
@@ -127,7 +134,7 @@ fi
 
 echo "Generating build files"
 cmake -S ./ -B $build_dir -DCMAKE_INSTALL_PREFIX=$install_dir -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-    -DDOWNLOAD_ONNX=$use_conan -DUSE_CONAN=$use_conan -DOS=$os -DCMAKE_BUILD_TYPE=$config -DDOWNLOAD_MODELS_AND_IMAGES=$download -DUSE_GCOV_CODECOVERAGE=$useSonarWrapper
+    -DDOWNLOAD_ONNX=$download_onnx -DUSE_CONAN=$use_conan -DOS=$os -DCMAKE_BUILD_TYPE=$config -DDOWNLOAD_MODELS_AND_IMAGES=$download -DUSE_GCOV_CODECOVERAGE=$useSonarWrapper
 
 cmakeBuildCommand="cmake --build $build_dir --target install -j 8"
 if [ "$useSonarWrapper" = "true" ]

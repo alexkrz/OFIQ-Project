@@ -127,9 +127,11 @@ namespace OFIQ_LIB::modules::detectors
         Mat blob = dnn::blobFromImage(cvImage, 1.0, Size(300, 300), meanBGR, doSwapRB, doCrop);
 
         // Run a model.
-        m_dnnNet->setInput(blob /*, "", 1.0, mean*/);
         std::vector<Mat> netOuts;
+        std::unique_lock lock(m_dnnNetMutex);
+        m_dnnNet->setInput(blob /*, "", 1.0, mean*/);
         m_dnnNet->forward(netOuts);
+        lock.unlock();
 
         // Network produces output blob with a shape 1x1xNx7 where N is a number of
         // detections and an every detection is a vector of values
