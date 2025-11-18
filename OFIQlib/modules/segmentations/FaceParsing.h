@@ -131,7 +131,7 @@ namespace OFIQ_LIB::modules::segmentations
         /**
          * @brief Manages CNN computations.
          */
-        ONNXRuntimeSegmentation m_onnxRuntimeEnv;
+        ONNXRuntimeEnv m_onnxRuntimeEnv;
 
         /**
          * @brief Stores the last result computed with
@@ -175,22 +175,22 @@ namespace OFIQ_LIB::modules::segmentations
          * of dimension 400 x 400 is created.
          * @return Blob of requested dimension.
          */
-        static cv::Mat CreateBlob(const cv::Mat& image, int i_imageSize_one_dim);
+        //static cv::Mat CreateBlob(const cv::Mat& image, int i_imageSize_one_dim);
 
         /**
          * @brief Applies segmentation to the blob created from the input image
          * and returns the result.
          * @details Is invoked by \link OFIQ_LIB::modules::segmentations::FaceParsing::SetImage()
          * SetImage()\endlink.
-         * @param resultImage Blob being created by one of the CreateBlob functions.
-         * @param i_imageSize_one_dim Specifies the size of the blob being
+         * @param faceSegments Blob being created by one of the CreateBlob functions.
+         * @param imgSize Specifies the size of the blob being
          * input to the face parsing CNN; should be 400, such that a blob
          * of dimension 400 x 400 is created.
          * @return Result of face parsing.
          */
         static std::shared_ptr<cv::Mat> CalculateClassIds(
-            const cv::Mat& resultImage,
-            int i_imageSize_one_dim);
+            const cv::Mat& faceSegments,
+            int imgSize);
 
         /*/
          * @brief Derives the private member \link segmentationImage\endlink

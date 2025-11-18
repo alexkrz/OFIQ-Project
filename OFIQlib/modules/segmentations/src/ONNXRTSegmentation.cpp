@@ -24,10 +24,10 @@
  * @author OFIQ development team
  */
 
-#include <ONNXRTSegmentation.h>
 #include "OFIQError.h"
+#include <ONNXRTSegmentation.h>
 
-void ONNXRuntimeSegmentation::initialize(
+void ONNXRuntimeEnv::initialize(
     const std::vector<uint8_t>& i_modelData, int64_t i_imageWidth, int64_t i_imageHeight)
 {
 
@@ -44,12 +44,13 @@ void ONNXRuntimeSegmentation::initialize(
 }
 
 
-size_t ONNXRuntimeSegmentation::getNumberOfOutputNodes() const
+size_t ONNXRuntimeEnv::getNumberOfOutputNodes() const
 {
     return m_ortSession->GetOutputCount();
 }
 
-std::vector<Ort::Value> ONNXRuntimeSegmentation::run( std::vector<float>& i_netInput) {
+std::vector<Ort::Value> ONNXRuntimeEnv::run(std::vector<float>& i_netInput)
+{
 
     std::vector<Ort::Value> results;
 
@@ -88,10 +89,8 @@ std::vector<Ort::Value> ONNXRuntimeSegmentation::run( std::vector<float>& i_netI
     return results;
 }
 
-void ONNXRuntimeSegmentation::init_session(
-    const std::vector<uint8_t>& i_model_data,
-    int64_t i_imageWidth,
-    int64_t i_imageHeight)
+void ONNXRuntimeEnv::init_session(
+    const std::vector<uint8_t>& i_model_data, int64_t i_imageWidth, int64_t i_imageHeight)
 {
     m_ortenv = Ort::Env(ORT_LOGGING_LEVEL_ERROR);
     m_ortSession = std::make_unique<Ort::Session>(

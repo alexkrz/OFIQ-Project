@@ -35,7 +35,7 @@ namespace OFIQ_LIB::modules::landmarks
         const FaceMap* FaceMap;
         OFIQ::Landmarks selectedLandmarks;
 
-        if(faceLandmarks.type == OFIQ::LandmarkType::LM_98)
+        if (faceLandmarks.type == OFIQ::LandmarkType::LM_98)
             FaceMap = &adnet::FaceMap;
         else
             throw std::invalid_argument("Unknown LandmarkType");

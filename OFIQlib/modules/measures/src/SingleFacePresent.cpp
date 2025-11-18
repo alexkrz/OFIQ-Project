@@ -25,24 +25,23 @@
  */
 
 #include "SingleFacePresent.h"
+#include "OFIQError.h"
 #include "landmarks.h"
 #include "utils.h"
-#include "OFIQError.h"
 
 namespace OFIQ_LIB::modules::measures
 {
     static const auto qualityMeasure = OFIQ::QualityMeasure::SingleFacePresent;
 
-    SingleFacePresent::SingleFacePresent(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+    SingleFacePresent::SingleFacePresent(const Configuration& configuration)
+        : Measure{configuration, qualityMeasure}
     {
         // Note: Mapping the native score f to the quality measure qc=100*(1-f)
         // seems not to be possing using SigmoidParameter; thus this is set
         // customized within the SingleFacePresent::Execute method.
     }
 
-    void SingleFacePresent::Execute(OFIQ_LIB::Session & session)
+    void SingleFacePresent::Execute(OFIQ_LIB::Session& session)
     {
         float f = 1.0f;
         if (const auto& m_detectedFaces = session.getDetectedFaces(); m_detectedFaces.empty())
@@ -51,7 +50,11 @@ namespace OFIQ_LIB::modules::measures
             // to FailureToAssess if no face is detected and then this
             // method would not be called by OFIQ's logic.
             double rawScore = 0.0;
-            SetQualityMeasure(session, qualityMeasure, rawScore, OFIQ::QualityMeasureReturnCode::FailureToAssess);
+            SetQualityMeasure(
+                session,
+                qualityMeasure,
+                rawScore,
+                OFIQ::QualityMeasureReturnCode::FailureToAssess);
             return;
         }
         else if (m_detectedFaces.size() == 1)
@@ -76,7 +79,7 @@ namespace OFIQ_LIB::modules::measures
                     a2 = a;
                 }
             }
-            // Now 'a1' will be the largest area and 'a2' will be 
+            // Now 'a1' will be the largest area and 'a2' will be
             // the second largest area.
 
             // Update face unicity: the more it approaches zero, the more
@@ -85,7 +88,14 @@ namespace OFIQ_LIB::modules::measures
         }
 
         float qc = round(100.0f * (1.0f - f));
-        session.assessment().qAssessments[qualityMeasure] = 
-            { static_cast<double>(f), static_cast<double>(qc), OFIQ::QualityMeasureReturnCode::Success };
+
+        #ifdef OFIQ_FRVT
+        f = session.getDetectedFaces().size();
+        #endif
+
+        session.assessment().qAssessments[qualityMeasure] = {
+            static_cast<double>(f),
+            static_cast<double>(qc),
+            OFIQ::QualityMeasureReturnCode::Success};
     }
 }

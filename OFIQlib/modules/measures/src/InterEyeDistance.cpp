@@ -32,9 +32,8 @@ namespace OFIQ_LIB::modules::measures
 {
     static const auto qualityMeasure = OFIQ::QualityMeasure::InterEyeDistance;
 
-    InterEyeDistance::InterEyeDistance(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+    InterEyeDistance::InterEyeDistance(const Configuration& configuration)
+        : Measure{configuration, qualityMeasure}
     {
         SigmoidParameters defaultValues;
         defaultValues.h = 100;
@@ -44,7 +43,7 @@ namespace OFIQ_LIB::modules::measures
         AddSigmoid(qualityMeasure, defaultValues);
     }
 
-    void InterEyeDistance::Execute(OFIQ_LIB::Session & session)
+    void InterEyeDistance::Execute(OFIQ_LIB::Session& session)
     {
         auto landmarks = session.getLandmarks();
         auto headPose = session.getPose();
@@ -54,11 +53,19 @@ namespace OFIQ_LIB::modules::measures
 
         if (std::isnan(rawScore))
         {
-            SetQualityMeasure(session, qualityMeasure, rawScore, OFIQ::QualityMeasureReturnCode::FailureToAssess);
+            SetQualityMeasure(
+                session,
+                qualityMeasure,
+                rawScore,
+                OFIQ::QualityMeasureReturnCode::FailureToAssess);
         }
         else
         {
-            SetQualityMeasure(session, qualityMeasure, rawScore, OFIQ::QualityMeasureReturnCode::Success);
+            SetQualityMeasure(
+                session,
+                qualityMeasure,
+                rawScore,
+                OFIQ::QualityMeasureReturnCode::Success);
         }
     }
 

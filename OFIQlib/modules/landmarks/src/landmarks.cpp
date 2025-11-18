@@ -29,8 +29,7 @@
 namespace OFIQ_LIB
 {
     // public
-    OFIQ::FaceLandmarks
-        FaceLandmarkExtractorInterface::extractLandmarks(OFIQ_LIB::Session& session)
+    OFIQ::FaceLandmarks FaceLandmarkExtractorInterface::extractLandmarks(OFIQ_LIB::Session& session)
     {
         auto landmarks = updateLandmarks(session);
         return landmarks;

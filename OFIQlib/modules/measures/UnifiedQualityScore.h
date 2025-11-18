@@ -68,6 +68,6 @@ namespace OFIQ_LIB::modules::measures
          * @brief Instance of the neural network (iResNet50 model M).
          * 
          */
-        ONNXRuntimeSegmentation m_onnxRuntimeEnv;
+        ONNXRuntimeEnv m_onnxRuntimeEnv;
     };
 }

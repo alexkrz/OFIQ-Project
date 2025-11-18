@@ -98,6 +98,6 @@ namespace OFIQ_LIB::modules::measures
         /**
          * @brief Manages CNN estimations. 
          */
-        ONNXRuntimeSegmentation m_onnxRuntimeEnv;
+        ONNXRuntimeEnv m_onnxRuntimeEnv;
     };
 }

@@ -25,19 +25,20 @@ if(USE_CONAN)
 	find_package(OpenCV REQUIRED COMPONENTS core calib3d imgcodecs imgproc dnn ml)
 	find_package(taocpp-json REQUIRED)
 	find_package(magic_enum REQUIRED)
+	find_package(gzip-hpp REQUIRED)
 
 	add_library(onnxruntime SHARED IMPORTED)
 	if( ARCHITECTURE STREQUAL "x64" )
 		set_target_properties(onnxruntime PROPERTIES
-		IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-win-x64-1.17.3/lib/onnxruntime.lib
-		IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-win-x64-1.17.3/lib/onnxruntime.dll
-		INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-win-x64-1.17.3/include
+		IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-win-x64-1.18.1/lib/onnxruntime.lib
+		IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-win-x64-1.18.1/lib/onnxruntime.dll
+		INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-win-x64-1.18.1/include
 		)
 	else ()
 		set_target_properties(onnxruntime PROPERTIES
-		IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-win-x86-1.17.3/lib/onnxruntime.lib
-		IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-win-x86-1.17.3/lib/onnxruntime.dll
-		INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-win-x86-1.17.3/include
+		IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-win-x86-1.18.1/lib/onnxruntime.lib
+		IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-win-x86-1.18.1/lib/onnxruntime.dll
+		INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-win-x86-1.18.1/include
 		)
 	endif()
 else(USE_CONAN)
@@ -48,15 +49,16 @@ else(USE_CONAN)
 		"${CMAKE_CURRENT_SOURCE_DIR}/extern/di/include"
 		"${CMAKE_CURRENT_SOURCE_DIR}/extern/PEGTL/include"
 		"${CMAKE_CURRENT_SOURCE_DIR}/extern/abseil-cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/extern/gzip-hpp/include"
 	)
 	include_directories(
         ${OFIQ_LINK_INCLUDE_LIST}
 	)
 	add_library(onnxruntime SHARED IMPORTED)
 	set_target_properties(onnxruntime PROPERTIES
-	IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/build/Windows/${CMAKE_BUILD_TYPE}/${CMAKE_BUILD_TYPE}/onnxruntime.lib
-	IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/build/Windows/${CMAKE_BUILD_TYPE}/${CMAKE_BUILD_TYPE}/onnxruntime.dll
-	INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/include/onnxruntime/core/session
+		IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/build/Windows/${CMAKE_BUILD_TYPE}/${CMAKE_BUILD_TYPE}/onnxruntime.lib
+		IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/build/Windows/${CMAKE_BUILD_TYPE}/${CMAKE_BUILD_TYPE}/onnxruntime.dll
+		INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/include/onnxruntime/core/session
 	)
 	if (VS_VERSION STREQUAL vc16)
 		SET(OPENCV_INSTALL_PATH ${ARCHITECTURE}/${VS_VERSION}/)
@@ -87,6 +89,7 @@ else(USE_CONAN)
 	add_library(zlib STATIC IMPORTED)
 	set_target_properties(zlib PROPERTIES
 		IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/extern/opencv-4.5.5/build/install/${OPENCV_INSTALL_PATH}staticlib/zlib${DEBUG_POSTFIX}.lib"
+		INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/extern/opencv-4.5.5/3rdparty/zlib"
 	)
 	add_library(OpenCV::core STATIC IMPORTED)
 	set_target_properties(OpenCV::core PROPERTIES
@@ -140,6 +143,7 @@ if(USE_CONAN)
 		opencv::opencv
 		taocpp::json
 		magic_enum::magic_enum
+		gzip-hpp::gzip-hpp
 		onnxruntime
 	)
 else(USE_CONAN)

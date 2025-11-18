@@ -32,28 +32,27 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
-#include <opencv2/opencv.hpp>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
-
-#define _USE_MATH_DEFINES
-#include <math.h>
-
+#include <opencv2/opencv.hpp>
 
 using PartExtractor = OFIQ_LIB::modules::landmarks::PartExtractor;
 using FaceParts = OFIQ_LIB::modules::landmarks::FaceParts;
 
 namespace OFIQ_LIB
 {
-    OFIQ_EXPORT void makeSquareBoundingBoxWithPadding(
+    void makeSquareBoundingBoxWithPadding(
         const OFIQ::BoundingBox& i_bb,
         const cv::Mat& i_input_image,
         cv::Mat& o_output_image,
         OFIQ::BoundingBox& o_bb,
-        Point2i & o_translation_vector)
+        Point2i& o_translation_vector)
     {
         int height_image = i_input_image.rows;
         int width_image = i_input_image.cols;
@@ -62,7 +61,6 @@ namespace OFIQ_LIB
         o_translation_vector.y = 0;
 
         o_bb = OFIQ_LIB::makeSquareBoundingBox(i_bb);
-
 
         int x_top_left = o_bb.xleft;
         int y_top_left = o_bb.ytop;
@@ -78,7 +76,6 @@ namespace OFIQ_LIB
             int leftBorder = std::max(0, -x_top_left);
             int rightBorder = std::max(0, x_bottom_right - width_image + 1);
 
-
             o_translation_vector.x = leftBorder;
             o_translation_vector.y = topBorder;
 
@@ -89,7 +86,7 @@ namespace OFIQ_LIB
             cv::Mat paddedImage{
                 i_input_image.rows + topBorder + bottomBorder,
                 i_input_image.cols + leftBorder + rightBorder,
-                i_input_image.type() };
+                i_input_image.type()};
 
             cv::copyMakeBorder(
                 i_input_image,
@@ -105,11 +102,11 @@ namespace OFIQ_LIB
         }
         else
         {
-            o_output_image = i_input_image.clone();
+            o_output_image = i_input_image /*.clone()*/;
         }
     }
 
-    OFIQ_EXPORT OFIQ::BoundingBox makeSquareBoundingBox(const OFIQ::BoundingBox& i_bb)
+    OFIQ::BoundingBox makeSquareBoundingBox(const OFIQ::BoundingBox& i_bb)
     {
 
         // if already square
@@ -134,10 +131,10 @@ namespace OFIQ_LIB
         {
             // extend width
 
-            x_top_left_trans =
-                static_cast<uint16_t>(std::floor((x_bottom_right_orig + x_top_left_orig - i_bb.height) * 0.5));
-            x_bottom_right_trans =
-                static_cast<uint16_t>(std::ceil((x_bottom_right_orig + x_top_left_orig + i_bb.height) * 0.5));
+            x_top_left_trans = static_cast<uint16_t>(
+                std::floor((x_bottom_right_orig + x_top_left_orig - i_bb.height) * 0.5));
+            x_bottom_right_trans = static_cast<uint16_t>(
+                std::ceil((x_bottom_right_orig + x_top_left_orig + i_bb.height) * 0.5));
 
             y_top_left_trans = y_top_left_orig;
             y_bottom_right_trans = y_bottom_right_orig;
@@ -148,10 +145,10 @@ namespace OFIQ_LIB
             x_top_left_trans = x_top_left_orig;
             x_bottom_right_trans = x_bottom_right_orig;
 
-            y_top_left_trans =
-                static_cast<uint16_t>(std::floor((y_bottom_right_orig + y_top_left_orig - i_bb.width) * 0.5));
-            y_bottom_right_trans =
-                static_cast<uint16_t>(std::ceil((y_bottom_right_orig + y_top_left_orig + i_bb.width) * 0.5));
+            y_top_left_trans = static_cast<uint16_t>(
+                std::floor((y_bottom_right_orig + y_top_left_orig - i_bb.width) * 0.5));
+            y_bottom_right_trans = static_cast<uint16_t>(
+                std::ceil((y_bottom_right_orig + y_top_left_orig + i_bb.width) * 0.5));
         }
 
         OFIQ::BoundingBox square(
@@ -169,7 +166,7 @@ namespace OFIQ_LIB
         return square;
     }
 
-    OFIQ_EXPORT size_t findLargestBoundingBox(const std::vector<OFIQ::BoundingBox>& faceRects)
+    size_t findLargestBoundingBox(const std::vector<OFIQ::BoundingBox>& faceRects)
     {
         if (faceRects.empty())
             throw OFIQError(
@@ -186,41 +183,64 @@ namespace OFIQ_LIB
         return (size_t)std::distance(faceRects.begin(), idxBiggestFace);
     }
 
-    OFIQ_EXPORT OFIQ::Image MakeGreyImage(uint16_t width, uint16_t height)
+    OFIQ::BoundingBox findLandmarksBoundingBox(const OFIQ::Landmarks& landmarks)
+    {
+        if (landmarks.empty())
+            throw OFIQError(
+                OFIQ::ReturnCode::UnknownError,
+                "Unable to find bounding box for an empty landmarks list");
+
+        OFIQ::LandmarkPoint leftTop{
+            std::numeric_limits<int16_t>::max(),
+            std::numeric_limits<int16_t>::max()};
+        OFIQ::LandmarkPoint rightBottom{-1, -1};
+        for (const auto& lm : landmarks)
+        {
+            if (leftTop.x > lm.x)
+                leftTop.x = lm.x;
+            if (leftTop.y > lm.y)
+                leftTop.y = lm.y;
+            if (rightBottom.x < lm.x)
+                rightBottom.x = lm.x;
+            if (rightBottom.y < lm.y)
+                rightBottom.y = lm.y;
+        }
+
+        return OFIQ::BoundingBox{
+            leftTop.x,
+            leftTop.y,
+            static_cast<int16_t>(rightBottom.x - leftTop.x + 1),
+            static_cast<int16_t>(rightBottom.y - leftTop.y + 1),
+            OFIQ::FaceDetectorType::NotSet};
+    }
+
+    OFIQ::Image MakeGreyImage(uint16_t width, uint16_t height)
     {
         std::shared_ptr<uint8_t[]> data{new uint8_t[width * height]};
         return {width, height, 8, data};
     }
 
-    OFIQ_EXPORT cv::Mat copyToCvImage(const OFIQ::Image& sourceImage, bool asGrayImage)
+    cv::Mat copyToCvImage(const OFIQ::Image& sourceImage, bool asGrayImage)
     {
-        bool isRGB = sourceImage.depth == 24;
+        bool isColor = sourceImage.depth == 24;
 
-        cv::Mat cvImage(sourceImage.height, sourceImage.width, isRGB ? CV_8UC3 : CV_8UC1);
-
+        cv::Mat cvImage(sourceImage.height, sourceImage.width, isColor ? CV_8UC3 : CV_8UC1);
         memcpy(cvImage.data, (char*)sourceImage.data.get(), sourceImage.size());
-
-        if (!isRGB && !asGrayImage)
+        if (!isColor && !asGrayImage)
             cv::cvtColor(cvImage, cvImage, cv::COLOR_GRAY2BGR);
-        else if (isRGB && !asGrayImage)
-            cv::cvtColor(cvImage, cvImage, cv::COLOR_RGB2BGR);
-        else if (isRGB && asGrayImage)
-            cv::cvtColor(cvImage, cvImage, cv::COLOR_RGB2GRAY);
-        else if (!isRGB && asGrayImage)
-        {
-            // Then no work is necessary
-        }
-
+        else if (isColor && asGrayImage)
+            cv::cvtColor(cvImage, cvImage, cv::COLOR_BGR2GRAY);
         return cvImage;
     }
 
-    OFIQ_EXPORT cv::Mat alignImage(
+    cv::Mat alignImage(
         const OFIQ::Image& faceImage,
         const OFIQ::FaceLandmarks& faceLandmarks,
         OFIQ::FaceLandmarks& alignedFaceLandmarks,
         cv::Mat& transformationMatrix)
     {
-        cv::Mat bgrCvImage = copyToCvImage(faceImage);
+        cv::Mat bgrCvImage(faceImage.height, faceImage.width, CV_8UC3, faceImage.data.get());
+
         int nose;
         int leftMouth;
         int rightMouth;
@@ -266,7 +286,7 @@ namespace OFIQ_LIB
         cv::warpAffine(bgrCvImage, bgrAlignedImage, transformationMatrix, cv::Size(616, 616));
         for (auto landmark : faceLandmarks.landmarks)
         {
-            landmarks.push_back({ static_cast<float>(landmark.x), static_cast<float>(landmark.y) });
+            landmarks.push_back({static_cast<float>(landmark.x), static_cast<float>(landmark.y)});
         }
         cv::transform(landmarks, alignedLandmarks, transformationMatrix);
         for (const auto& p : alignedLandmarks)
@@ -279,26 +299,31 @@ namespace OFIQ_LIB
         return bgrAlignedImage;
     }
 
-    OFIQ_EXPORT void calculateEyeCenter(
+    void calculateEyeCenter(
         const OFIQ::FaceLandmarks& faceLandmarks, Point2f& leftEyeCenter, Point2f& rightEyeCenter)
     {
         auto leftEyePoints = PartExtractor::getFacePart(faceLandmarks, FaceParts::LEFT_EYE_CORNERS);
         auto rightEyePoints =
             PartExtractor::getFacePart(faceLandmarks, FaceParts::RIGHT_EYE_CORNERS);
         assert(leftEyePoints.size() == 2 && rightEyePoints.size() == 2);
-        leftEyeCenter.x = static_cast<float>(round(leftEyePoints[0].x + 0.5 * (leftEyePoints[1].x - leftEyePoints[0].x)));
-        leftEyeCenter.y = static_cast<float>(round(leftEyePoints[0].y + 0.5 * (leftEyePoints[1].y - leftEyePoints[0].y)));
-        rightEyeCenter.x = static_cast<float>(round(rightEyePoints[0].x + 0.5 * (rightEyePoints[1].x - rightEyePoints[0].x)));
-        rightEyeCenter.y = static_cast<float>(round(rightEyePoints[0].y + 0.5 * (rightEyePoints[1].y - rightEyePoints[0].y)));
+        leftEyeCenter.x = static_cast<float>(
+            round(leftEyePoints[0].x + 0.5 * (leftEyePoints[1].x - leftEyePoints[0].x)));
+        leftEyeCenter.y = static_cast<float>(
+            round(leftEyePoints[0].y + 0.5 * (leftEyePoints[1].y - leftEyePoints[0].y)));
+        rightEyeCenter.x = static_cast<float>(
+            round(rightEyePoints[0].x + 0.5 * (rightEyePoints[1].x - rightEyePoints[0].x)));
+        rightEyeCenter.y = static_cast<float>(
+            round(rightEyePoints[0].y + 0.5 * (rightEyePoints[1].y - rightEyePoints[0].y)));
     }
 
-    OFIQ_EXPORT float tmetric(const OFIQ::FaceLandmarks& faceLandmarks)
+    float tmetric(const OFIQ::FaceLandmarks& faceLandmarks)
     {
         Point2f leftEyeCenter;
         Point2f rightEyeCenter;
         calculateEyeCenter(faceLandmarks, leftEyeCenter, rightEyeCenter);
         OFIQ::Landmarks chinLandmarks = PartExtractor::getFacePart(faceLandmarks, FaceParts::CHIN);
-        cv::Point2f eyeMidpoint(static_cast<float>((leftEyeCenter.x + rightEyeCenter.x) / 2.0), 
+        cv::Point2f eyeMidpoint(
+            static_cast<float>((leftEyeCenter.x + rightEyeCenter.x) / 2.0),
             static_cast<float>((leftEyeCenter.y + rightEyeCenter.y) / 2.0));
         cv::Point2f chin(chinLandmarks[0].x, chinLandmarks[0].y);
 

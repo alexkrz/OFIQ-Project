@@ -48,6 +48,7 @@ list(APPEND module_sources
 	${OFIQLIB_SOURCE_DIR}/modules/segmentations/src/FaceOcclusionSegmentation.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/segmentations/src/segmentations.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/utils/src/Configuration.cpp
+	${OFIQLIB_SOURCE_DIR}/modules/utils/src/DataStreamAndroid.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/utils/src/OFIQError.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/utils/src/image_io.cpp
 	${OFIQLIB_SOURCE_DIR}/modules/utils/src/image_utils.cpp
@@ -102,6 +103,10 @@ list(APPEND module_headers
 	${OFIQLIB_SOURCE_DIR}/modules/segmentations/FaceOcclusionSegmentation.h
 	${OFIQLIB_SOURCE_DIR}/modules/segmentations/segmentations.h
 	${OFIQLIB_SOURCE_DIR}/modules/utils/Configuration.h
+	${OFIQLIB_SOURCE_DIR}/modules/utils/DataStream.h
+	${OFIQLIB_SOURCE_DIR}/modules/utils/DataStreamAndroid.h
+	${OFIQLIB_SOURCE_DIR}/modules/utils/DataStreamIOS.h
+	${OFIQLIB_SOURCE_DIR}/modules/utils/DataStreamDesktop.h
 	${OFIQLIB_SOURCE_DIR}/modules/utils/OFIQError.h
 	${OFIQLIB_SOURCE_DIR}/modules/utils/image_io.h
 	${OFIQLIB_SOURCE_DIR}/modules/utils/image_utils.h

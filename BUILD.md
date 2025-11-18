@@ -4,7 +4,7 @@ To build OFIQ you need to install Python with pip, cmake and conan.
 
 - Python (version 3.10.12 or higher)
 - [Download and install cmake](https://cmake.org/) (version 3.26 or higher)
-- [Download and install conan](https://conan.io/) (version 2.0.17)
+- [Download and install conan](https://conan.io/) (version 2.18.1)
 
 ## Linux
 
@@ -25,13 +25,13 @@ sudo snap install cmake --channel=3.26/stable --classic
 Conan can be installed via Python with
 
 ```
-pip install conan==2.0.17
+pip install conan==2.18.1
 ```
 
 In some cases the command above shows a warning *"Defaulting to user installation because normal site-packages is not writeable"*, to avoid this you can pass a `--user` argument:
 
 ```
-pip install --user conan==2.0.17
+pip install --user conan==2.18.1
 ```
 
 The conan binary will be installed in `$HOME/.local/bin` and this path will be added to your `~/.profile` file. You'll need to relogin or rload the `.profile` with
@@ -66,7 +66,7 @@ This will create the following output.
  <tr>
   <td>install_x86_64_linux/</td>
   <td>Folder with the installation including the binaries <code>Release/bin/OFIQSampleApp</code>,
-   <code>Release/lib/libofiq_lib.so</code>, <code>Release/lib/libonnxruntime.so.1.17.3</code>, and the
+   <code>Release/lib/libofiq_lib.so</code>, <code>Release/lib/libonnxruntime.so.1.18.1</code>, and the
    header files in <code>Release/include/</code>. </td>
  </tr>
  <tr>
@@ -100,7 +100,7 @@ Then install conan as follows.
 
 ```
 source path/to/py_ofiq_env/bin/activate
-pip install conan==2.0.17
+pip install conan==2.18.1
 ```
 
 In order to build OFIQ and installing all required packages via conan run the following.
@@ -130,7 +130,7 @@ This will create the following output.
  <tr>
   <td>install_x86_64_linux/</td>
   <td>Folder with the installation including the binaries <code>Release/bin/OFIQSampleApp</code>,
-   <code>Release/lib/libofiq_lib.so</code>, <code>Release/lib/libonnxruntime.so.1.17.3</code>, and the
+   <code>Release/lib/libofiq_lib.so</code>, <code>Release/lib/libonnxruntime.so.1.18.1</code>, and the
    header files in <code>Release/include/</code>. </td>
  </tr>
  <tr>
@@ -166,7 +166,7 @@ Then install conan as follows.
 
 ```
 source /path/to/py_ofiq_env/bin/activate
-pip install conan==2.0.17
+pip install conan==2.18.1
 ```
 
 In order to build OFIQ and installing all required packages via conan run the following.
@@ -197,7 +197,7 @@ This will create the following output.
  <tr>
   <td>install_arm64_linux/</td>
   <td>Folder with the installation including the binaries <code>Release/bin/OFIQSampleApp</code>,
-   <code>Release/lib/libofiq_lib.so</code>, <code>Release/lib/libonnxruntime.so.1.17.3</code>, and the
+   <code>Release/lib/libofiq_lib.so</code>, <code>Release/lib/libonnxruntime.so.1.18.1</code>, and the
    header files in <code>Release/include/</code>. </td>
  </tr>
  <tr>
@@ -222,7 +222,7 @@ of <b>cmake version 3.29</b> has been used. As the compiler, <b>Microsoft's Visu
 To install conan, run
 
 ```
- pip install conan==2.0.17
+ pip install conan==2.18.1
 ```
 
 from the command prompt.
@@ -255,7 +255,7 @@ This will create the following output.
   <td>`install_x86_64\`</td>
   <td>
    Folder with the OFIQ installation files. This includes the binaries `Release\bin\OFIQSampleApp`,
-   `Release\bin\libofiq_lib.so`, `Release\bin\libonnxruntime.so.1.17.3`, and the
+   `Release\bin\libofiq_lib.so`, `Release\bin\libonnxruntime.so.1.18.1`, and the
    header files in `Release\include\`.
    </td>
  </tr>
@@ -324,7 +324,7 @@ where <code>/path/to/miniconda3</code> can be replaced by the path where Minicon
 Install conan.
 
 ```
-$ python -m pip install conan==2.0.17
+$ python -m pip install conan==2.18.1
 ```
 
 Finally, to build OFIQ run the following.
@@ -392,15 +392,14 @@ NOTE: At the date of publication, the link to the full OFIQ release were not ava
 To build OFIQ without conan (described below), we need to extract the archive so that file structure
 matches the following:
 <table>
- <tr><td>/path/to/OFIQ-Project/extern/di/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/flatbuffers/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/googletest/*</td></tr>
+ <tr><td>/path/to/OFIQ-Project/extern/gzip-hpp/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/json/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/magic_enum/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/onnxruntime/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/openvc-4.5.5/*</td></tr>
  <tr><td>/path/to/OFIQ-Project/extern/PEGTL/*</td></tr>
- <tr><td>/path/to/OFIQ-Project/extern/spdlog/*</td></tr>
 </table>
 Here, <code>/path/to/OFIQ-Project/</code> denotes the path to OFIQ's root folder.
 <br/><br/>

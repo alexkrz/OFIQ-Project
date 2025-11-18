@@ -25,23 +25,23 @@
  */
 
 #if defined _WIN32 && defined OFIQ_EXPORTS
-#undef OFIQ_EXPORTS
+#    undef OFIQ_EXPORTS
 #endif
 
-#include "ofiq_lib.h"
 #include "image_io.h"
+#include "ofiq_lib.h"
 #include "utils.h"
 
+#include <algorithm>
+#include <chrono>
+#include <cmath>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include <iterator>
-#include <algorithm>
-#include <cmath>
 #include <magic_enum.hpp>
-#include <filesystem>
-#include <chrono>
+#include <sstream>
 
 constexpr int SUCCESS = 0;
 constexpr int FAILURE = 1;
@@ -57,14 +57,13 @@ using namespace OFIQ_LIB;
 int getQualityAssessmentResults(
     const std::shared_ptr<Interface>& implPtr,
     const string& inputFile,
-    FaceImageQualityAssessment& assessments, int & r_elapsed );
+    FaceImageQualityAssessment& assessments,
+    int& r_elapsed);
 
-std::vector<std::string> readFileLines(
-    const std::string& inputFile);
+std::vector<std::string> readFileLines(const std::string& inputFile);
 
 string exportAssessmentResultsToString(
-    const FaceImageQualityAssessment& assessments,
-    bool doExportScalar = false);
+    const FaceImageQualityAssessment& assessments, bool doExportScalar = false);
 
 std::vector<std::string> readFileLines(const std::string& inputFile)
 {
@@ -86,7 +85,10 @@ std::vector<std::string> readFileLines(const std::string& inputFile)
 
 std::string to_lower(std::string data)
 {
-    std::transform(data.begin(), data.end(), data.begin(),
+    std::transform(
+        data.begin(),
+        data.end(),
+        data.begin(),
         [](unsigned char c) { return std::tolower(c); });
     return data;
 }
@@ -108,17 +110,17 @@ std::vector<std::string> readImageFilesFromDirectory(const std::string& inputDir
 }
 
 bool isStringContained(
-    const std::vector<std::string>& strings, 
-    const std::string& str,
-    bool isCaseSensitive=false)
+    const std::vector<std::string>& strings, const std::string& str, bool isCaseSensitive = false)
 {
     std::string s = str;
     if (!isCaseSensitive)
-        std::transform(s.begin(), s.end(), s.begin(),
+        std::transform(
+            s.begin(),
+            s.end(),
+            s.begin(),
             [](unsigned char c) { return std::tolower(c); });
 
-    return (!s.empty() &&
-        std::find(strings.begin(), strings.end(), s) != strings.end());
+    return (!s.empty() && std::find(strings.begin(), strings.end(), s) != strings.end());
 }
 
 int runQuality(
@@ -137,7 +139,7 @@ int runQuality(
         imageFiles = readImageFilesFromDirectory(inputFile.generic_string());
     }
     else if (std::string fileExt = inputFile.extension().string();
-        isStringContained({ ".txt", ".csv" }, fileExt))
+             isStringContained({".txt", ".csv"}, fileExt))
         // a list of image files
         imageFiles = readFileLines(inputFile.generic_string());
     else
@@ -148,28 +150,28 @@ int runQuality(
     constexpr bool EXPORT_RAW = false;
     constexpr bool EXPORT_SCALAR = true;
     bool outputHeaderIn1stIter = true;
-    for (auto const& imageFile: imageFiles)
+    for (auto const& imageFile : imageFiles)
     {
         FaceImageQualityAssessment assessmentResult;
 
         int time_elapsed_ms = 0;
-        int resCode = getQualityAssessmentResults(implPtr, imageFile, assessmentResult, time_elapsed_ms);
+        int resCode =
+            getQualityAssessmentResults(implPtr, imageFile, assessmentResult, time_elapsed_ms);
         faceImageQAresultCodes.push_back(resCode);
         faceImageQAassessmentTimes.push_back(time_elapsed_ms);
 
         faceImageQAs.push_back(assessmentResult);
 
-        string strQAresRaw = exportAssessmentResultsToString(
-            assessmentResult, EXPORT_RAW);
-        string strQAresScalar = exportAssessmentResultsToString(
-            assessmentResult, EXPORT_SCALAR);
+        string strQAresRaw = exportAssessmentResultsToString(assessmentResult, EXPORT_RAW);
+        string strQAresScalar = exportAssessmentResultsToString(assessmentResult, EXPORT_SCALAR);
 
         // output result of each file right after it was processed
         if (outputHeaderIn1stIter)
         {
             // print the header. the format is the following
-            // "Filename", MeasurementName1, ..., MeasurementNameN, MeasurementName1.scalar, ..., MeasurementNameN.scalar
-            // Filename,      Measurement1.raw, ..., MeasurementN.raw, Measurement1.scalar, ..., MeasurementN.scalar
+            // "Filename", MeasurementName1, ..., MeasurementNameN, MeasurementName1.scalar, ...,
+            // MeasurementNameN.scalar Filename,      Measurement1.raw, ..., MeasurementN.raw,
+            // Measurement1.scalar, ..., MeasurementN.scalar
             vector<string> measureNames;
             vector<string> measureNamesScalar;
             for (const auto& [measure, measure_result] : faceImageQAs[0].qAssessments)
@@ -189,7 +191,8 @@ int runQuality(
             outputHeaderIn1stIter = false;
         }
 
-        *outStreamPtr << imageFile << ';' << strQAresRaw << ';' << strQAresScalar << ';' << time_elapsed_ms << std::endl;
+        *outStreamPtr << imageFile << ';' << strQAresRaw << ';' << strQAresScalar << ';'
+                      << time_elapsed_ms << std::endl;
 
         if (doConsoleOut)
         {
@@ -203,7 +206,7 @@ int runQuality(
                 if (measure_result.code != QualityMeasureReturnCode::Success)
                     scalarScore = -1;
                 std::cout << mName << "-> rawScore:  " << rawScore << "   scalar: " << scalarScore
-                    << std::endl;
+                          << std::endl;
             }
             std::cout << "-------------------------------------------------------" << std::endl;
         }
@@ -211,14 +214,17 @@ int runQuality(
 
     if (faceImageQAs.empty())
     {
-        cerr << "[ERROR] " << "empty result list" << "." << endl;
+        cerr << "[ERROR] "
+             << "empty result list"
+             << "." << endl;
         return FAILURE;
     }
 
     if (faceImageQAs.size() != imageFiles.size())
     {
-        cerr << "[ERROR] " << "invalid number of measurement results. Is " << imageFiles.size() <<
-            ", has to be " << faceImageQAs.size() << endl;
+        cerr << "[ERROR] "
+             << "invalid number of measurement results. Is " << imageFiles.size() << ", has to be "
+             << faceImageQAs.size() << endl;
         return FAILURE;
     }
 
@@ -229,7 +235,7 @@ int getQualityAssessmentResults(
     const std::shared_ptr<Interface>& implPtr,
     const string& inputFile,
     FaceImageQualityAssessment& assessments,
-    int & r_elapsed)
+    int& r_elapsed)
 {
     Image image;
     ReturnStatus retStatus = readImage(inputFile, image);
@@ -240,7 +246,7 @@ int getQualityAssessmentResults(
         return FAILURE;
     }
 
-    //std::cout << "--> Start processing image file: " << inputFile << std::endl;
+    // std::cout << "--> Start processing image file: " << inputFile << std::endl;
     auto start_time = std::chrono::high_resolution_clock::now();
     retStatus = implPtr->vectorQuality(image, assessments);
     auto end_time = std::chrono::high_resolution_clock::now();
@@ -251,11 +257,10 @@ int getQualityAssessmentResults(
 }
 
 string exportAssessmentResultsToString(
-    const FaceImageQualityAssessment& assessments, 
-    bool doExportScalar)
+    const FaceImageQualityAssessment& assessments, bool doExportScalar)
 {
     std::string resultStr;
-    for ( auto it = assessments.qAssessments.begin() ; it != assessments.qAssessments.end() ; )
+    for (auto it = assessments.qAssessments.begin(); it != assessments.qAssessments.end();)
     {
         const auto& [measure, measure_result] = *it;
         const QualityMeasureResult& qaResult = measure_result;
@@ -270,8 +275,7 @@ string exportAssessmentResultsToString(
             scalarScore = qaResult.scalar;
         }
 
-        if (double val = doExportScalar ? scalarScore : qaResult.rawScore;
-            round(val) == val)
+        if (double val = doExportScalar ? scalarScore : qaResult.rawScore; round(val) == val)
         {
             resultStr += to_string((int)val);
         }
@@ -284,19 +288,17 @@ string exportAssessmentResultsToString(
         }
     }
     // replace decimal point for german MS Excel
-    //std::replace(resultStr.begin(), resultStr.end(), '.', ',');    
+    // std::replace(resultStr.begin(), resultStr.end(), '.', ',');
     return resultStr;
 }
 
 
 void usage(const string& executable)
 {
-    cerr << "Usage: " << executable
-         << " [-c <configDir|configPath>]" << endl
+    cerr << "Usage: " << executable << " [-c <configDir|configPath>]" << endl
          << " [-o <outputFile>]" << endl
          << " - i <inputFile>|<inputDir>" << endl
-         << " [-cf <configFile>]"
-         << endl;
+         << " [-cf <configFile>]" << endl;
 }
 
 int main(int argc, char* argv[])
@@ -316,16 +318,16 @@ int main(int argc, char* argv[])
     {
         if (strcmp(argv[i], "-c") == 0)
         {
-            if ( !configDir.empty() ) 
+            if (!configDir.empty())
             {
-                usage(argv[0]); 
-                cerr << "[ERROR] <configDir|configPath> already specified." << endl; 
+                usage(argv[0]);
+                cerr << "[ERROR] <configDir|configPath> already specified." << endl;
                 return FAILURE;
             }
-            if (i + 1 >= argc) 
-            { 
-                usage(argv[0]); 
-                cerr << "[ERROR] specification of <configDir|configPath> missing." << endl; 
+            if (i + 1 >= argc)
+            {
+                usage(argv[0]);
+                cerr << "[ERROR] specification of <configDir|configPath> missing." << endl;
                 return FAILURE;
             }
             configDir = fs::path(argv[++i]);
@@ -334,14 +336,14 @@ int main(int argc, char* argv[])
         {
             if (!outputFile.empty())
             {
-                usage(argv[0]); 
-                cerr << "[ERROR] <outputFile> already specified." << endl; 
+                usage(argv[0]);
+                cerr << "[ERROR] <outputFile> already specified." << endl;
                 return FAILURE;
             }
             if (i + 1 >= argc)
             {
-                usage(argv[0]); 
-                cerr << "[ERROR] specification of <outputFile> missing." << endl; 
+                usage(argv[0]);
+                cerr << "[ERROR] specification of <outputFile> missing." << endl;
                 return FAILURE;
             }
             outputFile = fs::path(argv[++i]);
@@ -350,14 +352,14 @@ int main(int argc, char* argv[])
         {
             if (!inputFile.empty())
             {
-                usage(argv[0]); 
-                cerr << "[ERROR] <inputFile>|<inputDir> already specified." << endl; 
+                usage(argv[0]);
+                cerr << "[ERROR] <inputFile>|<inputDir> already specified." << endl;
                 return FAILURE;
             }
             if (i + 1 >= argc)
             {
-                usage(argv[0]); 
-                cerr << "[ERROR] specification of <inputFile>|<inputDir> missing." << endl; 
+                usage(argv[0]);
+                cerr << "[ERROR] specification of <inputFile>|<inputDir> missing." << endl;
                 return FAILURE;
             }
             inputFile = fs::path(argv[++i]);
@@ -366,14 +368,14 @@ int main(int argc, char* argv[])
         {
             if (!configFile.empty())
             {
-                usage(argv[0]); 
+                usage(argv[0]);
                 cerr << "[ERROR] <configFile> already specified." << endl;
                 return FAILURE;
             }
             if (i + 1 >= argc)
             {
-                usage(argv[0]); 
-                cerr << "[ERROR] specification of <configFile> missing." << endl; 
+                usage(argv[0]);
+                cerr << "[ERROR] specification of <configFile> missing." << endl;
                 return FAILURE;
             }
             configFile = fs::path(argv[++i]);
@@ -421,9 +423,7 @@ int main(int argc, char* argv[])
     auto implPtr = Interface::getImplementation();
     /* Initialization */
     auto start_time = std::chrono::high_resolution_clock::now();
-    auto ret = implPtr->initialize(
-        configDir.generic_string(),
-        configFile.generic_string());
+    auto ret = implPtr->initialize(configDir.generic_string(), configFile.generic_string());
     auto end_time = std::chrono::high_resolution_clock::now();
     if (ret.code != ReturnCode::Success)
     {
@@ -439,7 +439,7 @@ int main(int argc, char* argv[])
     int minor;
     int patch;
     implPtr->getVersion(major, minor, patch);
-    
+
     cout << "OFIQ library version: " << major << '.' << minor << '.' << patch << endl;
 
     // write to output file

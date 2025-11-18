@@ -1,0 +1,821 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		291E2C93F607AB9EA90E4CB0 /* Pods_ofiqlib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73C2DE3F243E0CFB57BD104B /* Pods_ofiqlib.framework */; };
+		317346BF2E6075BE008E4D54 /* Luminance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346B32E6075BE008E4D54 /* Luminance.cpp */; };
+		317346C02E6075BE008E4D54 /* Measure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346B42E6075BE008E4D54 /* Measure.cpp */; };
+		317346C12E6075BE008E4D54 /* UnifiedQualityScore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346BE2E6075BE008E4D54 /* UnifiedQualityScore.cpp */; };
+		317346C22E6075BE008E4D54 /* MouthClosed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346B62E6075BE008E4D54 /* MouthClosed.cpp */; };
+		317346C32E6075BE008E4D54 /* MouthOcclusionPrevention.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346B72E6075BE008E4D54 /* MouthOcclusionPrevention.cpp */; };
+		317346C42E6075BE008E4D54 /* NoHeadCoverings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346B92E6075BE008E4D54 /* NoHeadCoverings.cpp */; };
+		317346C52E6075BE008E4D54 /* Executor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346AA2E6075BE008E4D54 /* Executor.cpp */; };
+		317346C62E6075BE008E4D54 /* DynamicRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346A92E6075BE008E4D54 /* DynamicRange.cpp */; };
+		317346C72E6075BE008E4D54 /* InterEyeDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346B22E6075BE008E4D54 /* InterEyeDistance.cpp */; };
+		317346C82E6075BE008E4D54 /* IlluminationUniformity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346B12E6075BE008E4D54 /* IlluminationUniformity.cpp */; };
+		317346C92E6075BE008E4D54 /* NaturalColour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346B82E6075BE008E4D54 /* NaturalColour.cpp */; };
+		317346CA2E6075BE008E4D54 /* BackgroundUniformity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346A62E6075BE008E4D54 /* BackgroundUniformity.cpp */; };
+		317346CB2E6075BE008E4D54 /* MeasureFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346B52E6075BE008E4D54 /* MeasureFactory.cpp */; };
+		317346CC2E6075BE008E4D54 /* UnderExposurePrevention.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346BD2E6075BE008E4D54 /* UnderExposurePrevention.cpp */; };
+		317346CD2E6075BE008E4D54 /* CropOfTheFaceImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346A82E6075BE008E4D54 /* CropOfTheFaceImage.cpp */; };
+		317346CE2E6075BE008E4D54 /* EyesOpen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346AC2E6075BE008E4D54 /* EyesOpen.cpp */; };
+		317346CF2E6075BE008E4D54 /* HeadPose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346AF2E6075BE008E4D54 /* HeadPose.cpp */; };
+		317346D02E6075BE008E4D54 /* SingleFacePresent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346BC2E6075BE008E4D54 /* SingleFacePresent.cpp */; };
+		317346D12E6075BE008E4D54 /* Sharpness.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346BB2E6075BE008E4D54 /* Sharpness.cpp */; };
+		317346D22E6075BE008E4D54 /* ExpressionNeutrality.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346AB2E6075BE008E4D54 /* ExpressionNeutrality.cpp */; };
+		317346D32E6075BE008E4D54 /* FaceOcclusionPrevention.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346AE2E6075BE008E4D54 /* FaceOcclusionPrevention.cpp */; };
+		317346D42E6075BE008E4D54 /* HeadSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346B02E6075BE008E4D54 /* HeadSize.cpp */; };
+		317346D52E6075BE008E4D54 /* CompressionArtifacts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346A72E6075BE008E4D54 /* CompressionArtifacts.cpp */; };
+		317346D62E6075BE008E4D54 /* EyesVisible.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346AD2E6075BE008E4D54 /* EyesVisible.cpp */; };
+		317346D72E6075BE008E4D54 /* OverExposurePrevention.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346BA2E6075BE008E4D54 /* OverExposurePrevention.cpp */; };
+		317346DC2E607628008E4D54 /* FaceMeasures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346D92E607628008E4D54 /* FaceMeasures.cpp */; };
+		317346DD2E607628008E4D54 /* landmarks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346DA2E607628008E4D54 /* landmarks.cpp */; };
+		317346DE2E607628008E4D54 /* PartExtractor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346DB2E607628008E4D54 /* PartExtractor.cpp */; };
+		317346DF2E607628008E4D54 /* adnet_landmarks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346D82E607628008E4D54 /* adnet_landmarks.cpp */; };
+		317346E42E607648008E4D54 /* FaceParsing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346E12E607648008E4D54 /* FaceParsing.cpp */; };
+		317346E52E607648008E4D54 /* ONNXRTSegmentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346E22E607648008E4D54 /* ONNXRTSegmentation.cpp */; };
+		317346E62E607648008E4D54 /* FaceOcclusionSegmentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346E02E607648008E4D54 /* FaceOcclusionSegmentation.cpp */; };
+		317346E72E607648008E4D54 /* segmentations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346E32E607648008E4D54 /* segmentations.cpp */; };
+		317346EA2E607664008E4D54 /* poseEstimators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346E92E607664008E4D54 /* poseEstimators.cpp */; };
+		317346EB2E607664008E4D54 /* HeadPose3DDFAV2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346E82E607664008E4D54 /* HeadPose3DDFAV2.cpp */; };
+		317346EE2E60767D008E4D54 /* detectors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346EC2E60767D008E4D54 /* detectors.cpp */; };
+		317346EF2E60767D008E4D54 /* opencv_ssd_face_detector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346ED2E60767D008E4D54 /* opencv_ssd_face_detector.cpp */; };
+		317346F72E607696008E4D54 /* image_io.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346F22E607696008E4D54 /* image_io.cpp */; };
+		317346F82E607696008E4D54 /* Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346F52E607696008E4D54 /* Session.cpp */; };
+		317346F92E607696008E4D54 /* DataStreamAndroid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346F12E607696008E4D54 /* DataStreamAndroid.cpp */; };
+		317346FA2E607696008E4D54 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346F62E607696008E4D54 /* utils.cpp */; };
+		317346FB2E607696008E4D54 /* OFIQError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346F42E607696008E4D54 /* OFIQError.cpp */; };
+		317346FC2E607696008E4D54 /* Configuration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346F02E607696008E4D54 /* Configuration.cpp */; };
+		317346FD2E607696008E4D54 /* image_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346F32E607696008E4D54 /* image_utils.cpp */; };
+		317347002E6076B9008E4D54 /* OFIQInitialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346FF2E6076B9008E4D54 /* OFIQInitialization.cpp */; };
+		317347012E6076B9008E4D54 /* OFIQImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317346FE2E6076B9008E4D54 /* OFIQImpl.cpp */; };
+		31852C422C737A5D00890033 /* ofiqlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 31852C362C737A5D00890033 /* ofiqlib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31852C4F2C73820E00890033 /* OfiqLib.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31852C4E2C73820E00890033 /* OfiqLib.mm */; };
+		31852CCA2C74833C00890033 /* data in Resources */ = {isa = PBXBuildFile; fileRef = 31852CC92C74833C00890033 /* data */; };
+		31852D142C748FCF00890033 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31852C582C7464BE00890033 /* opencv2.framework */; platformFilter = ios; };
+		31852D1A2C74978700890033 /* InitializeResult.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31852D192C74978700890033 /* InitializeResult.mm */; };
+		31852D1C2C7497DF00890033 /* InitializeResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 31852D1B2C7497C800890033 /* InitializeResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31852D1E2C74986900890033 /* ReturnCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 31852D1D2C74986500890033 /* ReturnCode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31997FCA2C7613A200520C8A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31997FC92C7613A200520C8A /* UIKit.framework */; };
+		31997FD02C770AAC00520C8A /* QualityMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = 31997FCF2C770AAC00520C8A /* QualityMetrics.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31997FD22C77112E00520C8A /* QualityMeasureAssessment.h in Headers */ = {isa = PBXBuildFile; fileRef = 31997FD12C77112E00520C8A /* QualityMeasureAssessment.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31997FD42C7719D500520C8A /* QualityMetrics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31997FD32C7719D500520C8A /* QualityMetrics.mm */; };
+		31997FD62C771A4300520C8A /* QualityMeasureAssessment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31997FD52C771A4300520C8A /* QualityMeasureAssessment.mm */; };
+		31D35B9F2C7C4E5800A1DB5C /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D35B9E2C7C4DC900A1DB5C /* Version.h */; settings = {ATTRIBUTES = (Public, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		317346A62E6075BE008E4D54 /* BackgroundUniformity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BackgroundUniformity.cpp; path = ../../../../OFIQlib/modules/measures/src/BackgroundUniformity.cpp; sourceTree = SOURCE_ROOT; };
+		317346A72E6075BE008E4D54 /* CompressionArtifacts.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CompressionArtifacts.cpp; path = ../../../../OFIQlib/modules/measures/src/CompressionArtifacts.cpp; sourceTree = SOURCE_ROOT; };
+		317346A82E6075BE008E4D54 /* CropOfTheFaceImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CropOfTheFaceImage.cpp; path = ../../../../OFIQlib/modules/measures/src/CropOfTheFaceImage.cpp; sourceTree = SOURCE_ROOT; };
+		317346A92E6075BE008E4D54 /* DynamicRange.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DynamicRange.cpp; path = ../../../../OFIQlib/modules/measures/src/DynamicRange.cpp; sourceTree = SOURCE_ROOT; };
+		317346AA2E6075BE008E4D54 /* Executor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Executor.cpp; path = ../../../../OFIQlib/modules/measures/src/Executor.cpp; sourceTree = SOURCE_ROOT; };
+		317346AB2E6075BE008E4D54 /* ExpressionNeutrality.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ExpressionNeutrality.cpp; path = ../../../../OFIQlib/modules/measures/src/ExpressionNeutrality.cpp; sourceTree = SOURCE_ROOT; };
+		317346AC2E6075BE008E4D54 /* EyesOpen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = EyesOpen.cpp; path = ../../../../OFIQlib/modules/measures/src/EyesOpen.cpp; sourceTree = SOURCE_ROOT; };
+		317346AD2E6075BE008E4D54 /* EyesVisible.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = EyesVisible.cpp; path = ../../../../OFIQlib/modules/measures/src/EyesVisible.cpp; sourceTree = SOURCE_ROOT; };
+		317346AE2E6075BE008E4D54 /* FaceOcclusionPrevention.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FaceOcclusionPrevention.cpp; path = ../../../../OFIQlib/modules/measures/src/FaceOcclusionPrevention.cpp; sourceTree = SOURCE_ROOT; };
+		317346AF2E6075BE008E4D54 /* HeadPose.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HeadPose.cpp; path = ../../../../OFIQlib/modules/measures/src/HeadPose.cpp; sourceTree = SOURCE_ROOT; };
+		317346B02E6075BE008E4D54 /* HeadSize.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HeadSize.cpp; path = ../../../../OFIQlib/modules/measures/src/HeadSize.cpp; sourceTree = SOURCE_ROOT; };
+		317346B12E6075BE008E4D54 /* IlluminationUniformity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IlluminationUniformity.cpp; path = ../../../../OFIQlib/modules/measures/src/IlluminationUniformity.cpp; sourceTree = SOURCE_ROOT; };
+		317346B22E6075BE008E4D54 /* InterEyeDistance.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = InterEyeDistance.cpp; path = ../../../../OFIQlib/modules/measures/src/InterEyeDistance.cpp; sourceTree = SOURCE_ROOT; };
+		317346B32E6075BE008E4D54 /* Luminance.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Luminance.cpp; path = ../../../../OFIQlib/modules/measures/src/Luminance.cpp; sourceTree = SOURCE_ROOT; };
+		317346B42E6075BE008E4D54 /* Measure.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Measure.cpp; path = ../../../../OFIQlib/modules/measures/src/Measure.cpp; sourceTree = SOURCE_ROOT; };
+		317346B52E6075BE008E4D54 /* MeasureFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MeasureFactory.cpp; path = ../../../../OFIQlib/modules/measures/src/MeasureFactory.cpp; sourceTree = SOURCE_ROOT; };
+		317346B62E6075BE008E4D54 /* MouthClosed.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MouthClosed.cpp; path = ../../../../OFIQlib/modules/measures/src/MouthClosed.cpp; sourceTree = SOURCE_ROOT; };
+		317346B72E6075BE008E4D54 /* MouthOcclusionPrevention.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MouthOcclusionPrevention.cpp; path = ../../../../OFIQlib/modules/measures/src/MouthOcclusionPrevention.cpp; sourceTree = SOURCE_ROOT; };
+		317346B82E6075BE008E4D54 /* NaturalColour.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = NaturalColour.cpp; path = ../../../../OFIQlib/modules/measures/src/NaturalColour.cpp; sourceTree = SOURCE_ROOT; };
+		317346B92E6075BE008E4D54 /* NoHeadCoverings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = NoHeadCoverings.cpp; path = ../../../../OFIQlib/modules/measures/src/NoHeadCoverings.cpp; sourceTree = SOURCE_ROOT; };
+		317346BA2E6075BE008E4D54 /* OverExposurePrevention.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OverExposurePrevention.cpp; path = ../../../../OFIQlib/modules/measures/src/OverExposurePrevention.cpp; sourceTree = SOURCE_ROOT; };
+		317346BB2E6075BE008E4D54 /* Sharpness.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Sharpness.cpp; path = ../../../../OFIQlib/modules/measures/src/Sharpness.cpp; sourceTree = SOURCE_ROOT; };
+		317346BC2E6075BE008E4D54 /* SingleFacePresent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SingleFacePresent.cpp; path = ../../../../OFIQlib/modules/measures/src/SingleFacePresent.cpp; sourceTree = SOURCE_ROOT; };
+		317346BD2E6075BE008E4D54 /* UnderExposurePrevention.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnderExposurePrevention.cpp; path = ../../../../OFIQlib/modules/measures/src/UnderExposurePrevention.cpp; sourceTree = SOURCE_ROOT; };
+		317346BE2E6075BE008E4D54 /* UnifiedQualityScore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedQualityScore.cpp; path = ../../../../OFIQlib/modules/measures/src/UnifiedQualityScore.cpp; sourceTree = SOURCE_ROOT; };
+		317346D82E607628008E4D54 /* adnet_landmarks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = adnet_landmarks.cpp; path = ../../../../OFIQlib/modules/landmarks/src/adnet_landmarks.cpp; sourceTree = SOURCE_ROOT; };
+		317346D92E607628008E4D54 /* FaceMeasures.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FaceMeasures.cpp; path = ../../../../OFIQlib/modules/landmarks/src/FaceMeasures.cpp; sourceTree = SOURCE_ROOT; };
+		317346DA2E607628008E4D54 /* landmarks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = landmarks.cpp; path = ../../../../OFIQlib/modules/landmarks/src/landmarks.cpp; sourceTree = SOURCE_ROOT; };
+		317346DB2E607628008E4D54 /* PartExtractor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PartExtractor.cpp; path = ../../../../OFIQlib/modules/landmarks/src/PartExtractor.cpp; sourceTree = SOURCE_ROOT; };
+		317346E02E607648008E4D54 /* FaceOcclusionSegmentation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FaceOcclusionSegmentation.cpp; path = ../../../../OFIQlib/modules/segmentations/src/FaceOcclusionSegmentation.cpp; sourceTree = SOURCE_ROOT; };
+		317346E12E607648008E4D54 /* FaceParsing.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FaceParsing.cpp; path = ../../../../OFIQlib/modules/segmentations/src/FaceParsing.cpp; sourceTree = SOURCE_ROOT; };
+		317346E22E607648008E4D54 /* ONNXRTSegmentation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ONNXRTSegmentation.cpp; path = ../../../../OFIQlib/modules/segmentations/src/ONNXRTSegmentation.cpp; sourceTree = SOURCE_ROOT; };
+		317346E32E607648008E4D54 /* segmentations.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = segmentations.cpp; path = ../../../../OFIQlib/modules/segmentations/src/segmentations.cpp; sourceTree = SOURCE_ROOT; };
+		317346E82E607664008E4D54 /* HeadPose3DDFAV2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HeadPose3DDFAV2.cpp; path = ../../../../OFIQlib/modules/poseEstimators/src/HeadPose3DDFAV2.cpp; sourceTree = SOURCE_ROOT; };
+		317346E92E607664008E4D54 /* poseEstimators.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = poseEstimators.cpp; path = ../../../../OFIQlib/modules/poseEstimators/src/poseEstimators.cpp; sourceTree = SOURCE_ROOT; };
+		317346EC2E60767D008E4D54 /* detectors.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = detectors.cpp; path = ../../../../OFIQlib/modules/detectors/src/detectors.cpp; sourceTree = SOURCE_ROOT; };
+		317346ED2E60767D008E4D54 /* opencv_ssd_face_detector.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = opencv_ssd_face_detector.cpp; path = ../../../../OFIQlib/modules/detectors/src/opencv_ssd_face_detector.cpp; sourceTree = SOURCE_ROOT; };
+		317346F02E607696008E4D54 /* Configuration.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Configuration.cpp; path = ../../../../OFIQlib/modules/utils/src/Configuration.cpp; sourceTree = SOURCE_ROOT; };
+		317346F12E607696008E4D54 /* DataStreamAndroid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DataStreamAndroid.cpp; path = ../../../../OFIQlib/modules/utils/src/DataStreamAndroid.cpp; sourceTree = SOURCE_ROOT; };
+		317346F22E607696008E4D54 /* image_io.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = image_io.cpp; path = ../../../../OFIQlib/modules/utils/src/image_io.cpp; sourceTree = SOURCE_ROOT; };
+		317346F32E607696008E4D54 /* image_utils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = image_utils.cpp; path = ../../../../OFIQlib/modules/utils/src/image_utils.cpp; sourceTree = SOURCE_ROOT; };
+		317346F42E607696008E4D54 /* OFIQError.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OFIQError.cpp; path = ../../../../OFIQlib/modules/utils/src/OFIQError.cpp; sourceTree = SOURCE_ROOT; };
+		317346F52E607696008E4D54 /* Session.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Session.cpp; path = ../../../../OFIQlib/modules/utils/src/Session.cpp; sourceTree = SOURCE_ROOT; };
+		317346F62E607696008E4D54 /* utils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = utils.cpp; path = ../../../../OFIQlib/modules/utils/src/utils.cpp; sourceTree = SOURCE_ROOT; };
+		317346FE2E6076B9008E4D54 /* OFIQImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OFIQImpl.cpp; path = ../../../../OFIQlib/src/OFIQImpl.cpp; sourceTree = SOURCE_ROOT; };
+		317346FF2E6076B9008E4D54 /* OFIQInitialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OFIQInitialization.cpp; path = ../../../../OFIQlib/src/OFIQInitialization.cpp; sourceTree = SOURCE_ROOT; };
+		31852C332C737A5D00890033 /* ofiqlib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ofiqlib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		31852C362C737A5D00890033 /* ofiqlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofiqlib.h; sourceTree = "<group>"; };
+		31852C4E2C73820E00890033 /* OfiqLib.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OfiqLib.mm; sourceTree = "<group>"; };
+		31852C582C7464BE00890033 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../../../eesfm_cpp/extern/frameworks/opencv2.framework; sourceTree = "<group>"; };
+		31852CC92C74833C00890033 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; path = data; sourceTree = "<group>"; };
+		31852D192C74978700890033 /* InitializeResult.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InitializeResult.mm; sourceTree = "<group>"; };
+		31852D1B2C7497C800890033 /* InitializeResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InitializeResult.h; sourceTree = "<group>"; };
+		31852D1D2C74986500890033 /* ReturnCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReturnCode.h; sourceTree = "<group>"; };
+		31997FC92C7613A200520C8A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		31997FCF2C770AAC00520C8A /* QualityMetrics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QualityMetrics.h; sourceTree = "<group>"; };
+		31997FD12C77112E00520C8A /* QualityMeasureAssessment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QualityMeasureAssessment.h; sourceTree = "<group>"; };
+		31997FD32C7719D500520C8A /* QualityMetrics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = QualityMetrics.mm; sourceTree = "<group>"; };
+		31997FD52C771A4300520C8A /* QualityMeasureAssessment.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = QualityMeasureAssessment.mm; sourceTree = "<group>"; };
+		31D35B9E2C7C4DC900A1DB5C /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
+		31D35BA02C7C50B600A1DB5C /* prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prefix.pch; sourceTree = "<group>"; };
+		4075C6D081DD7F464D9D5465 /* Pods-ofiqlib.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ofiqlib.release.xcconfig"; path = "Target Support Files/Pods-ofiqlib/Pods-ofiqlib.release.xcconfig"; sourceTree = "<group>"; };
+		5328D86F88152BA8A14D37AB /* Pods-ofiqlib.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ofiqlib.debug.xcconfig"; path = "Target Support Files/Pods-ofiqlib/Pods-ofiqlib.debug.xcconfig"; sourceTree = "<group>"; };
+		73C2DE3F243E0CFB57BD104B /* Pods_ofiqlib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ofiqlib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B62B881F8198FD7D660B31E /* Pods_ofiqlib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ofiqlib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		31852C302C737A5D00890033 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31997FCA2C7613A200520C8A /* UIKit.framework in Frameworks */,
+				31852D142C748FCF00890033 /* opencv2.framework in Frameworks */,
+				291E2C93F607AB9EA90E4CB0 /* Pods_ofiqlib.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		31313B5F2C89A62E00D16091 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				8B62B881F8198FD7D660B31E /* Pods_ofiqlib.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		31852C292C737A5D00890033 = {
+			isa = PBXGroup;
+			children = (
+				31D35BA02C7C50B600A1DB5C /* prefix.pch */,
+				31D35B9E2C7C4DC900A1DB5C /* Version.h */,
+				31852C352C737A5D00890033 /* ofiqlib */,
+				31852C342C737A5D00890033 /* Products */,
+				31852C572C7464BE00890033 /* Frameworks */,
+				9B95DA0E686351557EDE77E9 /* Pods */,
+				31313B5F2C89A62E00D16091 /* Recovered References */,
+			);
+			sourceTree = "<group>";
+		};
+		31852C342C737A5D00890033 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				31852C332C737A5D00890033 /* ofiqlib.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		31852C352C737A5D00890033 /* ofiqlib */ = {
+			isa = PBXGroup;
+			children = (
+				31852C4D2C7380C400890033 /* OFIQLib */,
+				31852C362C737A5D00890033 /* ofiqlib.h */,
+				31852C4E2C73820E00890033 /* OfiqLib.mm */,
+				31852D192C74978700890033 /* InitializeResult.mm */,
+				31852D1B2C7497C800890033 /* InitializeResult.h */,
+				31852D1D2C74986500890033 /* ReturnCode.h */,
+				31997FCF2C770AAC00520C8A /* QualityMetrics.h */,
+				31997FD32C7719D500520C8A /* QualityMetrics.mm */,
+				31997FD12C77112E00520C8A /* QualityMeasureAssessment.h */,
+				31997FD52C771A4300520C8A /* QualityMeasureAssessment.mm */,
+				31852CC92C74833C00890033 /* data */,
+			);
+			path = ofiqlib;
+			sourceTree = "<group>";
+		};
+		31852C4D2C7380C400890033 /* OFIQLib */ = {
+			isa = PBXGroup;
+			children = (
+				31852C662C747A1B00890033 /* modules */,
+				317346FE2E6076B9008E4D54 /* OFIQImpl.cpp */,
+				317346FF2E6076B9008E4D54 /* OFIQInitialization.cpp */,
+			);
+			name = OFIQLib;
+			sourceTree = "<group>";
+		};
+		31852C572C7464BE00890033 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				31997FC92C7613A200520C8A /* UIKit.framework */,
+				31852C582C7464BE00890033 /* opencv2.framework */,
+				73C2DE3F243E0CFB57BD104B /* Pods_ofiqlib.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		31852C662C747A1B00890033 /* modules */ = {
+			isa = PBXGroup;
+			children = (
+				31852C952C747C7600890033 /* measures */,
+				31852C8B2C747C2700890033 /* landmarks */,
+				31852C812C747B3C00890033 /* segmentations */,
+				31852C7B2C747AFC00890033 /* poseEstimators */,
+				31852C752C747AC000890033 /* detectors */,
+				31852C672C747A2800890033 /* utils */,
+			);
+			name = modules;
+			sourceTree = "<group>";
+		};
+		31852C672C747A2800890033 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				31852C682C747A3300890033 /* src */,
+			);
+			name = utils;
+			sourceTree = "<group>";
+		};
+		31852C682C747A3300890033 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				317346F02E607696008E4D54 /* Configuration.cpp */,
+				317346F12E607696008E4D54 /* DataStreamAndroid.cpp */,
+				317346F22E607696008E4D54 /* image_io.cpp */,
+				317346F32E607696008E4D54 /* image_utils.cpp */,
+				317346F42E607696008E4D54 /* OFIQError.cpp */,
+				317346F52E607696008E4D54 /* Session.cpp */,
+				317346F62E607696008E4D54 /* utils.cpp */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		31852C752C747AC000890033 /* detectors */ = {
+			isa = PBXGroup;
+			children = (
+				31852C762C747ACC00890033 /* src */,
+			);
+			name = detectors;
+			sourceTree = "<group>";
+		};
+		31852C762C747ACC00890033 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				317346EC2E60767D008E4D54 /* detectors.cpp */,
+				317346ED2E60767D008E4D54 /* opencv_ssd_face_detector.cpp */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		31852C7B2C747AFC00890033 /* poseEstimators */ = {
+			isa = PBXGroup;
+			children = (
+				31852C7C2C747B0C00890033 /* src */,
+			);
+			name = poseEstimators;
+			sourceTree = "<group>";
+		};
+		31852C7C2C747B0C00890033 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				317346E82E607664008E4D54 /* HeadPose3DDFAV2.cpp */,
+				317346E92E607664008E4D54 /* poseEstimators.cpp */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		31852C812C747B3C00890033 /* segmentations */ = {
+			isa = PBXGroup;
+			children = (
+				31852C822C747B4500890033 /* src */,
+			);
+			name = segmentations;
+			sourceTree = "<group>";
+		};
+		31852C822C747B4500890033 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				317346E02E607648008E4D54 /* FaceOcclusionSegmentation.cpp */,
+				317346E12E607648008E4D54 /* FaceParsing.cpp */,
+				317346E22E607648008E4D54 /* ONNXRTSegmentation.cpp */,
+				317346E32E607648008E4D54 /* segmentations.cpp */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		31852C8B2C747C2700890033 /* landmarks */ = {
+			isa = PBXGroup;
+			children = (
+				31852C8C2C747C6000890033 /* src */,
+			);
+			name = landmarks;
+			sourceTree = "<group>";
+		};
+		31852C8C2C747C6000890033 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				317346D82E607628008E4D54 /* adnet_landmarks.cpp */,
+				317346D92E607628008E4D54 /* FaceMeasures.cpp */,
+				317346DA2E607628008E4D54 /* landmarks.cpp */,
+				317346DB2E607628008E4D54 /* PartExtractor.cpp */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		31852C952C747C7600890033 /* measures */ = {
+			isa = PBXGroup;
+			children = (
+				31852C962C747CBA00890033 /* src */,
+			);
+			name = measures;
+			sourceTree = "<group>";
+		};
+		31852C962C747CBA00890033 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				317346A62E6075BE008E4D54 /* BackgroundUniformity.cpp */,
+				317346A72E6075BE008E4D54 /* CompressionArtifacts.cpp */,
+				317346A82E6075BE008E4D54 /* CropOfTheFaceImage.cpp */,
+				317346A92E6075BE008E4D54 /* DynamicRange.cpp */,
+				317346AA2E6075BE008E4D54 /* Executor.cpp */,
+				317346AB2E6075BE008E4D54 /* ExpressionNeutrality.cpp */,
+				317346AC2E6075BE008E4D54 /* EyesOpen.cpp */,
+				317346AD2E6075BE008E4D54 /* EyesVisible.cpp */,
+				317346AE2E6075BE008E4D54 /* FaceOcclusionPrevention.cpp */,
+				317346AF2E6075BE008E4D54 /* HeadPose.cpp */,
+				317346B02E6075BE008E4D54 /* HeadSize.cpp */,
+				317346B12E6075BE008E4D54 /* IlluminationUniformity.cpp */,
+				317346B22E6075BE008E4D54 /* InterEyeDistance.cpp */,
+				317346B32E6075BE008E4D54 /* Luminance.cpp */,
+				317346B42E6075BE008E4D54 /* Measure.cpp */,
+				317346B52E6075BE008E4D54 /* MeasureFactory.cpp */,
+				317346B62E6075BE008E4D54 /* MouthClosed.cpp */,
+				317346B72E6075BE008E4D54 /* MouthOcclusionPrevention.cpp */,
+				317346B82E6075BE008E4D54 /* NaturalColour.cpp */,
+				317346B92E6075BE008E4D54 /* NoHeadCoverings.cpp */,
+				317346BA2E6075BE008E4D54 /* OverExposurePrevention.cpp */,
+				317346BB2E6075BE008E4D54 /* Sharpness.cpp */,
+				317346BC2E6075BE008E4D54 /* SingleFacePresent.cpp */,
+				317346BD2E6075BE008E4D54 /* UnderExposurePrevention.cpp */,
+				317346BE2E6075BE008E4D54 /* UnifiedQualityScore.cpp */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		9B95DA0E686351557EDE77E9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5328D86F88152BA8A14D37AB /* Pods-ofiqlib.debug.xcconfig */,
+				4075C6D081DD7F464D9D5465 /* Pods-ofiqlib.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		31852C2E2C737A5D00890033 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31852D1E2C74986900890033 /* ReturnCode.h in Headers */,
+				31852C422C737A5D00890033 /* ofiqlib.h in Headers */,
+				31997FD02C770AAC00520C8A /* QualityMetrics.h in Headers */,
+				31997FD22C77112E00520C8A /* QualityMeasureAssessment.h in Headers */,
+				31852D1C2C7497DF00890033 /* InitializeResult.h in Headers */,
+				31D35B9F2C7C4E5800A1DB5C /* Version.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		31852C322C737A5D00890033 /* ofiqlib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 31852C452C737A5D00890033 /* Build configuration list for PBXNativeTarget "ofiqlib" */;
+			buildPhases = (
+				B2EA8A55A65A59F50AB67252 /* [CP] Check Pods Manifest.lock */,
+				31D35B9C2C78C4BF00A1DB5C /* Run Script */,
+				31852C2E2C737A5D00890033 /* Headers */,
+				31852C2F2C737A5D00890033 /* Sources */,
+				31852C302C737A5D00890033 /* Frameworks */,
+				31852C312C737A5D00890033 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ofiqlib;
+			productName = ofiqlib;
+			productReference = 31852C332C737A5D00890033 /* ofiqlib.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		31852C2A2C737A5D00890033 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					31852C322C737A5D00890033 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = 31852C2D2C737A5D00890033 /* Build configuration list for PBXProject "ofiqlib" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 31852C292C737A5D00890033;
+			productRefGroup = 31852C342C737A5D00890033 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				31852C322C737A5D00890033 /* ofiqlib */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		31852C312C737A5D00890033 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31852CCA2C74833C00890033 /* data in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		31D35B9C2C78C4BF00A1DB5C /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./readVersion.sh\n";
+		};
+		B2EA8A55A65A59F50AB67252 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ofiqlib-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		31852C2F2C737A5D00890033 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31852D1A2C74978700890033 /* InitializeResult.mm in Sources */,
+				31997FD42C7719D500520C8A /* QualityMetrics.mm in Sources */,
+				317346BF2E6075BE008E4D54 /* Luminance.cpp in Sources */,
+				317346C02E6075BE008E4D54 /* Measure.cpp in Sources */,
+				317346C12E6075BE008E4D54 /* UnifiedQualityScore.cpp in Sources */,
+				317346C22E6075BE008E4D54 /* MouthClosed.cpp in Sources */,
+				317346C32E6075BE008E4D54 /* MouthOcclusionPrevention.cpp in Sources */,
+				317346DC2E607628008E4D54 /* FaceMeasures.cpp in Sources */,
+				317346DD2E607628008E4D54 /* landmarks.cpp in Sources */,
+				317346DE2E607628008E4D54 /* PartExtractor.cpp in Sources */,
+				317346DF2E607628008E4D54 /* adnet_landmarks.cpp in Sources */,
+				317346C42E6075BE008E4D54 /* NoHeadCoverings.cpp in Sources */,
+				317346C52E6075BE008E4D54 /* Executor.cpp in Sources */,
+				317346C62E6075BE008E4D54 /* DynamicRange.cpp in Sources */,
+				317346C72E6075BE008E4D54 /* InterEyeDistance.cpp in Sources */,
+				317346C82E6075BE008E4D54 /* IlluminationUniformity.cpp in Sources */,
+				317346C92E6075BE008E4D54 /* NaturalColour.cpp in Sources */,
+				317346CA2E6075BE008E4D54 /* BackgroundUniformity.cpp in Sources */,
+				317346CB2E6075BE008E4D54 /* MeasureFactory.cpp in Sources */,
+				317346E42E607648008E4D54 /* FaceParsing.cpp in Sources */,
+				317346E52E607648008E4D54 /* ONNXRTSegmentation.cpp in Sources */,
+				317346EA2E607664008E4D54 /* poseEstimators.cpp in Sources */,
+				317346EB2E607664008E4D54 /* HeadPose3DDFAV2.cpp in Sources */,
+				317346E62E607648008E4D54 /* FaceOcclusionSegmentation.cpp in Sources */,
+				317346E72E607648008E4D54 /* segmentations.cpp in Sources */,
+				317346CC2E6075BE008E4D54 /* UnderExposurePrevention.cpp in Sources */,
+				317346CD2E6075BE008E4D54 /* CropOfTheFaceImage.cpp in Sources */,
+				317346CE2E6075BE008E4D54 /* EyesOpen.cpp in Sources */,
+				317346CF2E6075BE008E4D54 /* HeadPose.cpp in Sources */,
+				317346D02E6075BE008E4D54 /* SingleFacePresent.cpp in Sources */,
+				317346D12E6075BE008E4D54 /* Sharpness.cpp in Sources */,
+				317346EE2E60767D008E4D54 /* detectors.cpp in Sources */,
+				317346EF2E60767D008E4D54 /* opencv_ssd_face_detector.cpp in Sources */,
+				317346D22E6075BE008E4D54 /* ExpressionNeutrality.cpp in Sources */,
+				317346D32E6075BE008E4D54 /* FaceOcclusionPrevention.cpp in Sources */,
+				317346D42E6075BE008E4D54 /* HeadSize.cpp in Sources */,
+				317347002E6076B9008E4D54 /* OFIQInitialization.cpp in Sources */,
+				317347012E6076B9008E4D54 /* OFIQImpl.cpp in Sources */,
+				317346D52E6075BE008E4D54 /* CompressionArtifacts.cpp in Sources */,
+				317346D62E6075BE008E4D54 /* EyesVisible.cpp in Sources */,
+				317346D72E6075BE008E4D54 /* OverExposurePrevention.cpp in Sources */,
+				31997FD62C771A4300520C8A /* QualityMeasureAssessment.mm in Sources */,
+				31852C4F2C73820E00890033 /* OfiqLib.mm in Sources */,
+				317346F72E607696008E4D54 /* image_io.cpp in Sources */,
+				317346F82E607696008E4D54 /* Session.cpp in Sources */,
+				317346F92E607696008E4D54 /* DataStreamAndroid.cpp in Sources */,
+				317346FA2E607696008E4D54 /* utils.cpp in Sources */,
+				317346FB2E607696008E4D54 /* OFIQError.cpp in Sources */,
+				317346FC2E607696008E4D54 /* Configuration.cpp in Sources */,
+				317346FD2E607696008E4D54 /* image_utils.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		31852C432C737A5D00890033 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		31852C442C737A5D00890033 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		31852C462C737A5D00890033 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5328D86F88152BA8A14D37AB /* Pods-ofiqlib.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../../../extern/frameworks/",
+					"$(inherited)",
+				);
+				GCC_PREFIX_HEADER = prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../../../OFIQlib/include",
+					"$(PROJECT_DIR)/../../../../OFIQlib/modules/**",
+					"$(PROJECT_DIR)/../../../../extern/libs/json/include",
+					"$(PROJECT_DIR)/../../../../extern/libs/PEGTL/include",
+					"$(PROJECT_DIR)/../../../../extern/libs/magic_enum/include/magic_enum",
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../../../extern/libs/gzip-hpp-0.1.0/include",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)";
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				PRODUCT_BUNDLE_IDENTIFIER = de.bund.bsi.ofiqmobile.lib;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		31852C472C737A5D00890033 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4075C6D081DD7F464D9D5465 /* Pods-ofiqlib.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../../../extern/frameworks/",
+					"$(inherited)",
+				);
+				GCC_PREFIX_HEADER = prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../../../OFIQlib/include",
+					"$(PROJECT_DIR)/../../../../OFIQlib/modules/**",
+					"$(PROJECT_DIR)/../../../../extern/libs/json/include",
+					"$(PROJECT_DIR)/../../../../extern/libs/PEGTL/include",
+					"$(PROJECT_DIR)/../../../../extern/libs/magic_enum/include/magic_enum",
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../../../extern/libs/gzip-hpp-0.1.0/include",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)";
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				PRODUCT_BUNDLE_IDENTIFIER = de.bund.bsi.ofiqmobile.lib;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		31852C2D2C737A5D00890033 /* Build configuration list for PBXProject "ofiqlib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				31852C432C737A5D00890033 /* Debug */,
+				31852C442C737A5D00890033 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		31852C452C737A5D00890033 /* Build configuration list for PBXNativeTarget "ofiqlib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				31852C462C737A5D00890033 /* Debug */,
+				31852C472C737A5D00890033 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 31852C2A2C737A5D00890033 /* Project object */;
+}
