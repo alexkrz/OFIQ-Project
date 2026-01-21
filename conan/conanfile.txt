@@ -20,7 +20,7 @@ opencv/*:with_openexr=False
 opencv/*:with_qt=False
 opencv/*:with_tiff=False
 opencv/*:with_wayland=False
-opencv/*:with_webp=False
+opencv/*:with_webp=True
 [generators]
 CMakeDeps
 CMakeToolchain

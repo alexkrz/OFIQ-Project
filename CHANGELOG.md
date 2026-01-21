@@ -1,5 +1,10 @@
 # Changes
 
+## Version 1.1.1 (2026-01-21)
+- Updates URL to external library dependency hosted by eu-LISA
+- Adds a CONTRIBUTING.md
+- OFIQSampleApp labels native scores clearly by a .native prefix
+
 ## Version 1.1.0 (2025-10-31)
 - Some runtime improvements have been implemented that affect conformance tests. In this way, the resulting OFIQ version is
 a conformant implementation by means of ISO/IEC 29794-5. However, it is not a reference implementation. Therfore, the minor version
