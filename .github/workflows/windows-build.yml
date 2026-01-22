@@ -24,7 +24,7 @@ jobs:
         python-version: '3.13'
 
     - name: Install CMake
-      uses: lukka/get-cmake@latest
+      uses: lukka/get-cmake@v4.1.2
       with:
             cmakeVersion: "~3.31.0"
 
