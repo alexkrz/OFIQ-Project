@@ -36,10 +36,6 @@
 #include <sstream>
 #include <string_view>
 
-#include <future>
-#include <thread>
-
-
 namespace fs = std::filesystem;
 
 using namespace OFIQ;
@@ -70,7 +66,6 @@ static std::shared_ptr<OFIQ::Interface> ofiqImplInstance;
 static OFIQ::ReturnStatus ofiqInitResult;
 
 static std::map<std::string, OFIQ::FaceImageQualityAssessment> assessmentsCache;
-static std::map<std::string, OFIQ::FaceImageQualityAssessment> assessmentsCacheMT;
 
 struct FaceImageAssessments
 {
@@ -237,7 +232,6 @@ TEST_P(ConformanceTest, ValidateScores)
     ASSERT_EQ(measureResult.scalar, round(measureResult.scalar))
         << "scalar scores have to be integer" << std::endl;
 }
-
 
 std::string generateTestname(const testing::TestParamInfo<ConformanceTest::ParamType>& info)
 {
