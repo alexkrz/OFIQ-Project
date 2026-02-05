@@ -59,20 +59,22 @@ then
 
     echo using conan file ${CONAN_FILE}
 
+    os_prefix=$(printf '%s' "$os" | tr '-' '_')
+
     if [ "$config" = "Release" ]
     then
         conan install ${OFIQLIB_CONAN_DIR}/${CONAN_FILE} \
             --build missing \
-            --profile:build ${OFIQLIB_CONAN_DIR}/conan_profile_release_${os}.txt \
-            --profile:host ${OFIQLIB_CONAN_DIR}/conan_profile_release_${os}.txt \
+            --profile:build ${OFIQLIB_CONAN_DIR}/conan_profile_release_${os_prefix}.txt \
+            --profile:host ${OFIQLIB_CONAN_DIR}/conan_profile_release_${os_prefix}.txt \
             --output-folder=../build/conan \
             -g CMakeDeps \
             -g CMakeToolchain
     else
         conan install ${OFIQLIB_CONAN_DIR}/${CONAN_FILE} \
         --build missing \
-        --profile:build ${OFIQLIB_CONAN_DIR}/conan_profile_debug_${os}.txt \
-        --profile:host ${OFIQLIB_CONAN_DIR}/conan_profile_debug_${os}.txt \
+        --profile:build ${OFIQLIB_CONAN_DIR}/conan_profile_debug_${os_prefix}.txt \
+        --profile:host ${OFIQLIB_CONAN_DIR}/conan_profile_debug_${os_prefix}.txt \
         --output-folder=../build/conan \
         -g CMakeDeps \
         -g CMakeToolchain
