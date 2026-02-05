@@ -31,7 +31,7 @@ elif [ "$1" = "--os" ]; then
     elif [ "$1" = "linux-arm64" ]; then
         build_dir=build/build_linux_arm64
         install_dir=install_arm64_linux
-        os=linux_arm64
+        os=linux-arm64
     else
         echo "$1" is a not a supported OS
         exit
