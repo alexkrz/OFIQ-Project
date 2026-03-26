@@ -27,8 +27,8 @@
 #include "FaceMeasures.h"
 #include "FaceParts.h"
 #include <math.h>
-#include <unordered_set>
 #include <opencv2/imgproc.hpp>
+#include <unordered_set>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -51,8 +51,10 @@ namespace OFIQ_LIB::modules::landmarks
         OFIQ::LandmarkPoint point;
         if (count > 0)
         {
-            point.x = static_cast<int16_t>(round(static_cast<float>(sumX) / static_cast<float>(count)));
-            point.y = static_cast<int16_t>(round(static_cast<float>(sumY) / static_cast<float>(count)));
+            point.x =
+                static_cast<int16_t>(round(static_cast<float>(sumX) / static_cast<float>(count)));
+            point.y =
+                static_cast<int16_t>(round(static_cast<float>(sumY) / static_cast<float>(count)));
         }
 
         return point;
@@ -94,7 +96,10 @@ namespace OFIQ_LIB::modules::landmarks
 
 
     cv::Mat FaceMeasures::GetFaceMask(
-        const OFIQ::FaceLandmarks& faceLandmarks, const int height, const int width, const float alpha)
+        const OFIQ::FaceLandmarks& faceLandmarks,
+        const int height,
+        const int width,
+        const float alpha)
     {
         std::vector<cv::Point2i> landmarkPoints;
         for (const auto& landmark : faceLandmarks.landmarks)
@@ -107,8 +112,10 @@ namespace OFIQ_LIB::modules::landmarks
             std::vector<cv::Point2i> contour;
             cv::Point2f eyesMidpoint;
             cv::Point2f chin;
-            OFIQ::Landmarks eyeCorners = PartExtractor::getFacePart(faceLandmarks, FaceParts::LEFT_EYE_CORNERS);
-            OFIQ::Landmarks rightEyeCorners = PartExtractor::getFacePart(faceLandmarks, FaceParts::RIGHT_EYE_CORNERS);
+            OFIQ::Landmarks eyeCorners =
+                PartExtractor::getFacePart(faceLandmarks, FaceParts::LEFT_EYE_CORNERS);
+            OFIQ::Landmarks rightEyeCorners =
+                PartExtractor::getFacePart(faceLandmarks, FaceParts::RIGHT_EYE_CORNERS);
             eyeCorners.insert(eyeCorners.end(), rightEyeCorners.begin(), rightEyeCorners.end());
             for (auto eyeCorner : eyeCorners)
             {
@@ -120,7 +127,7 @@ namespace OFIQ_LIB::modules::landmarks
             {
                 int chinIndex = 16;
                 chin = landmarkPoints[chinIndex];
-                std::vector<int> contourIndices = { 0, 7, 25, 32 };
+                std::vector<int> contourIndices = {0, 7, 25, 32};
                 for (auto index : contourIndices)
                 {
                     contour.push_back(landmarkPoints[index]);
@@ -130,21 +137,35 @@ namespace OFIQ_LIB::modules::landmarks
                 throw std::invalid_argument("Unknown LandmarkType");
 
             cv::Point2f chinMidpointVector = eyesMidpoint - chin;
-            cv::Point2i topOfForehead{ (int)(eyesMidpoint.x + alpha * chinMidpointVector.x), (int)(eyesMidpoint.y + alpha * chinMidpointVector.y) };
-            std::vector <cv::Point2i> ellipsePoints = contour;
+            cv::Point2i topOfForehead{
+                (int)(eyesMidpoint.x + alpha * chinMidpointVector.x),
+                (int)(eyesMidpoint.y + alpha * chinMidpointVector.y)};
+            std::vector<cv::Point2i> ellipsePoints = contour;
             ellipsePoints.push_back(chin);
             ellipsePoints.push_back(topOfForehead);
             cv::RotatedRect ellipse = cv::fitEllipse(ellipsePoints);
             std::vector<cv::Point2i> polyPoints;
-            cv::Point2i ellipseCenter{ (int)ellipse.center.x, (int)ellipse.center.y };
-            cv::Size ellipseSize = { (int)(ellipse.size.width / 2), (int)(ellipse.size.height / 2) };
+            cv::Point2i ellipseCenter{(int)ellipse.center.x, (int)ellipse.center.y};
+            cv::Size ellipseSize = {(int)(ellipse.size.width / 2), (int)(ellipse.size.height / 2)};
             // Get landmarks for the ellipse
-            cv::ellipse2Poly(ellipseCenter, ellipseSize, (int)ellipse.angle, 0, 360, 10, polyPoints);
+            cv::ellipse2Poly(
+                ellipseCenter,
+                ellipseSize,
+                (int)ellipse.angle,
+                0,
+                360,
+                10,
+                polyPoints);
             // discard ellipse points which are not on forehead
-            polyPoints.erase(std::remove_if(polyPoints.begin(), polyPoints.end(), [chin, chinMidpointVector](cv::Point2f p)
-            {
-                return (p - chin).dot(chinMidpointVector) <= 1.1 * chinMidpointVector.dot(chinMidpointVector);
-            }), polyPoints.end());
+            polyPoints.erase(
+                std::remove_if(
+                    polyPoints.begin(),
+                    polyPoints.end(),
+                    [chin, chinMidpointVector](cv::Point2f p) {
+                        return (p - chin).dot(chinMidpointVector) <=
+                               1.1 * chinMidpointVector.dot(chinMidpointVector);
+                    }),
+                polyPoints.end());
             landmarkPoints.reserve(landmarkPoints.size() + polyPoints.size());
             landmarkPoints.insert(landmarkPoints.end(), polyPoints.begin(), polyPoints.end());
         }
@@ -161,7 +182,8 @@ namespace OFIQ_LIB::modules::landmarks
         for (auto& p : hullPoints)
         {
             cv::Point2f cropped = p;
-            cropped = (cropped - cv::Point2f(static_cast<float>(a), static_cast<float>(b))) / static_cast<float>(d - b) * static_cast<float>(imgSize);
+            cropped = (cropped - cv::Point2f(static_cast<float>(a), static_cast<float>(b))) /
+                      static_cast<float>(d - b) * static_cast<float>(imgSize);
             p.x = static_cast<int>(cropped.x);
             p.y = static_cast<int>(cropped.y);
         }

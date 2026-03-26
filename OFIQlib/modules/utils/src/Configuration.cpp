@@ -25,10 +25,9 @@
  */
 
 #include "Configuration.h"
-
+#include "DataStream.h"
 #include "OFIQError.h"
 #include <filesystem>
-#include <fstream>
 #include <magic_enum.hpp>
 #include <tao/json.hpp>
 
@@ -67,33 +66,36 @@ namespace OFIQ_LIB
         fs::path fullConfPath;
         fs::path pathConfFilename;
         // use default fileName 'ofiq_config.jaxn' if no configFilename was given
-        pathConfFilename = configFilename.empty() ? fs::path("ofiq_config.jaxn") : fs::path(configFilename);
-        
-        fullConfPath = pathConfFilename.parent_path().empty() ?
-            fs::weakly_canonical(configDirPath / pathConfFilename) : pathConfFilename;
+        pathConfFilename =
+            configFilename.empty() ? fs::path("ofiq_config.jaxn") : fs::path(configFilename);
 
-        std::ifstream istream(fullConfPath.string());
-        if(!istream.good())
-            throw std::invalid_argument("Invalid path to config file: " + fullConfPath.string());
+#if defined(ANDROID)
+        fullConfPath = pathConfFilename;
+#else
+        fullConfPath = pathConfFilename.parent_path().empty()
+                         ? fs::weakly_canonical(configDirPath / pathConfFilename)
+                         : pathConfFilename;
+#endif
+
+        DataStream stream(fullConfPath.string());
+        if (!stream.good())
+            throw OFIQError(
+                OFIQ::ReturnCode::MissingConfigFileError,
+                "Invalid path to config file: '" + fullConfPath.string() + "'");
 
         std::string source;
-        tao::json::value jsonValue = tao::json::jaxn::from_stream(istream, source);
+        tao::json::value jsonValue = tao::json::jaxn::from_stream(stream, source);
         ParseObject(parameters, jsonValue["config"], "");
-
     }
 
-    std::string Configuration::getDataDir() const {
-        return m_dataDir.string();
-    }
+    std::string Configuration::getDataDir() const { return m_dataDir.string(); }
 
-    void Configuration::SetDataDir(std::string_view dataDir)
-    {
-        m_dataDir = dataDir;
-    }
+    void Configuration::SetDataDir(std::string_view dataDir) { m_dataDir = dataDir; }
 
     bool Configuration::GetBool(const std::string& key, bool& value) const
     {
-        std::map<std::string, tao::json::value, std::less<>>::const_iterator citModel = parameters.find(key);
+        std::map<std::string, tao::json::value, std::less<>>::const_iterator citModel =
+            parameters.find(key);
         if (citModel == parameters.cend())
             return false;
         if (!citModel->second.is_boolean())
@@ -104,7 +106,8 @@ namespace OFIQ_LIB
 
     bool Configuration::GetString(const std::string& key, std::string& value) const
     {
-        std::map<std::string, tao::json::value, std::less<>>::const_iterator citModel = parameters.find(key);
+        std::map<std::string, tao::json::value, std::less<>>::const_iterator citModel =
+            parameters.find(key);
         if (citModel == parameters.cend())
             return false;
         if (!citModel->second.is_string())
@@ -116,19 +119,24 @@ namespace OFIQ_LIB
 
     bool Configuration::GetStringList(const std::string& key, std::vector<std::string>& value) const
     {
-        std::map<std::string, tao::json::value, std::less<>>::const_iterator citModel = parameters.find(key);
-        if (citModel == parameters.cend()) {
+        std::map<std::string, tao::json::value, std::less<>>::const_iterator citModel =
+            parameters.find(key);
+        if (citModel == parameters.cend())
+        {
             return false;
         }
 
-        if (!citModel->second.is_array()) {
+        if (!citModel->second.is_array())
+        {
             return false;
         }
-        
+
         auto theArray = citModel->second.get_array();
 
-        for (auto entry : theArray) {
-            if (entry.is_string()) {
+        for (auto entry : theArray)
+        {
+            if (entry.is_string())
+            {
                 value.push_back(entry.get_string());
             }
         }
@@ -137,11 +145,10 @@ namespace OFIQ_LIB
     }
 
 
-
-
     bool Configuration::GetNumber(const std::string& key, double& value) const
     {
-        std::map<std::string, tao::json::value, std::less<>>::const_iterator citModel = parameters.find(key);
+        std::map<std::string, tao::json::value, std::less<>>::const_iterator citModel =
+            parameters.find(key);
         if (citModel == parameters.cend())
             return false;
         const auto& item = citModel->second;
@@ -160,9 +167,10 @@ namespace OFIQ_LIB
             break;
 
         default:
-            throw std::invalid_argument(
+            throw OFIQError(
+                OFIQ::ReturnCode::MissingConfigParamError,
                 "invalid type in Configuration::GetNumber: " +
-                static_cast<std::string>(magic_enum::enum_name(item.type())));
+                    static_cast<std::string>(magic_enum::enum_name(item.type())));
         }
         return true;
     }
@@ -195,5 +203,20 @@ namespace OFIQ_LIB
                 OFIQ::ReturnCode::MissingConfigParamError,
                 "Required parameter missing: " + key);
         return value;
+    }
+
+    std::string Configuration::GetFullPath(const std::string& key) const
+    {
+        auto modelPath = GetString(key);
+#if defined(ANDROID)
+        // For *.gz files, the extension is removed by the AssetManager.
+        // https://github.com/ionic-team/capacitor/issues/5844
+        if (modelPath.size() >= 3 && modelPath.substr(modelPath.size() - 3) == ".gz")
+        {
+            modelPath.resize(modelPath.size() - 3);
+        }
+        return modelPath;
+#endif
+        return getDataDir() + "/" + modelPath;
     }
 }

@@ -25,11 +25,14 @@
  */
 
 #include "Sharpness.h"
-#include "OFIQError.h"
-#include <opencv2/ml.hpp>
+#include "DataStream.h"
 #include "FaceMeasures.h"
+#include "OFIQError.h"
 #include "utils.h"
+#include <gzip/decompress.hpp>
+#include <iterator>
 #include <opencv2/imgproc.hpp>
+#include <opencv2/ml.hpp>
 #include <opencv2/opencv.hpp>
 
 namespace OFIQ_LIB::modules::measures
@@ -41,26 +44,33 @@ namespace OFIQ_LIB::modules::measures
     static const std::string useAlignedConfigItem = prefixPath + "use_aligned_landmarks";
 
     Sharpness::Sharpness(const Configuration& configuration)
-    : Measure{ configuration, qualityMeasure }
+        : Measure{configuration, qualityMeasure}
     {
         if (!configuration.GetBool(useAlignedConfigItem, m_useAligned))
             m_useAligned = false;
         if (!configuration.GetNumber(faceRegionConfigItem, m_faceRegionAlpha))
             m_faceRegionAlpha = 0;
 
-        if (!configuration.GetString(paramModelFile, m_modelFile) ||
-            m_modelFile.empty())
-            throw OFIQError(OFIQ::ReturnCode::UnknownError,
+        if (!configuration.GetString(paramModelFile, m_modelFile) || m_modelFile.empty())
+            throw OFIQError(
+                OFIQ::ReturnCode::UnknownError,
                 std::string("Missing or empty value of parameter 'model_path' in Sharpness"));
         else
         {
             try
             {
-                m_rtree = cv::ml::RTrees::load(configuration.getDataDir() + "/" + m_modelFile);
+                auto modelPath = configuration.GetFullPath(paramModelFile);
+                DataStream instream(modelPath, std::ios::binary);
+                auto compressedData = std::vector<char>(
+                    (std::istreambuf_iterator<char>(instream)),
+                    std::istreambuf_iterator<char>());
+                std::string model = gzip::decompress(compressedData.data(), compressedData.size());
+                m_rtree = cv::ml::RTrees::loadFromString<cv::ml::RTrees>(model);
             }
             catch (const std::exception&)
             {
-                throw OFIQError(OFIQ::ReturnCode::UnknownError,
+                throw OFIQError(
+                    OFIQ::ReturnCode::UnknownError,
                     std::string("Unable to initialize Sharpness from given file: ") + m_modelFile);
             }
         }
@@ -77,11 +87,19 @@ namespace OFIQ_LIB::modules::measures
         AddSigmoid(qualityMeasure, defaultValues);
     }
 
-    void Sharpness::Execute(OFIQ_LIB::Session & session)
+    void Sharpness::Execute(OFIQ_LIB::Session& session)
     {
         cv::Mat faceCrop;
         cv::Mat maskCrop;
-        GetCroppedImages(session, faceCrop, maskCrop, m_useAligned, static_cast<float>(m_faceRegionAlpha));
+        GetCroppedImages(
+            session,
+            faceCrop,
+            maskCrop,
+            m_useAligned,
+            static_cast<float>(m_faceRegionAlpha));
+
+        if (faceCrop.channels() == 3)
+            cv::cvtColor(faceCrop, faceCrop, cv::COLOR_BGR2GRAY);
 
         cv::Mat features = GetClassifierFocusFeatures(faceCrop, maskCrop, true);
         features.convertTo(features, CV_32F);
@@ -90,7 +108,11 @@ namespace OFIQ_LIB::modules::measures
         m_rtree->predict(features, predResults, cv::ml::StatModel::RAW_OUTPUT);
 
         double prediction = static_cast<float>(m_numTrees) - predResults.at<float>(0, 0);
-        SetQualityMeasure(session, qualityMeasure, prediction, OFIQ::QualityMeasureReturnCode::Success);
+        SetQualityMeasure(
+            session,
+            qualityMeasure,
+            prediction,
+            OFIQ::QualityMeasureReturnCode::Success);
     }
 
     void Sharpness::GetCroppedImages(
@@ -109,32 +131,44 @@ namespace OFIQ_LIB::modules::measures
         }
         else
         {
-            img = copyToCvImage(session.image());
+            const OFIQ::Image& sourceImage = session.image();
+            img = cv::Mat(sourceImage.height, sourceImage.width, CV_8UC3, sourceImage.data.get());
             auto faceLandmarks = session.getLandmarks();
-            faceMask = landmarks::FaceMeasures::GetFaceMask(faceLandmarks, img.rows, img.cols, faceRegionAlpha) * 255;
+            faceMask = landmarks::FaceMeasures::GetFaceMask(
+                           faceLandmarks,
+                           img.rows,
+                           img.cols,
+                           faceRegionAlpha) *
+                       255;
         }
+
         std::vector<std::vector<cv::Point>> contours;
         cv::findContours(faceMask, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
-        cv::Rect rect = cv::boundingRect(contours[0]);
-        faceCrop = img(rect);
-        maskCrop = faceMask(rect);
+        cv::Rect faceRect = cv::boundingRect(contours[0]);
+
+        faceCrop = img(faceRect);
+        maskCrop = faceMask(faceRect);
     }
 
-    cv::Mat Sharpness::GetClassifierFocusFeatures(const cv::Mat& image, const cv::Mat& mask, bool applyBlur) const
+    cv::Mat Sharpness::GetClassifierFocusFeatures(
+        const cv::Mat& image, const cv::Mat& mask, bool applyBlur) const
     {
         cv::Mat features;
-        cv::Mat grayImage = image.clone();
+        cv::Mat grayImage;
         if (image.channels() == 3)
-        {
-            cv::cvtColor(grayImage, grayImage, cv::COLOR_BGR2GRAY);
-        }
-        cv::Mat grayBlur3 = grayImage.clone();
+            cv::cvtColor(image, grayImage, cv::COLOR_BGR2GRAY);
+        else
+            grayImage = image;
+
+        cv::Mat grayBlur3;
+
         if (applyBlur)
-        {
-            cv::GaussianBlur(grayBlur3, grayBlur3, cv::Size(3, 3), 0);
-        }
+            cv::GaussianBlur(grayImage, grayBlur3, cv::Size(3, 3), 0);
+        else
+            grayBlur3 = grayImage;
+
         // calculate Laplacian features
-        std::array<int, 5> kernelSizes { 1, 3, 5, 7, 9 };
+        std::array<int, 5> kernelSizes{1, 3, 5, 7, 9};
         for (const int& k : kernelSizes)
         {
             cv::Mat laplacian;
@@ -146,8 +180,9 @@ namespace OFIQ_LIB::modules::measures
             features.push_back(mean.reshape(1));
             features.push_back(stddev.reshape(1));
         }
+
         // calculate Mean Diff features
-        std::array<int, 3> kernelSizesMeanDiff{ 3, 5, 7 };
+        std::array<int, 3> kernelSizesMeanDiff{3, 5, 7};
         for (const int& k : kernelSizesMeanDiff)
         {
             cv::Mat grayMeanBlur;
@@ -160,6 +195,7 @@ namespace OFIQ_LIB::modules::measures
             features.push_back(mean.reshape(1));
             features.push_back(stddev.reshape(1));
         }
+
         // calculate Sobel features
         for (const int& k : kernelSizes)
         {
@@ -172,6 +208,7 @@ namespace OFIQ_LIB::modules::measures
             features.push_back(mean.reshape(1));
             features.push_back(stddev.reshape(1));
         }
+
         cv::transpose(features, features);
         return features;
     }

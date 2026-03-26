@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -e  # Exit immediately if a command exits with a non-zero status
+
 build_dir=build/build_linux
 install_dir=install_x86_64_linux
 use_conan=ON
@@ -28,7 +31,7 @@ elif [ "$1" = "--os" ]; then
     elif [ "$1" = "linux-arm64" ]; then
         build_dir=build/build_linux_arm64
         install_dir=install_arm64_linux
-        os=linux_arm64
+        os=linux-arm64
     else
         echo "$1" is a not a supported OS
         exit
@@ -40,6 +43,13 @@ fi
 shift
 done
 
+download_onnx=OFF
+if [ "$use_conan" = "ON" ]; then
+    if [ "$download" = "ON" ]; then
+        download_onnx="ON"
+    fi
+fi
+
 if [ "$use_conan" = "ON" ]
 then
     rm -rf ../build/conan
@@ -49,20 +59,22 @@ then
 
     echo using conan file ${CONAN_FILE}
 
+    os_prefix=$(printf '%s' "$os" | tr '-' '_')
+
     if [ "$config" = "Release" ]
     then
         conan install ${OFIQLIB_CONAN_DIR}/${CONAN_FILE} \
             --build missing \
-            --profile:build ${OFIQLIB_CONAN_DIR}/conan_profile_release_${os}.txt \
-            --profile:host ${OFIQLIB_CONAN_DIR}/conan_profile_release_${os}.txt \
+            --profile:build ${OFIQLIB_CONAN_DIR}/conan_profile_release_${os_prefix}.txt \
+            --profile:host ${OFIQLIB_CONAN_DIR}/conan_profile_release_${os_prefix}.txt \
             --output-folder=../build/conan \
             -g CMakeDeps \
             -g CMakeToolchain
     else
         conan install ${OFIQLIB_CONAN_DIR}/${CONAN_FILE} \
         --build missing \
-        --profile:build ${OFIQLIB_CONAN_DIR}/conan_profile_debug_${os}.txt \
-        --profile:host ${OFIQLIB_CONAN_DIR}/conan_profile_debug_${os}.txt \
+        --profile:build ${OFIQLIB_CONAN_DIR}/conan_profile_debug_${os_prefix}.txt \
+        --profile:host ${OFIQLIB_CONAN_DIR}/conan_profile_debug_${os_prefix}.txt \
         --output-folder=../build/conan \
         -g CMakeDeps \
         -g CMakeToolchain
@@ -89,21 +101,42 @@ else
     cd ../googletest
     cmake -S ./ -B build -DBUILD_GMOCK=OFF -DINSTALL_GTEST=OFF -DBUILD_SHARED_LIBS=ON || exit 1
     cmake --build build/googletest --config $config || exit 1
-    # build onnxruntime
-    cd ../onnxruntime
-    sh ./build.sh --config $config --build_shared_lib --parallel --compile_no_warning_as_error --skip_submodule_sync --update --build || exit 1
-    cd ..
+    if [ "$os" = "linux" ]
+    then
+        # build onnxruntime
+        cd ../onnxruntime
+        sh ./build.sh --config $config --build_shared_lib --parallel --compile_no_warning_as_error --skip_submodule_sync --update --build || exit 1
+        cd ..
+    else # os is macos
+        # build protobuf
+        cd ..
+        cp onnxruntime/extern/protobuf-21.12.zip ./
+        unzip protobuf-21.12.zip
+        rm -f protobuf-21.12.zip
+        cd protobuf-21.12
+        cmake cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -Dprotobuf_BUILD_TESTS=OFF -Dprotobuf_WITH_ZLIB_DEFAULT=OFF \
+        -Dprotobuf_BUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release "-DCMAKE_INSTALL_PREFIX=../protobuf" || exit 1
+        make || exit 1
+        make install || exit 1
+        # build onnxruntime
+        cd ../onnxruntime
+        rm -rf ../protobuf-21.12
+        sh ./build.sh --config $config --path_to_protoc_exe ../protobuf/bin/protoc --build_shared_lib --parallel --compile_no_warning_as_error --skip_submodule_sync --update --build || exit 1
+        cd ..
+    fi
 fi
 
 echo "Attempting to build the real implementation"
 
 cd ../
-echo "Removing $build_dir"
-rm -r $build_dir
+if [ -d "$build_dir" ]; then
+    echo "Removing $build_dir"
+    rm -r $build_dir
+fi
 
 echo "Generating build files"
 cmake -S ./ -B $build_dir -DCMAKE_INSTALL_PREFIX=$install_dir -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-    -DDOWNLOAD_ONNX=$use_conan -DUSE_CONAN=$use_conan -DOS=$os -DCMAKE_BUILD_TYPE=$config -DDOWNLOAD_MODELS_AND_IMAGES=$download
+    -DDOWNLOAD_ONNX=$download_onnx -DUSE_CONAN=$use_conan -DOS=$os -DCMAKE_BUILD_TYPE=$config -DDOWNLOAD_MODELS_AND_IMAGES=$download -DUSE_GCOV_CODECOVERAGE=$useSonarWrapper
 
 cmakeBuildCommand="cmake --build $build_dir --target install -j 8"
 if [ "$useSonarWrapper" = "true" ]

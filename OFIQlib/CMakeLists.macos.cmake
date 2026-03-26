@@ -18,7 +18,7 @@ list(FILTER include_modules EXCLUDE REGEX "/src$")
 include_directories (
 	${OFIQLIB_SOURCE_DIR}/include
 	${CMAKE_CURRENT_SOURCE_DIR}/extern/thirdParty
-	${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-osx-universal2-1.17.3/include
+	${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-osx-universal2-1.18.1/include
 	${include_modules}
 )
 
@@ -27,12 +27,13 @@ if(USE_CONAN)
 	find_package(OpenCV REQUIRED COMPONENTS core calib3d imgcodecs imgproc dnn ml)
 	find_package(taocpp-json REQUIRED)
 	find_package(magic_enum REQUIRED)
+	find_package(gzip-hpp REQUIRED)
 
 	add_library(onnxruntime SHARED IMPORTED)
     set_target_properties(onnxruntime PROPERTIES
-    IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-osx-universal2-1.17.3/lib/libonnxruntime.dylib
-    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-osx-universal2-1.17.3/lib/libonnxruntime.1.17.3.dylib
-    INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-osx-universal2-1.17.3/include
+    IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-osx-universal2-1.18.1/lib/libonnxruntime.dylib
+    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-osx-universal2-1.18.1/lib/libonnxruntime.1.18.1.dylib
+    INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-osx-universal2-1.18.1/include
     )
 else(USE_CONAN)
 	list(APPEND OFIQ_LINK_INCLUDE_LIST 
@@ -42,6 +43,7 @@ else(USE_CONAN)
 		"${CMAKE_CURRENT_SOURCE_DIR}/extern/di/include"
 		"${CMAKE_CURRENT_SOURCE_DIR}/extern/PEGTL/include"
 		"${CMAKE_CURRENT_SOURCE_DIR}/extern/abseil-cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/extern/gzip-hpp/include"
 	)
 	include_directories(
         ${OFIQ_LINK_INCLUDE_LIST}
@@ -49,9 +51,9 @@ else(USE_CONAN)
 
     add_library(onnxruntime SHARED IMPORTED)
     set_target_properties(onnxruntime PROPERTIES
-    IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/build/MacOS/${CMAKE_BUILD_TYPE}/libonnxruntime.dylib
-    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/build/MacOS/${CMAKE_BUILD_TYPE}/libonnxruntime.1.18.0.dylib
-	INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/include/onnxruntime/core/session
+		IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/build/MacOS/${CMAKE_BUILD_TYPE}/libonnxruntime.dylib
+		IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/build/MacOS/${CMAKE_BUILD_TYPE}/libonnxruntime.1.18.0.dylib
+		INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/include/onnxruntime/core/session
 	)
 	add_library(ittnotify STATIC IMPORTED)
 	set_target_properties(ittnotify PROPERTIES
@@ -73,13 +75,10 @@ else(USE_CONAN)
 	set_target_properties(libprotobuf PROPERTIES
 		IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/opencv-4.5.5/build/install/lib/opencv4/3rdparty/liblibprotobuf.a
 	)
-	add_library(tegra_hal STATIC IMPORTED)
-	set_target_properties(tegra_hal PROPERTIES
-		IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/opencv-4.5.5/build/install/lib/opencv4/3rdparty/libtegra_hal.a
-	)
 	add_library(zlib STATIC IMPORTED)
 	set_target_properties(zlib PROPERTIES
 		IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/opencv-4.5.5/build/install/lib/opencv4/3rdparty/libzlib.a
+		INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/opencv-4.5.5/3rdparty/zlib	
 	)
 	add_library(OpenCV::core STATIC IMPORTED)
 	set_target_properties(OpenCV::core PROPERTIES
@@ -125,7 +124,7 @@ else(USE_CONAN)
 	add_library(OpenCV INTERFACE)
 	target_link_libraries(OpenCV INTERFACE OpenCV::calib3d OpenCV::imgcodecs 
 		OpenCV::dnn OpenCV::ml OpenCV::features2d OpenCV::flann OpenCV::imgproc OpenCV::core ittnotify libjpeg-turbo 
-		libopenjp2 libpng libprotobuf tegra_hal zlib
+		libopenjp2 libpng libprotobuf zlib
 	)
 endif(USE_CONAN)
 
@@ -143,6 +142,7 @@ if(USE_CONAN)
 		taocpp::json
 		magic_enum::magic_enum
 		onnxruntime
+		gzip-hpp::gzip-hpp
 	)
 else(USE_CONAN)
 	list(APPEND OFIQ_LINK_LIB_LIST

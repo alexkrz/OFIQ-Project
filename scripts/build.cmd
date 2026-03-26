@@ -17,8 +17,14 @@ if /i "%1" == "--arch" set "architecture=%2"
 if /i "%1" == "--compiler" set "set_compiler=%2"
 if /i "%1" == "--debug" set config=Debug
 shift
-goto :loop
+goto loop
 :done
+
+set download_onnx=OFF
+rem download onnxruntime only if both conan and download are enabled
+if /I "%use_conan%"=="ON" if /I "%download%"=="ON" (
+    set download_onnx=ON
+)
 
 @REM switch architecture
 IF %architecture%==x86 (
@@ -32,7 +38,7 @@ IF %architecture%==x86 (
   set set_architecture=-A %architecture%
 ) else (
   echo This architecture is not supported
-  goto :end
+  goto end
 )
 
 @REM  switch to compiler.version 17 based on parameter provided
@@ -41,11 +47,11 @@ IF %set_compiler%==16 (
   set "compiler="
 ) else if %set_compiler%==17 (
   set generator="Visual Studio 17 2022"
-  set compiler=-s:a compiler.version=193
+  set compiler=-s:a compiler.version=194
   set vs_version="vc17"
 ) else (
   echo Building on Windows with %set_compiler% is not supported
-  goto :end
+  goto end
 )
 
 @REM build dependencies
@@ -66,7 +72,7 @@ if %use_conan%==ON (
   )
 ) else (
   if %download%==ON (
-    cmake -P ../cmake/DownloadExternalSourceCode.cmake
+    cmake -P ../cmake/DownloadExternalSourceCode.cmake || goto end
   )
   echo Building dependencies from source for %config% mode
   @REM build opencv
@@ -104,7 +110,7 @@ if exist %build_dir% (
 )
 
 echo Generating build files
-cmake -S ./ -G %generator% %set_architecture% -B %build_dir% -DCMAKE_INSTALL_PREFIX=%install_dir% -DDOWNLOAD_ONNX=%use_conan% -DUSE_CONAN=%use_conan% ^
+cmake -S ./ -G %generator% %set_architecture% -B %build_dir% -DCMAKE_INSTALL_PREFIX=%install_dir% -DDOWNLOAD_ONNX=%download_onnx% -DUSE_CONAN=%use_conan% ^
   -DOS=windows -DCMAKE_BUILD_TYPE=%config% -DARCHITECTURE=%architecture% -DDOWNLOAD_MODELS_AND_IMAGES=%download% -DVS_VERSION=%vs_version% || goto end
 
 echo Building %config%

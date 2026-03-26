@@ -25,11 +25,11 @@
  */
 
 #include "CompressionArtifacts.h"
-#include "OFIQError.h"
+#include "DataStream.h"
 #include "FaceMeasures.h"
 #include "FaceParts.h"
-
-#include <fstream>
+#include "OFIQError.h"
+#include "utils.h"
 
 namespace OFIQ_LIB::modules::measures
 {
@@ -38,9 +38,8 @@ namespace OFIQ_LIB::modules::measures
     static const std::string dimConfigItem = "params.measures.CompressionArtifacts.dim";
     static const std::string modelConfigItem = "params.measures.CompressionArtifacts.model_path";
 
-    CompressionArtifacts::CompressionArtifacts(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+    CompressionArtifacts::CompressionArtifacts(const Configuration& configuration)
+        : Measure{configuration, qualityMeasure}
     {
         SigmoidParameters defaultValues;
         defaultValues.h = 1.0;
@@ -51,8 +50,7 @@ namespace OFIQ_LIB::modules::measures
         defaultValues.round = true;
         AddSigmoid(qualityMeasure, defaultValues);
 
-        auto modelPath = configuration.getDataDir() + "/" + configuration.GetString(modelConfigItem);
-
+        auto modelPath = configuration.GetFullPath(modelConfigItem);
         double confVal;
 
         if (configuration.GetNumber(cropConfigItem, confVal))
@@ -67,7 +65,7 @@ namespace OFIQ_LIB::modules::measures
 
         try
         {
-            std::ifstream instream(modelPath, std::ios::in | std::ios::binary);
+            DataStream instream(modelPath, std::ios::in | std::ios::binary);
 
             std::vector<uint8_t> modelData(
                 (std::istreambuf_iterator<char>(instream)),
@@ -84,22 +82,19 @@ namespace OFIQ_LIB::modules::measures
 
     void CompressionArtifacts::Execute(OFIQ_LIB::Session& session)
     {
-        cv::Mat inputImage = session.getAlignedFace();
-        auto width = inputImage.cols;
-        auto height = inputImage.rows;
-
-        auto cropped = inputImage(cv::Rect(m_crop, m_crop, width - 2 * m_crop, height - 2 * m_crop));
-
-        auto transformed = cropped;
+        const cv::Mat& inputImage = session.getAlignedFace();
+        auto cropped = inputImage(
+            cv::Rect(m_crop, m_crop, inputImage.cols - 2 * m_crop, inputImage.rows - 2 * m_crop));
+        cv::Mat transformed;
         cv::cvtColor(cropped, transformed, cv::COLOR_BGR2RGB);
 
         const cv::Scalar mean(123.7, 116.3, 103.5);
         const cv::Scalar std(58.4, 57.1, 57.4);
-        
+
         transformed.convertTo(transformed, CV_32FC3);
         transformed -= mean;
         transformed /= std;
-        cv::Mat blob = cv::dnn::blobFromImage({ transformed });
+        cv::Mat blob = cv::dnn::blobFromImage({transformed});
 
         std::vector<float> net_input;
         net_input.assign(blob.begin<float>(), blob.end<float>());
@@ -107,6 +102,10 @@ namespace OFIQ_LIB::modules::measures
         auto outPtr = out[0].GetTensorMutableData<float>();
 
         auto rawScore = *outPtr;
-        SetQualityMeasure(session, qualityMeasure, rawScore, OFIQ::QualityMeasureReturnCode::Success);
+        SetQualityMeasure(
+            session,
+            qualityMeasure,
+            rawScore,
+            OFIQ::QualityMeasureReturnCode::Success);
     }
 }

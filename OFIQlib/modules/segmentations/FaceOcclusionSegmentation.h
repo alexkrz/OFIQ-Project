@@ -107,7 +107,7 @@ namespace OFIQ_LIB::modules::segmentations
         /**
          * @brief Manages CNN computations.
          */
-        ONNXRuntimeSegmentation m_onnxRuntimeEnv;
+        ONNXRuntimeEnv m_onnxRuntimeEnv;
         
         /**
          * @brief Stores the last result computed with 

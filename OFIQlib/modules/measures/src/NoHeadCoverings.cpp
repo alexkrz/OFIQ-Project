@@ -39,9 +39,8 @@ namespace OFIQ_LIB::modules::measures
     static const std::string paramDevPoint = "params.measures.NoHeadCoverings.x0";
 
 
-    NoHeadCoverings::NoHeadCoverings(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+    NoHeadCoverings::NoHeadCoverings(const Configuration& configuration)
+        : Measure{configuration, qualityMeasure}
     {
         if (!configuration.GetNumber(paramThreshold0, this->m_t0))
             this->m_t0 = 0.0;
@@ -53,7 +52,7 @@ namespace OFIQ_LIB::modules::measures
             this->m_x0 = 0.02;
     }
 
-    void NoHeadCoverings::Execute(OFIQ_LIB::Session & session)
+    void NoHeadCoverings::Execute(OFIQ_LIB::Session& session)
     {
         cv::Mat M = session.getFaceParsingImage();
 
@@ -66,11 +65,26 @@ namespace OFIQ_LIB::modules::measures
         cv::Mat clothMask;
         cv::Mat hatMask;
         // set all values above and below Segment::cloth to 0
-        cv::threshold(croppedImage, mask, static_cast<uchar>(Segment::cloth) - 1, 255, cv::THRESH_TOZERO);
-        cv::threshold(mask, clothMask, static_cast<uchar>(Segment::cloth), 255, cv::THRESH_TOZERO_INV);
+        cv::threshold(
+            croppedImage,
+            mask,
+            static_cast<uchar>(Segment::cloth) - 1,
+            255,
+            cv::THRESH_TOZERO);
+        cv::threshold(
+            mask,
+            clothMask,
+            static_cast<uchar>(Segment::cloth),
+            255,
+            cv::THRESH_TOZERO_INV);
         // set all values above and below Segment::hat to 0
         cv::threshold(mask, hatMask, static_cast<uchar>(Segment::hat) - 1, 255, cv::THRESH_TOZERO);
-        cv::threshold(hatMask, hatMask, static_cast<uchar>(Segment::hat), 255, cv::THRESH_TOZERO_INV);
+        cv::threshold(
+            hatMask,
+            hatMask,
+            static_cast<uchar>(Segment::hat),
+            255,
+            cv::THRESH_TOZERO_INV);
         auto clothPixels = cv::countNonZero(clothMask);
         auto hatPixels = cv::countNonZero(hatMask);
 
@@ -97,10 +111,13 @@ namespace OFIQ_LIB::modules::measures
             double h = s1 - s;
             double h0 = s1 - s0;
             double q = h / h0;
-            
+
             scalarScore = round(100.0 * q);
         }
 
-        session.assessment().qAssessments[qualityMeasure] = { rawScore, scalarScore, OFIQ::QualityMeasureReturnCode::Success };
+        session.assessment().qAssessments[qualityMeasure] = {
+            rawScore,
+            scalarScore,
+            OFIQ::QualityMeasureReturnCode::Success};
     }
 }

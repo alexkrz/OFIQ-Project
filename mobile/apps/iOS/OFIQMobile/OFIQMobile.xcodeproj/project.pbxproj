@@ -1,0 +1,482 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		31313B582C899BB700D16091 /* ofiqlib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31313B572C899BB700D16091 /* ofiqlib.framework */; };
+		31313B592C899BB700D16091 /* ofiqlib.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 31313B572C899BB700D16091 /* ofiqlib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6605A2912C80AB3600617E8E /* Rotator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6605A2902C80AB3600617E8E /* Rotator.swift */; };
+		66B476892C8059F900F8564E /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B476882C8059F900F8564E /* CustomButton.swift */; };
+		66FFB1102C7CA49E00A9B589 /* OFIQMobileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB10F2C7CA49E00A9B589 /* OFIQMobileApp.swift */; };
+		66FFB1122C7CA49E00A9B589 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB1112C7CA49E00A9B589 /* MainView.swift */; };
+		66FFB1142C7CA4A100A9B589 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66FFB1132C7CA4A100A9B589 /* Assets.xcassets */; };
+		66FFB13D2C7CA7CD00A9B589 /* Progress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB13C2C7CA7CD00A9B589 /* Progress.swift */; };
+		66FFB13F2C7CA7E600A9B589 /* Dim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB13E2C7CA7E600A9B589 /* Dim.swift */; };
+		66FFB1412C7CA7FB00A9B589 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB1402C7CA7FB00A9B589 /* Logger.swift */; };
+		66FFB1432C7CA9B500A9B589 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB1422C7CA9B500A9B589 /* MainViewModel.swift */; };
+		66FFB1512C7CAE4B00A9B589 /* AppBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB1502C7CAE4B00A9B589 /* AppBody.swift */; };
+		66FFB1532C7CB85C00A9B589 /* TopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB1522C7CB85C00A9B589 /* TopBar.swift */; };
+		66FFB1552C7DB49000A9B589 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB1542C7DB49000A9B589 /* CameraView.swift */; };
+		66FFB1572C7DB4E600A9B589 /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB1562C7DB4E600A9B589 /* CameraViewModel.swift */; };
+		66FFB15A2C7DC01C00A9B589 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB1592C7DC01C00A9B589 /* ImageView.swift */; };
+		66FFB15C2C7DC04100A9B589 /* ImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB15B2C7DC04100A9B589 /* ImageViewModel.swift */; };
+		66FFB15E2C7DC9DC00A9B589 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB15D2C7DC9DC00A9B589 /* ResultView.swift */; };
+		66FFB1602C7DCA4100A9B589 /* ResultViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB15F2C7DCA4100A9B589 /* ResultViewModel.swift */; };
+		66FFB1622C7DCB3F00A9B589 /* ResultTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB1612C7DCB3F00A9B589 /* ResultTable.swift */; };
+		66FFB1662C7DE03C00A9B589 /* MetricType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFB1652C7DE03C00A9B589 /* MetricType.swift */; };
+		66FFB1682C7DE44100A9B589 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 66FFB1672C7DE44100A9B589 /* Localizable.xcstrings */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		66FFB1482C7CAA7000A9B589 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				31313B592C899BB700D16091 /* ofiqlib.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		31313B572C899BB700D16091 /* ofiqlib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ofiqlib.framework; path = OFIQMobile/libs/ofiqlib.framework; sourceTree = "<group>"; };
+		6605A2902C80AB3600617E8E /* Rotator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rotator.swift; sourceTree = "<group>"; };
+		66B476882C8059F900F8564E /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
+		66FFB10C2C7CA49E00A9B589 /* OFIQMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OFIQMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		66FFB10F2C7CA49E00A9B589 /* OFIQMobileApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OFIQMobileApp.swift; sourceTree = "<group>"; };
+		66FFB1112C7CA49E00A9B589 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		66FFB1132C7CA4A100A9B589 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		66FFB13C2C7CA7CD00A9B589 /* Progress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Progress.swift; sourceTree = "<group>"; };
+		66FFB13E2C7CA7E600A9B589 /* Dim.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dim.swift; sourceTree = "<group>"; };
+		66FFB1402C7CA7FB00A9B589 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		66FFB1422C7CA9B500A9B589 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		66FFB1502C7CAE4B00A9B589 /* AppBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBody.swift; sourceTree = "<group>"; };
+		66FFB1522C7CB85C00A9B589 /* TopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBar.swift; sourceTree = "<group>"; };
+		66FFB1542C7DB49000A9B589 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		66FFB1562C7DB4E600A9B589 /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
+		66FFB1582C7DB81600A9B589 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		66FFB1592C7DC01C00A9B589 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		66FFB15B2C7DC04100A9B589 /* ImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewModel.swift; sourceTree = "<group>"; };
+		66FFB15D2C7DC9DC00A9B589 /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
+		66FFB15F2C7DCA4100A9B589 /* ResultViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewModel.swift; sourceTree = "<group>"; };
+		66FFB1612C7DCB3F00A9B589 /* ResultTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTable.swift; sourceTree = "<group>"; };
+		66FFB1652C7DE03C00A9B589 /* MetricType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricType.swift; sourceTree = "<group>"; };
+		66FFB1672C7DE44100A9B589 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		66FFB1092C7CA49E00A9B589 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31313B582C899BB700D16091 /* ofiqlib.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		66F31EBC2C81ACB200FC779A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				31313B572C899BB700D16091 /* ofiqlib.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		66FFB1032C7CA49E00A9B589 = {
+			isa = PBXGroup;
+			children = (
+				66FFB10E2C7CA49E00A9B589 /* OFIQMobile */,
+				66FFB10D2C7CA49E00A9B589 /* Products */,
+				66F31EBC2C81ACB200FC779A /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		66FFB10D2C7CA49E00A9B589 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				66FFB10C2C7CA49E00A9B589 /* OFIQMobile.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		66FFB10E2C7CA49E00A9B589 /* OFIQMobile */ = {
+			isa = PBXGroup;
+			children = (
+				66FFB1582C7DB81600A9B589 /* Info.plist */,
+				66FFB13B2C7CA7A300A9B589 /* view */,
+				66FFB13A2C7CA73F00A9B589 /* model */,
+				66FFB1392C7CA73000A9B589 /* viewmodel */,
+				66FFB10F2C7CA49E00A9B589 /* OFIQMobileApp.swift */,
+				66FFB1132C7CA4A100A9B589 /* Assets.xcassets */,
+				66FFB1672C7DE44100A9B589 /* Localizable.xcstrings */,
+			);
+			path = OFIQMobile;
+			sourceTree = "<group>";
+		};
+		66FFB1392C7CA73000A9B589 /* viewmodel */ = {
+			isa = PBXGroup;
+			children = (
+				66FFB1422C7CA9B500A9B589 /* MainViewModel.swift */,
+				66FFB1562C7DB4E600A9B589 /* CameraViewModel.swift */,
+				66FFB15B2C7DC04100A9B589 /* ImageViewModel.swift */,
+				66FFB15F2C7DCA4100A9B589 /* ResultViewModel.swift */,
+			);
+			path = viewmodel;
+			sourceTree = "<group>";
+		};
+		66FFB13A2C7CA73F00A9B589 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				66FFB1402C7CA7FB00A9B589 /* Logger.swift */,
+				66FFB1652C7DE03C00A9B589 /* MetricType.swift */,
+				6605A2902C80AB3600617E8E /* Rotator.swift */,
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
+		66FFB13B2C7CA7A300A9B589 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				66FFB1112C7CA49E00A9B589 /* MainView.swift */,
+				66FFB13E2C7CA7E600A9B589 /* Dim.swift */,
+				66FFB13C2C7CA7CD00A9B589 /* Progress.swift */,
+				66FFB1502C7CAE4B00A9B589 /* AppBody.swift */,
+				66FFB1522C7CB85C00A9B589 /* TopBar.swift */,
+				66FFB1542C7DB49000A9B589 /* CameraView.swift */,
+				66FFB1592C7DC01C00A9B589 /* ImageView.swift */,
+				66FFB15D2C7DC9DC00A9B589 /* ResultView.swift */,
+				66FFB1612C7DCB3F00A9B589 /* ResultTable.swift */,
+				66B476882C8059F900F8564E /* CustomButton.swift */,
+			);
+			path = view;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		66FFB10B2C7CA49E00A9B589 /* OFIQMobile */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 66FFB1302C7CA4A100A9B589 /* Build configuration list for PBXNativeTarget "OFIQMobile" */;
+			buildPhases = (
+				66FFB1082C7CA49E00A9B589 /* Sources */,
+				66FFB1092C7CA49E00A9B589 /* Frameworks */,
+				66FFB10A2C7CA49E00A9B589 /* Resources */,
+				66FFB1482C7CAA7000A9B589 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OFIQMobile;
+			productName = OFIQMobile;
+			productReference = 66FFB10C2C7CA49E00A9B589 /* OFIQMobile.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		66FFB1042C7CA49E00A9B589 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					66FFB10B2C7CA49E00A9B589 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = 66FFB1072C7CA49E00A9B589 /* Build configuration list for PBXProject "OFIQMobile" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				de,
+			);
+			mainGroup = 66FFB1032C7CA49E00A9B589;
+			productRefGroup = 66FFB10D2C7CA49E00A9B589 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				66FFB10B2C7CA49E00A9B589 /* OFIQMobile */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		66FFB10A2C7CA49E00A9B589 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66FFB1142C7CA4A100A9B589 /* Assets.xcassets in Resources */,
+				66FFB1682C7DE44100A9B589 /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		66FFB1082C7CA49E00A9B589 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66B476892C8059F900F8564E /* CustomButton.swift in Sources */,
+				66FFB1412C7CA7FB00A9B589 /* Logger.swift in Sources */,
+				66FFB1602C7DCA4100A9B589 /* ResultViewModel.swift in Sources */,
+				66FFB1122C7CA49E00A9B589 /* MainView.swift in Sources */,
+				66FFB1512C7CAE4B00A9B589 /* AppBody.swift in Sources */,
+				66FFB1572C7DB4E600A9B589 /* CameraViewModel.swift in Sources */,
+				66FFB13D2C7CA7CD00A9B589 /* Progress.swift in Sources */,
+				66FFB13F2C7CA7E600A9B589 /* Dim.swift in Sources */,
+				66FFB15C2C7DC04100A9B589 /* ImageViewModel.swift in Sources */,
+				66FFB15E2C7DC9DC00A9B589 /* ResultView.swift in Sources */,
+				66FFB1102C7CA49E00A9B589 /* OFIQMobileApp.swift in Sources */,
+				66FFB1432C7CA9B500A9B589 /* MainViewModel.swift in Sources */,
+				66FFB1532C7CB85C00A9B589 /* TopBar.swift in Sources */,
+				66FFB1662C7DE03C00A9B589 /* MetricType.swift in Sources */,
+				66FFB15A2C7DC01C00A9B589 /* ImageView.swift in Sources */,
+				66FFB1552C7DB49000A9B589 /* CameraView.swift in Sources */,
+				66FFB1622C7DCB3F00A9B589 /* ResultTable.swift in Sources */,
+				6605A2912C80AB3600617E8E /* Rotator.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		66FFB12E2C7CA4A100A9B589 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		66FFB12F2C7CA4A100A9B589 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		66FFB1312C7CA4A100A9B589 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/OFIQMobile/libs",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OFIQMobile/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "OFIQ Mobile";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Needed to take the face image, that will be analyzed";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.bund.bsi.OFIQMobile;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		66FFB1322C7CA4A100A9B589 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/OFIQMobile/libs",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OFIQMobile/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "OFIQ Mobile";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Needed to take the face image, that will be analyzed";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.bund.bsi.OFIQMobile;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		66FFB1072C7CA49E00A9B589 /* Build configuration list for PBXProject "OFIQMobile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				66FFB12E2C7CA4A100A9B589 /* Debug */,
+				66FFB12F2C7CA4A100A9B589 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		66FFB1302C7CA4A100A9B589 /* Build configuration list for PBXNativeTarget "OFIQMobile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				66FFB1312C7CA4A100A9B589 /* Debug */,
+				66FFB1322C7CA4A100A9B589 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 66FFB1042C7CA49E00A9B589 /* Project object */;
+}

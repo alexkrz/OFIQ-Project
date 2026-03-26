@@ -18,7 +18,7 @@ list(FILTER include_modules EXCLUDE REGEX "/src$")
 include_directories (
 	${OFIQLIB_SOURCE_DIR}/include
 	${CMAKE_CURRENT_SOURCE_DIR}/extern/thirdParty
-	${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-aarch64-1.17.3/include
+	${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-aarch64-1.18.1/include
 	${include_modules}
 )
 
@@ -27,12 +27,13 @@ if(USE_CONAN)
 	find_package(OpenCV REQUIRED COMPONENTS core calib3d imgcodecs imgproc dnn ml)
 	find_package(taocpp-json REQUIRED)
 	find_package(magic_enum REQUIRED)
+	find_package(gzip-hpp REQUIRED)
 
 	add_library(onnxruntime SHARED IMPORTED)
 	set_target_properties(onnxruntime PROPERTIES
-	IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-aarch64-1.17.3/lib/libonnxruntime.so
-	IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-aarch64-1.17.3/lib/libonnxruntime.so.1.17.3
-	INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-aarch64-1.17.3/include
+	IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-aarch64-1.18.1/lib/libonnxruntime.so
+	IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-aarch64-1.18.1/lib/libonnxruntime.so.1.18.1
+	INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime-linux-aarch64-1.18.1/include
 	)
 else(USE_CONAN)
 	list(APPEND OFIQ_LINK_INCLUDE_LIST 
@@ -42,15 +43,16 @@ else(USE_CONAN)
 		"${CMAKE_CURRENT_SOURCE_DIR}/extern/di/include"
 		"${CMAKE_CURRENT_SOURCE_DIR}/extern/PEGTL/include"
 		"${CMAKE_CURRENT_SOURCE_DIR}/extern/abseil-cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/extern/gzip-hpp/include"
 	)
 	include_directories(
         ${OFIQ_LINK_INCLUDE_LIST}
 	)
 	add_library(onnxruntime SHARED IMPORTED)
 	set_target_properties(onnxruntime PROPERTIES
-	IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/build/Linux/${CMAKE_BUILD_TYPE}/libonnxruntime.so
-	IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/build/Linux/${CMAKE_BUILD_TYPE}/libonnxruntime.so.1.18.0
-	INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/include/onnxruntime/core/session
+		IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/build/Linux/${CMAKE_BUILD_TYPE}/libonnxruntime.so
+		IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/build/Linux/${CMAKE_BUILD_TYPE}/libonnxruntime.so.1.18.0
+		INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/onnxruntime/include/onnxruntime/core/session
 	)
 	add_library(ittnotify STATIC IMPORTED)
 	set_target_properties(ittnotify PROPERTIES
@@ -67,6 +69,7 @@ else(USE_CONAN)
 	add_library(zlib STATIC IMPORTED)
 	set_target_properties(zlib PROPERTIES
 		IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/extern/opencv-4.5.5/build/install/lib/opencv4/3rdparty/libzlib.a
+		INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/extern/opencv-4.5.5/3rdparty/zlib
 	)
 	add_library(libpng STATIC IMPORTED)
 	set_target_properties(libpng PROPERTIES
@@ -137,6 +140,7 @@ if(USE_CONAN)
 		taocpp::json
 		magic_enum::magic_enum
 		onnxruntime
+		gzip-hpp::gzip-hpp
 	)
 else(USE_CONAN)
 	list(APPEND OFIQ_LINK_LIB_LIST

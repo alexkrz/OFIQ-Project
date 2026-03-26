@@ -29,6 +29,7 @@
 #include "Configuration.h"
 #include "detectors.h"
 #include <opencv2/dnn.hpp>
+#include <mutex>
 
 
 /**
@@ -73,6 +74,12 @@ namespace OFIQ_LIB::modules::detectors
          * 
          */
         std::shared_ptr<cv::dnn::Net> m_dnnNet{nullptr};
+
+        /**
+         * @brief Mutex preventing the opencv dnn::Net to crash during parallel call.
+         * 
+         */
+        std::mutex m_dnnNetMutex;
 
         /**
          * @brief Confidence threshold used for the face detection. The value is read from the configuration file.

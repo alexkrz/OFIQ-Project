@@ -25,26 +25,35 @@
  */
 
 #include "image_utils.h"
-#include "landmarks.h"
 #include "FaceMeasures.h"
 #include "FaceParts.h"
+#include "landmarks.h"
+#include <array>
+
+#include <chrono>
+using hrclock = std::chrono::high_resolution_clock;
 
 using PartExtractor = OFIQ_LIB::modules::landmarks::PartExtractor;
 using FaceParts = OFIQ_LIB::modules::landmarks::FaceParts;
 using FaceMeasures = OFIQ_LIB::modules::landmarks::FaceMeasures;
 
+
 namespace OFIQ_LIB
 {
-
     double ColorConvert(double x)
     {
-        if (x > 0.04045)
-        {
-            return pow( (x+0.055)/1.055 , 2.4);
-        }
-        
-        return x / 12.92;
+        return x <= 0.04045 ? x / 12.92 : pow((x + 0.055) / 1.055, 2.4);
     }
+
+    std::array<double, 256> prepare_COLOR_CVT_LUT()
+    {
+        std::array<double, 256> lut;
+        for (size_t i = 0; i < 256; i++)
+            lut[i] = ColorConvert((double)i / 255.0);
+        return lut;
+    }
+
+    const static std::array<double, 256> COLOR_CVT_LUT = prepare_COLOR_CVT_LUT();
 
     double Cubic(double x, double k, double eps)
     {
@@ -87,34 +96,27 @@ namespace OFIQ_LIB
         b = 200.0 * (F_Y - F_Z);
     }
 
-	cv::Mat GetLuminanceImageFromBGR(const cv::Mat& bgrImage)
-	{
+    cv::Mat GetLuminanceImageFromBGR(const cv::Mat& bgrImage)
+    {
         cv::Mat L = cv::Mat::zeros(bgrImage.rows, bgrImage.cols, CV_8U);
-
-        for (int i = 0; i < L.rows; i++)
-        {
-            for (int j = 0; j < L.cols; j++)
+        using Pixel = cv::Point3_<uint8_t>;
+        bgrImage.forEach<Pixel>(
+            [&L](const Pixel& bgr, const int coords[])
             {
-                auto & pixel = bgrImage.at<cv::Vec3b>(i,j);
-
-                double r_norm = pixel[2] / 255.0;
-                double g_norm = pixel[1] / 255.0;
-                double b_norm = pixel[0] / 255.0;
-
-                double r_lum = ColorConvert(r_norm);
-                double g_lum = ColorConvert(g_norm);
-                double b_lum = ColorConvert(b_norm);
-
-                double y = 0.2126 * r_lum + 0.7152 * g_lum + 0.0722 * b_lum;
-                L.data[L.cols*i + j] = (uint8_t)floor(y*255+0.5);
-            }
-        }
-
+                double y = 0.2126 * COLOR_CVT_LUT[bgr.z] + // R
+                           0.7152 * COLOR_CVT_LUT[bgr.y] + // G
+                           0.0722 * COLOR_CVT_LUT[bgr.x];  // B
+                L.at<uint8_t>(coords[0], coords[1]) = (uint8_t)floor(y * 255 + 0.5);
+            });
         return L;
-	}
+    }
 
-    void CalculateReferencePoints(const OFIQ::FaceLandmarks& landmarks, OFIQ::LandmarkPoint& leftEyeCenter, OFIQ::LandmarkPoint& rightEyeCenter,
-        double& interEyeDistance, double& eyeMouthDistance)
+    void CalculateReferencePoints(
+        const OFIQ::FaceLandmarks& landmarks,
+        OFIQ::LandmarkPoint& leftEyeCenter,
+        OFIQ::LandmarkPoint& rightEyeCenter,
+        double& interEyeDistance,
+        double& eyeMouthDistance)
     {
         auto leftEyePoints = PartExtractor::getFacePart(landmarks, FaceParts::LEFT_EYE_CORNERS);
         auto rightEyePoints = PartExtractor::getFacePart(landmarks, FaceParts::RIGHT_EYE_CORNERS);
@@ -122,16 +124,20 @@ namespace OFIQ_LIB
         rightEyeCenter = FaceMeasures::GetMiddle(rightEyePoints);
 
         interEyeDistance = FaceMeasures::GetDistance(leftEyeCenter, rightEyeCenter);
-        auto eyeMidPoint =
-            FaceMeasures::GetMiddle(OFIQ::Landmarks{ leftEyeCenter, rightEyeCenter });
+        auto eyeMidPoint = FaceMeasures::GetMiddle(OFIQ::Landmarks{leftEyeCenter, rightEyeCenter});
 
         auto mouthCenter = FaceMeasures::GetMiddle(
             PartExtractor::getPairsForPart(landmarks, FaceParts::MOUTH_CENTER));
         eyeMouthDistance = FaceMeasures::GetDistance(eyeMidPoint, mouthCenter);
     }
 
-    void CalculateRegionOfInterest(cv::Rect& leftRegionOfInterest, cv::Rect& rightRegionOfInterest, const OFIQ::LandmarkPoint& leftEyeCenter, const OFIQ::LandmarkPoint& rightEyeCenter,
-        const double interEyeDistance, const double eyeMouthDistance)
+    void CalculateRegionOfInterest(
+        cv::Rect& leftRegionOfInterest,
+        cv::Rect& rightRegionOfInterest,
+        const OFIQ::LandmarkPoint& leftEyeCenter,
+        const OFIQ::LandmarkPoint& rightEyeCenter,
+        const double interEyeDistance,
+        const double eyeMouthDistance)
     {
         auto zoneSize = static_cast<int>(interEyeDistance * 0.3);
         rightRegionOfInterest.x = rightEyeCenter.x - zoneSize;
@@ -143,12 +149,13 @@ namespace OFIQ_LIB
         leftRegionOfInterest.height = leftRegionOfInterest.width = zoneSize;
     }
 
-    void GetNormalizedHistogram(const cv::Mat& luminanceImage, const cv::Mat& maskImage, cv::Mat1f& histogram)
+    void GetNormalizedHistogram(
+        const cv::Mat& luminanceImage, const cv::Mat& maskImage, cv::Mat1f& histogram)
     {
         int histSize = 256;
-        std::vector<float> range = { 0, 256 };
+        std::vector<float> range = {0, 256};
 
-        cv::calcHist(std::vector{ luminanceImage }, { 0 }, maskImage, histogram, { histSize }, range);
+        cv::calcHist(std::vector{luminanceImage}, {0}, maskImage, histogram, {histSize}, range);
 
         auto pixelsInHistogram = cv::sum(histogram).val[0];
 
@@ -159,22 +166,15 @@ namespace OFIQ_LIB
     {
         double quality = 0.0;
 
-        cv::Mat faceOcclusionMask = session.getFaceOcclusionSegmentationImage();
-        cv::Mat faceMask = session.getAlignedFaceLandmarkedRegion();
-        auto alignedImage = session.getAlignedFace();
+        const auto& faceOcclusionMask = session.getFaceOcclusionSegmentationImage();
+        const auto& faceMask = session.getAlignedFaceLandmarkedRegion();
+        cv::Mat combinedFaceMask;
+        cv::bitwise_and(faceMask, faceOcclusionMask, combinedFaceMask);
 
-        cv::Mat maskedImage;
-        cv::bitwise_and(faceMask, faceOcclusionMask, maskedImage);
-
-        auto luminanceImage = GetLuminanceImageFromBGR(alignedImage);
-
-        quality = ComputeBrightnessAspect(
-            luminanceImage, maskedImage, exposureRange
-        );
-
+        auto luminanceImage = session.getAlignedFaceLuminance();
+        quality = ComputeBrightnessAspect(luminanceImage, combinedFaceMask, exposureRange);
         return quality;
     }
-
 
     double ComputeBrightnessAspect(
         const cv::Mat& luminanceImage, const cv::Mat& maskImage, const ExposureRange& exposureRange)

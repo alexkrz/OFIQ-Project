@@ -26,8 +26,8 @@
 
 #include "DynamicRange.h"
 #include "FaceMeasures.h"
-#include "utils.h"
 #include "image_utils.h"
+#include "utils.h"
 #include <opencv2/imgproc.hpp>
 
 namespace OFIQ_LIB::modules::measures
@@ -37,31 +37,25 @@ namespace OFIQ_LIB::modules::measures
     static double ComputeEntropy(const cv::Mat& luminanceImage, const cv::Mat& maskImage);
     static double CalculateScore(const cv::Mat1f& histogram);
 
-    DynamicRange::DynamicRange(
-        const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+    DynamicRange::DynamicRange(const Configuration& configuration)
+        : Measure{configuration, qualityMeasure}
     {
     }
 
-    void DynamicRange::Execute(OFIQ_LIB::Session & session)
+    void DynamicRange::Execute(OFIQ_LIB::Session& session)
     {
-        cv::Mat alignedImage = session.getAlignedFace();
-        cv::Mat cvMask = session.getAlignedFaceLandmarkedRegion();
-        cv::Mat faceSegmentation;
-        cv::bitwise_and(alignedImage, alignedImage, faceSegmentation, cvMask);
-        auto luminanceImage = GetLuminanceImageFromBGR(faceSegmentation);
-
-        auto rawScore = ComputeEntropy(luminanceImage, cvMask);
+        const auto& faceMask = session.getAlignedFaceLandmarkedRegion();
+        const auto& luminanceImage = session.getAlignedFaceLuminance();
+        auto rawScore = ComputeEntropy(luminanceImage, faceMask);
         auto scalarScore = round(12.5 * rawScore);
         if (scalarScore < 0.0)
-        {
             scalarScore = 0.0;
-        }
         else if (scalarScore > 100.0)
-        {
             scalarScore = 100.0;
-        }
-        session.assessment().qAssessments[qualityMeasure] = { rawScore, scalarScore, OFIQ::QualityMeasureReturnCode::Success };
+        session.assessment().qAssessments[qualityMeasure] = {
+            rawScore,
+            scalarScore,
+            OFIQ::QualityMeasureReturnCode::Success};
     }
 
     static double ComputeEntropy(const cv::Mat& luminanceImage, const cv::Mat& maskImage)
