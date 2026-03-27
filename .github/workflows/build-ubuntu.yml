@@ -25,7 +25,7 @@ jobs:
     #     cmake-version: '3.31.6'
 
     - name: Install conan
-      run: | 
+      run: |
         lsb_release -sd
         cmake --version
         pip install conan==2.18.1
@@ -35,4 +35,4 @@ jobs:
       run: |
         cd scripts
         chmod +x build.sh
-        ./build.sh --debug --no-download
+        ./build.sh --debug
