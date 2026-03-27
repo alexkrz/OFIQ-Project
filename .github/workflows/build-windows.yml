@@ -1,0 +1,28 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:  # Workflow can be trigerred manually
+  pull_request:
+    branches: [main, "release/*", "dev"]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure system
+      run: | # First print system info, then install conan
+        cmd /c ver
+        vswhere
+        cmake --version
+        pip install conan==2.18.1
+        conan --version
+
+    - name: Run build script
+      run: |
+        cd scripts
+        .\build.cmd --compiler 17

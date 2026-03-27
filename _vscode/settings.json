@@ -1,0 +1,23 @@
+{
+    "files.insertFinalNewline": false,
+    "editor.formatOnSave": false,
+    "cmake.buildDirectory": "${workspaceFolder}/build/build_linux",
+    "cmake.configureArgs": [
+        "-DCMAKE_INSTALL_PREFIX=${workspaceFolder}/install_x86_64_linux",
+        "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
+        "-DDOWNLOAD_ONNX=OFF",
+        "-DDOWNLOAD_MODELS_AND_IMAGES=OFF",
+        // "-DCMAKE_BUILD_TYPE=Release",
+    ],
+    "cmake.debugConfig": {
+        "args": [
+            "-c",
+            "${workspaceFolder}/data/ofiq_config.jaxn",
+            "-i",
+            "${workspaceFolder}/data/tests/images/c-06-glasses.png",
+            "-o",
+            "${workspaceFolder}/results/out.csv",
+        ]
+    },
+    "cmake.configureOnOpen": false,
+}
