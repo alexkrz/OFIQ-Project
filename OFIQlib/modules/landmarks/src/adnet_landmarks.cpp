@@ -29,7 +29,7 @@
 #include "utils.h"
 
 #include <algorithm>
-#include <fstream>
+#include "DataStream.h"
 #include <onnxruntime_cxx_api.h>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -69,7 +69,7 @@ namespace OFIQ_LIB::modules::landmarks
         {
             m_ort_session = std::make_unique<Ort::Session>(
                 m_ortenv,
-                i_model_data.data(), 
+                i_model_data.data(),
                 i_model_data.size(),
                 Ort::SessionOptions{nullptr});
 
@@ -120,7 +120,9 @@ namespace OFIQ_LIB::modules::landmarks
             cv::resize(
                 i_input_image,
                 scaled_image,
-                cv::Size(static_cast<int>(m_expected_image_width), static_cast<int>(m_expected_image_height)),
+                cv::Size(
+                    static_cast<int>(m_expected_image_width),
+                    static_cast<int>(m_expected_image_height)),
                 0,
                 0,
                 cv::INTER_LINEAR);
@@ -147,14 +149,12 @@ namespace OFIQ_LIB::modules::landmarks
 
         std::vector<float> find_landmarks(std::vector<float>& i_image)
         {
-
             // define shape
             const std::array<int64_t, 4> inputShape = {
                 1,
                 m_expected_image_number_of_channels,
                 m_expected_image_height,
                 m_expected_image_width};
-
 
             // define Tensor
             auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
@@ -164,7 +164,6 @@ namespace OFIQ_LIB::modules::landmarks
                 i_image.size(),
                 inputShape.data(),
                 inputShape.size());
-
 
             // define names
             Ort::AllocatorWithDefaultOptions ort_alloc;
@@ -182,7 +181,6 @@ namespace OFIQ_LIB::modules::landmarks
 
             inputName.release();
 
-
             // run inference
             try
             {
@@ -196,7 +194,6 @@ namespace OFIQ_LIB::modules::landmarks
                     num_output_nodes);
                 size_t useThisOutput =
                     num_output_nodes - 1; // take last output like in python implementation
-
                 auto element = results[useThisOutput].GetTensorTypeAndShapeInfo();
                 auto elementPtr = results[useThisOutput].GetTensorMutableData<float>();
 
@@ -208,7 +205,6 @@ namespace OFIQ_LIB::modules::landmarks
                     landmarks.cend(),
                     landmarks.begin(),
                     [](float i_landmark) { return (i_landmark + 1.0f) / 2 * 255; });
-
                 return landmarks;
             }
             catch (Ort::Exception& e)
@@ -234,20 +230,16 @@ namespace OFIQ_LIB::modules::landmarks
     // End of class ADNetFaceLandmarkExtractorImpl
     //--------------------------------------------------
 
-    ADNetFaceLandmarkExtractor::ADNetFaceLandmarkExtractor(
-        const Configuration& config)
+    ADNetFaceLandmarkExtractor::ADNetFaceLandmarkExtractor(const Configuration& config)
     {
         try
         {
 
             landmarkExtractor_ = std::make_unique<ADNetFaceLandmarkExtractorImpl>();
-            const auto modelPath =
-                config.getDataDir() + "/" + config.GetString("params.landmarks.ADNet.model_path");
+            auto modelPath = config.GetFullPath("params.landmarks.ADNet.model_path");
 
-            std::ifstream instream(modelPath, std::ios::in | std::ios::binary);
-            std::vector<uint8_t> modelData(
-                (std::istreambuf_iterator<char>(instream)),
-                std::istreambuf_iterator<char>());
+            DataStream instream(modelPath, std::ios::in | std::ios::binary);
+            std::vector<uint8_t> modelData( (std::istreambuf_iterator<char>(instream)), std::istreambuf_iterator<char>());
 
             landmarkExtractor_->init_session(modelData);
         }
@@ -274,7 +266,7 @@ namespace OFIQ_LIB::modules::landmarks
             std::string err_msg = "no face found on given image: " + std::string(e.what());
             throw OFIQError(ReturnCode::FaceDetectionError, err_msg);
         }
-        
+
         if (faceRects.empty())
         {
             return landmarks;
@@ -283,21 +275,23 @@ namespace OFIQ_LIB::modules::landmarks
         const size_t faceIndex = 0; // take largest face found
         OFIQ::BoundingBox detectedFace = faceRects[faceIndex];
 
-        cv::Mat cvImage = copyToCvImage(session.image());
-        Point2i translationVector{ 0, 0 };
+        const OFIQ::Image& sourceImage = session.image();
+        cv::Mat cvImage(sourceImage.height, sourceImage.width, CV_8UC3, sourceImage.data.get());
 
-        if (detectedFace.faceDetector == FaceDetectorType::OPENCVSSD) {
+        Point2i translationVector{0, 0};
+
+        if (detectedFace.faceDetector == FaceDetectorType::OPENCVSSD)
+        {
             // SSD bounding box does not have to be quadratic -> check and make it square
             cv::Mat cvImage_maybe_padded;
             OFIQ::BoundingBox detectedFaceSquare;
-            
+
             OFIQ_LIB::makeSquareBoundingBoxWithPadding(
                 detectedFace,
                 cvImage,
                 cvImage_maybe_padded,
                 detectedFaceSquare,
-                translationVector
-            );
+                translationVector);
             cvImage = cvImage_maybe_padded;
             detectedFace = detectedFaceSquare;
 
@@ -324,9 +318,9 @@ namespace OFIQ_LIB::modules::landmarks
         for (int i = 0; i < landmarks_from_net.size(); i += 2)
         {
             auto x = static_cast<int>(
-                std::round(landmarks_from_net[i] * scalingFactor+static_cast<float>(offset_x)));
-            auto y = static_cast<int>(
-                std::round(landmarks_from_net[i+1] * scalingFactor+static_cast<float>(offset_y)));
+                std::round(landmarks_from_net[i] * scalingFactor + static_cast<float>(offset_x)));
+            auto y = static_cast<int>(std::round(
+                landmarks_from_net[i + 1] * scalingFactor + static_cast<float>(offset_y)));
             landmarks.landmarks.emplace_back(
                 LandmarkPoint(static_cast<uint16_t>(x), static_cast<uint16_t>(y)));
         }

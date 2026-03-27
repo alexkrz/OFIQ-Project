@@ -33,38 +33,33 @@
 
 namespace OFIQ_LIB::modules::measures
 {
-    Luminance::Luminance(
-        const Configuration& configuration)
-        : Measure{ configuration, OFIQ::QualityMeasure::Luminance }
+    Luminance::Luminance(const Configuration& configuration)
+        : Measure{configuration, OFIQ::QualityMeasure::Luminance}
     {
     }
 
-    void Luminance::Execute(OFIQ_LIB::Session & session)
+    void Luminance::Execute(OFIQ_LIB::Session& session)
     {
-        cv::Mat aligned = session.getAlignedFace();
-
-        // Get landmarked region segmentation map
-        auto landmarks = session.getLandmarks();
-        auto mask = landmarks::FaceMeasures::GetFaceMask(session.getAlignedFaceLandmarks(), aligned.rows, aligned.cols);
-
-        // Recover the image luminance from RGB data of image
-        auto luminanceImage = GetLuminanceImageFromBGR(aligned);
-
+        const auto& faceMask = session.getAlignedFaceLandmarkedRegion();
+        const auto& luminanceImage = session.getAlignedFaceLuminance();
         // Compute the luminance histogram
         cv::Mat1f histogram;
-        GetNormalizedHistogram(luminanceImage, mask, histogram);
+        GetNormalizedHistogram(luminanceImage, faceMask, histogram);
 
         // Compute the mean of the luminance histogram
         double mean = 0;
-        std::vector<int> range = { 0, 256 };
+        std::vector<int> range = {0, 256};
         for (int i = range[0]; i < range[1]; i++)
         {
             mean += static_cast<double>(histogram.at<float>(i)) * static_cast<double>(i) / 255.0;
         }
 
-        double scalarScoreMean = round(100 * Sigmoid(mean, 0.2, 0.05) * (1 - Sigmoid(mean, 0.8, 0.05)));
-        session.assessment().qAssessments[OFIQ::QualityMeasure::LuminanceMean] = 
-            { mean, scalarScoreMean, OFIQ::QualityMeasureReturnCode::Success };
+        double scalarScoreMean =
+            round(100 * Sigmoid(mean, 0.2, 0.05) * (1 - Sigmoid(mean, 0.8, 0.05)));
+        session.assessment().qAssessments[OFIQ::QualityMeasure::LuminanceMean] = {
+            mean,
+            scalarScoreMean,
+            OFIQ::QualityMeasureReturnCode::Success};
 
         // Compute the variance of the luminance histogram
         double variance = 0;
@@ -74,7 +69,9 @@ namespace OFIQ_LIB::modules::measures
         }
 
         double scalarScoreVariance = round(100 * sin((60 * variance) / (60 * variance + 1) * M_PI));
-        session.assessment().qAssessments[OFIQ::QualityMeasure::LuminanceVariance] = 
-            { variance, scalarScoreVariance, OFIQ::QualityMeasureReturnCode::Success };
+        session.assessment().qAssessments[OFIQ::QualityMeasure::LuminanceVariance] = {
+            variance,
+            scalarScoreVariance,
+            OFIQ::QualityMeasureReturnCode::Success};
     }
 }

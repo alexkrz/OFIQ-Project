@@ -25,11 +25,12 @@
  */
 
 #include "UnifiedQualityScore.h"
-#include "utils.h"
+#include "DataStream.h"
 #include "OFIQError.h"
+#include "utils.h"
+#include <fstream>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
-#include <fstream>
 
 namespace OFIQ_LIB::modules::measures
 {
@@ -44,7 +45,7 @@ namespace OFIQ_LIB::modules::measures
     static const int scaledHeight = 192;
 
     UnifiedQualityScore::UnifiedQualityScore(const Configuration& configuration)
-        : Measure{ configuration, qualityMeasure }
+        : Measure{configuration, qualityMeasure}
     {
         try
         {
@@ -55,14 +56,14 @@ namespace OFIQ_LIB::modules::measures
             defaultValues.round = true;
             AddSigmoid(qualityMeasure, defaultValues);
 
-            std::string modelPath = configuration.getDataDir()+"/"+configuration.GetString(paramModelpath);
+            auto modelPath = configuration.GetFullPath(paramModelpath);
 
-            std::ifstream instream(modelPath, std::ios::in | std::ios::binary);
+            DataStream instream(modelPath, std::ios::in | std::ios::binary);
 
             std::vector<uint8_t> modelData(
                 (std::istreambuf_iterator<char>(instream)),
                 std::istreambuf_iterator<char>());
-            m_onnxRuntimeEnv.initialize(modelData, imageSize,imageSize); 
+            m_onnxRuntimeEnv.initialize(modelData, imageSize, imageSize);
         }
         catch (std::exception&)
         {
@@ -79,24 +80,27 @@ namespace OFIQ_LIB::modules::measures
         converted /= 255.0;
         cv::Size size(imageSize, imageSize);
         bool swapRB = false;
-        return cv::dnn::blobFromImage({ converted }, 1.0, size, 0, swapRB);
+        return cv::dnn::blobFromImage({converted}, 1.0, size, 0, swapRB);
     }
 
-    void UnifiedQualityScore::Execute(OFIQ_LIB::Session & session)
+    void UnifiedQualityScore::Execute(OFIQ_LIB::Session& session)
     {
-        cv::Mat alignedFaceBGR = session.getAlignedFace();
-
-        cv::resize(alignedFaceBGR, alignedFaceBGR, cv::Size(scaledWidth, scaledHeight));
+        cv::Mat alignedFaceBGR;
+        cv::resize(session.getAlignedFace(), alignedFaceBGR, cv::Size(scaledWidth, scaledHeight));
         cv::Mat alignedFaceCropBGR = alignedFaceBGR(
             cv::Range(cropTop, scaledHeight - cropBottom),
             cv::Range(cropLeft, scaledWidth - cropRight));
         auto blob = CreateBlob(alignedFaceCropBGR);
-        
+
         std::vector<float> net_input;
         net_input.assign(blob.begin<float>(), blob.end<float>());
         auto out = m_onnxRuntimeEnv.run(net_input);
         auto outPtr = out[0].GetTensorMutableData<float>();
         double rawScore = outPtr[0];
-        SetQualityMeasure(session, qualityMeasure, rawScore, OFIQ::QualityMeasureReturnCode::Success);
+        SetQualityMeasure(
+            session,
+            qualityMeasure,
+            rawScore,
+            OFIQ::QualityMeasureReturnCode::Success);
     }
 }

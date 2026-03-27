@@ -30,8 +30,7 @@
 
 namespace OFIQ_LIB
 {
-    std::vector<OFIQ::BoundingBox>
-        FaceDetectorInterface::detectFaces(OFIQ_LIB::Session& session)
+    std::vector<OFIQ::BoundingBox> FaceDetectorInterface::detectFaces(OFIQ_LIB::Session& session)
     {
         auto faces = UpdateFaces(session);
         if (faces.empty())
@@ -41,8 +40,9 @@ namespace OFIQ_LIB
         std::sort(
             faces.begin(),
             faces.end(),
-            [](OFIQ::BoundingBox rh, OFIQ::BoundingBox lh) { return rh.width * rh.height > lh.width * lh.height; });
-        
+            [](OFIQ::BoundingBox rh, OFIQ::BoundingBox lh)
+            { return rh.width * rh.height > lh.width * lh.height; });
+
         session.assessment().boundingBox = faces[0];
         return faces;
     }

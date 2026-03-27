@@ -39,7 +39,7 @@ namespace OFIQ_LIB
         }
 
         if (auto it = m_masks.find(faceSegment); it != m_masks.end())
-            return it ->second;
+            return it->second;
 
         m_masks[faceSegment] = UpdateMask(session, faceSegment);
         return m_masks[faceSegment];

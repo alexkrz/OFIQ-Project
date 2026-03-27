@@ -25,24 +25,22 @@
  */
 
 #include "FaceOcclusionSegmentation.h"
+#include "DataStream.h"
 #include "OFIQError.h"
 #include "utils.h"
-#include <string>
-#include <fstream>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
+#include <string>
 
 namespace OFIQ_LIB::modules::segmentations
 {
-
-
     FaceOcclusionSegmentation::FaceOcclusionSegmentation(const Configuration& config)
     {
-        std::string modelPath = config.getDataDir() + "/" + config.GetString(m_modelConfigItem);
+        auto modelPath = config.GetFullPath(m_modelConfigItem);
 
         try
         {
-            std::ifstream instream(modelPath, std::ios::in | std::ios::binary);
+            DataStream instream(modelPath, std::ios::in | std::ios::binary);
             std::vector<uint8_t> modelData(
                 (std::istreambuf_iterator<char>(instream)),
                 std::istreambuf_iterator<char>());
@@ -52,14 +50,13 @@ namespace OFIQ_LIB::modules::segmentations
         {
             throw OFIQError(
                 OFIQ::ReturnCode::FaceOcclusionSegmentationError,
-                std::string("Loading model for FaceOcclusionSegmentation failed: " + 
-                    modelPath));
+                std::string("Loading model for FaceOcclusionSegmentation failed: " + modelPath));
         }
     }
 
     cv::Mat FaceOcclusionSegmentation::GetFaceOcclusionSegmentation(const cv::Mat& alignedImage)
     {
-        cv::Mat alignedCrop = alignedImage(
+        const cv::Mat alignedCrop = alignedImage(
             cv::Range(m_cropTop, alignedImage.rows - m_cropBottom),
             cv::Range(m_cropLeft, alignedImage.cols - m_cropRight));
         int croppedWidth = alignedCrop.cols;
@@ -67,7 +64,7 @@ namespace OFIQ_LIB::modules::segmentations
         cv::Size size(m_scaledWidth, m_scaledHeight);
         cv::Mat resized;
         cv::resize(alignedCrop, resized, size);
-        float scaleFactor = 1/255.0f;
+        float scaleFactor = 1 / 255.0f;
         cv::Mat blob = cv::dnn::blobFromImage({resized}, scaleFactor, cv::Size(), 0, true);
 
         // Convert cv::Mat to std::vector<float>
@@ -83,35 +80,25 @@ namespace OFIQ_LIB::modules::segmentations
         std::vector<int64_t> shape = element.GetShape();
         auto elementPtr = results[useThisOutput].GetTensorMutableData<float>();
 
-        // Assuming 'tensorDims' contains dimensions like {batchSize, channels, height, width}
-        auto batchSize = static_cast<int>(shape[0]);
-        auto nbChannels = static_cast<int>(shape[1]);
-        auto height = static_cast<int>(shape[2]);
-        auto width = static_cast<int>(shape[3]);
-
-        // Create a cv::Mat from the tensor data
-        std::array<int, 4> sizeMat = { batchSize, nbChannels, height, width };
-        auto mat = cv::Mat(4, sizeMat.data(), CV_32FC1, elementPtr);
-
         cv::Mat outputReshaped(size, CV_32F, elementPtr);
-
         outputReshaped *= -1;
         cv::threshold(outputReshaped, outputReshaped, 0, 1, cv::THRESH_BINARY_INV);
-        cv::Mat maskRescaled;
+
+        cv::Mat output8u = cv::Mat::zeros(size, CV_8U);
+        outputReshaped.convertTo(output8u, CV_8U);
         cv::resize(
-            outputReshaped,
-            maskRescaled,
+            output8u,
+            output8u,
             cv::Size(croppedWidth, croppedHeight),
             0,
             0,
             cv::INTER_NEAREST);
-        cv::Mat maskAligned = cv::Mat::zeros(alignedImage.size(), CV_64F);
-        maskRescaled.copyTo(maskAligned(
+        cv::Mat maskAligned8U = cv::Mat::zeros(alignedImage.size(), CV_8U);
+        output8u.copyTo(maskAligned8U(
             cv::Range(m_cropTop, croppedHeight + m_cropTop),
             cv::Range(m_cropLeft, croppedWidth + m_cropLeft)));
-        maskAligned.convertTo(maskAligned, CV_8U);
 
-        return maskAligned;
+        return maskAligned8U;
     }
 
     OFIQ::Image FaceOcclusionSegmentation::UpdateMask(
@@ -120,8 +107,8 @@ namespace OFIQ_LIB::modules::segmentations
         if (m_segmentationImage == nullptr || session.Id() != GetLastSessionId())
             try
             {
-                m_segmentationImage =
-                    std::make_shared<cv::Mat>(GetFaceOcclusionSegmentation(session.getAlignedFace()));
+                m_segmentationImage = std::make_shared<cv::Mat>(
+                    GetFaceOcclusionSegmentation(session.getAlignedFace()));
             }
             catch (const std::exception& e)
             {
@@ -130,18 +117,12 @@ namespace OFIQ_LIB::modules::segmentations
                     "Occlusion segment generation failed: " + std::string(e.what()));
             }
 
-        OFIQ::Image maskImage =
-            OFIQ_LIB::MakeGreyImage(static_cast<uint16_t>(m_segmentationImage->cols), static_cast<uint16_t>(m_segmentationImage->rows));
-
+        OFIQ::Image maskImage = OFIQ_LIB::MakeGreyImage(
+            static_cast<uint16_t>(m_segmentationImage->cols),
+            static_cast<uint16_t>(m_segmentationImage->rows));
 
         if (OFIQ_LIB::modules::segmentations::SegmentClassLabels::face == faceSegment)
-        {
             memcpy(maskImage.data.get(), m_segmentationImage->data, maskImage.size());
-        }
-        else
-        {
-            // nothing, this segmentation algorithm has only one layer
-        }
 
         return maskImage;
     }

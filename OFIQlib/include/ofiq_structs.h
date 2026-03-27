@@ -56,8 +56,8 @@ namespace OFIQ
         /** Number of bits per pixel. Legal values are 8 and 24. */
         uint8_t depth{ 24 };
         /** Managed pointer to raster scanned data.
-         * Either RGB color or intensity.
-         * If image_depth == 24 this points to  3WH bytes  RGBRGBRGB...
+         * Either BGR color or intensity.
+         * If image_depth == 24 this points to  3WH bytes  BGRBGRBGR...
          * If image_depth ==  8 this points to  WH bytes  IIIIIII */
         std::shared_ptr<uint8_t[]> data;
 
@@ -101,8 +101,11 @@ namespace OFIQ
          * @param[in] height of the image.
          * @param[in] depth of the image
          * @param[in] data of the image.
+         * @param[in] isRgb if true, then data is interpreted as RGB data; otherwise, 
+         * if false, data is interpreted as BGR data.
          */
-        void deepcopy(uint16_t width, uint16_t height, uint8_t depth, const std::shared_ptr<uint8_t>& data)
+        void deepcopy(uint16_t width, uint16_t height, uint8_t depth, 
+			const std::shared_ptr<uint8_t>& data , bool isRgb = true )
         {
             this->width = width;
             this->height = height;
@@ -110,6 +113,14 @@ namespace OFIQ
             size_t size = this->size();
             this->data.reset(new uint8_t[size], std::default_delete<uint8_t[]>());
             memcpy(this->data.get(), data.get(), size);
+            if ( isRgb && depth == 24 )
+            {
+                auto ptr = this->data.get();
+                for (size_t idx = 0; idx < size; idx += 3)
+                {
+                    std::swap(ptr[idx],ptr[idx+2]);
+                }
+            }
         }
     };
 
@@ -143,7 +154,9 @@ namespace OFIQ
         /** Failure to generate a quality score on the input image */
         QualityAssessmentError,
         /** Function is not implemented */
-        NotImplemented
+        NotImplemented,
+        /** A config file is missing or the given filename is invalid*/
+        MissingConfigFileError
     };
 
     /** Output stream operator for a ReturnCode object. */

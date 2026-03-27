@@ -35,22 +35,34 @@ namespace OFIQ_LIB::modules::measures
             std::cout << msg << std::flush; // Need to explicitly flush the buffer to instantly show debug messages
     }
 
-    void Executor::ExecuteAll(Session & i_currentSession) const
+    void Executor::ExecuteAll(Session& i_currentSession) const
     {
         int i = 1;
-        log("\t");
+        // log("\t");
         for (const auto& measure : m_measures)
         {
             auto s = std::to_string(i);
+            auto start_time = std::chrono::high_resolution_clock::now();
             log(s + ". " + measure->GetName() + " ");
-            try {
+            try
+            {
                 measure->Execute(i_currentSession);
             }
             catch (...)
             {
-                measure->SetQualityMeasure(i_currentSession, measure->GetQualityMeasure(), .0f, OFIQ::QualityMeasureReturnCode::FailureToAssess);
+                measure->SetQualityMeasure(
+                    i_currentSession,
+                    measure->GetQualityMeasure(),
+                    .0f,
+                    OFIQ::QualityMeasureReturnCode::FailureToAssess);
                 log("Exception in " + measure->GetName() + "!!! ");
             }
+            auto end_time = std::chrono::high_resolution_clock::now();
+            auto elapsed_ms =
+                std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time)
+                    .count();
+            log(std::to_string(elapsed_ms) + std::string(" ms\n"));
+
             ++i;
         }
         log("\nfinished\n");

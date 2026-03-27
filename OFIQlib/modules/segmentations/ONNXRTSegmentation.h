@@ -36,7 +36,7 @@
  * @details Helper class to manage the ONNXRuntime session object. Details can be found on the ONNXRuntime documentation
  * https://onnxruntime.ai/docs/get-started/with-cpp.html.
  */
-class ONNXRuntimeSegmentation
+class ONNXRuntimeEnv
 {
 private:
 
@@ -79,13 +79,13 @@ public:
      * @brief Constructor
      * 
      */
-    ONNXRuntimeSegmentation() = default;
+    ONNXRuntimeEnv() = default;
 
     /**
      * @brief Destructor
      * 
      */
-    ~ONNXRuntimeSegmentation() = default;
+    ~ONNXRuntimeEnv() = default;
 
     /**
      * @brief Public method to generate an ONNXRuntime session object.

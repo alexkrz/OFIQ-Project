@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name" translatable="false">OFIQ Mobile</string>
+    <string name="capture">Capture</string>
+    <string name="scan_face_explanation">Please scan face</string>
+    <string name="accept">Yes</string>
+    <string name="accept_image">Accept</string>
+    <string name="repeat_scan">Repeat</string>
+    <string name="restart_process_menu_item">Restart process menu item</string>
+    <string name="initializing">Initializing…</string>
+    <string name="metric">Metric</string>
+    <string name="restart_icon_content_description">Process restart Icon</string>
+    <string name="zoomable_image_content_description">Zoomable Image</string>
+    <string name="close">Close</string>
+    <string name="cancel">No</string>
+    <string name="restart_process_dialog_title">Do you want to restart the process?</string>
+    <string name="switch_camera">Switch Camera</string>
+    <string name="close_app_dialog">Do you want to close the app?</string>
+    <string name="n_a" translatable="false">n/a</string>
+    <string name="could_not_initialize">The app could not be initialised! (%1$s)</string>
+    <string name="score">Score out of 100</string>
+    <string name="native_quality_measure">Native Quality Measure</string>
+    <string name="action_bar_title" translatable="false">OFIQ Mobile</string>
+</resources>

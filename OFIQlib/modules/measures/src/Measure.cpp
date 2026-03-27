@@ -57,7 +57,11 @@ namespace OFIQ_LIB::modules::measures
         return ScalarConversion(rawValue, m_sigmoidMap[key]);
     }
 
-    void Measure::SetQualityMeasure(OFIQ_LIB::Session& session, OFIQ::QualityMeasure measure, double rawScore, OFIQ::QualityMeasureReturnCode code)
+    void Measure::SetQualityMeasure(
+        OFIQ_LIB::Session& session,
+        OFIQ::QualityMeasure measure,
+        double rawScore,
+        OFIQ::QualityMeasureReturnCode code)
     {
         double scalarScore;
         if (code == OFIQ::QualityMeasureReturnCode::FailureToAssess)
@@ -71,20 +75,14 @@ namespace OFIQ_LIB::modules::measures
         session.assessment().qAssessments[measure] = {rawScore, scalarScore, code};
     }
 
-    std::string Measure::GetName() const
-    {
-        return Measure::GetMeasureName(this->m_measure);
-    }
+    std::string Measure::GetName() const { return Measure::GetMeasureName(this->m_measure); }
 
     std::string Measure::GetMeasureName(OFIQ::QualityMeasure measure)
     {
         return static_cast<std::string>(magic_enum::enum_name(measure));
     }
 
-    OFIQ::QualityMeasure Measure::GetQualityMeasure() const
-    {
-        return m_measure;
-    }
+    OFIQ::QualityMeasure Measure::GetQualityMeasure() const { return m_measure; }
 
     std::string Measure::ExpandKey(std::string_view rawKey)
     {

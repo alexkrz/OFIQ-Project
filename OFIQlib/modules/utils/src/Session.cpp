@@ -28,7 +28,7 @@
 
 namespace OFIQ_LIB
 {
-    
+
     std::string Session::GenerateId() const
     {
         static int sessionCounter = 0;
@@ -36,44 +36,34 @@ namespace OFIQ_LIB
         return std::to_string(sessionCounter);
     }
 
-    void Session::setDetectedFaces(const std::vector<OFIQ::BoundingBox>& i_boundingBoxes) {
-        m_detectedFaces = i_boundingBoxes;        
-    }
-
-    std::vector<OFIQ::BoundingBox> Session::getDetectedFaces()  const
+    void Session::setDetectedFaces(const std::vector<OFIQ::BoundingBox>& i_boundingBoxes)
     {
-        return m_detectedFaces;
+        m_detectedFaces = i_boundingBoxes;
     }
 
-    void Session::setPose(const EulerAngle& i_pose) {
-        m_pose = i_pose;
-    }
+    std::vector<OFIQ::BoundingBox> Session::getDetectedFaces() const { return m_detectedFaces; }
 
-    EulerAngle Session::getPose() const
+    void Session::setPose(const EulerAngle& i_pose) { m_pose = i_pose; }
+
+    EulerAngle Session::getPose() const { return m_pose; }
+
+    void Session::setLandmarks(const OFIQ::FaceLandmarks& i_landmarks)
     {
-        return m_pose;
-    }
-
-    void Session::setLandmarks(const OFIQ::FaceLandmarks& i_landmarks) {
         m_landmarks = i_landmarks;
     }
 
-    OFIQ::FaceLandmarks Session::getLandmarks() const
-    {
-        return m_landmarks;
-    }
+    OFIQ::FaceLandmarks Session::getLandmarks() const { return m_landmarks; }
 
-    void Session::setAlignedFaceLandmarks(const OFIQ::FaceLandmarks& i_landmarks) {
+    void Session::setAlignedFaceLandmarks(const OFIQ::FaceLandmarks& i_landmarks)
+    {
         m_alignedFaceLandmarks = i_landmarks;
     }
 
-    OFIQ::FaceLandmarks Session::getAlignedFaceLandmarks() const
-    {
-        return m_alignedFaceLandmarks;
-    }
+    OFIQ::FaceLandmarks Session::getAlignedFaceLandmarks() const { return m_alignedFaceLandmarks; }
 
-    void Session::setAlignedFaceTransformationMatrix(const cv::Mat& i_transformationMatrix) {
-        m_alignedFaceTransformationMatrix = i_transformationMatrix.clone();
+    void Session::setAlignedFaceTransformationMatrix(const cv::Mat& i_transformationMatrix)
+    {
+        m_alignedFaceTransformationMatrix = i_transformationMatrix;
     }
 
     cv::Mat Session::getAlignedFaceTransformationMatrix() const
@@ -81,42 +71,44 @@ namespace OFIQ_LIB
         return m_alignedFaceTransformationMatrix;
     }
 
-    void Session::setAlignedFace(const cv::Mat& i_alignedFace) {
-        m_alignedFace = i_alignedFace.clone();
-    }
+    void Session::setAlignedFace(const cv::Mat& i_alignedFace) { m_alignedFace = i_alignedFace; }
 
-    cv::Mat Session::getAlignedFace() const
+    void Session::setAlignedFaceLuminance(const cv::Mat& i_alignedFaceLuminance)
     {
-        return m_alignedFace.clone();
+        m_alignedFaceLuminance = i_alignedFaceLuminance;
     }
 
-    void Session::setAlignedFaceLandmarkedRegion(const cv::Mat& i_alignedFaceRegion) {
-        m_alignedFacelandmarkedRegion = i_alignedFaceRegion.clone();
+    cv::Mat Session::getAlignedFace() const { return m_alignedFace; }
+
+    cv::Mat Session::getAlignedFaceLuminance() const { return m_alignedFaceLuminance; }
+
+    void Session::setAlignedFaceLandmarkedRegion(const cv::Mat& i_alignedFaceRegion)
+    {
+        m_alignedFacelandmarkedRegion = i_alignedFaceRegion; // .clone();
     }
 
     cv::Mat Session::getAlignedFaceLandmarkedRegion() const
     {
-        return m_alignedFacelandmarkedRegion.clone();
+        return m_alignedFacelandmarkedRegion; // .clone();
     }
 
     void Session::setFaceParsingImage(const cv::Mat& i_parsingImage)
     {
-        m_faceParsingImage = i_parsingImage.clone();
+        m_faceParsingImage = i_parsingImage; // .clone();
     }
 
     cv::Mat Session::getFaceParsingImage() const
     {
-        return m_faceParsingImage.clone();
+        return m_faceParsingImage; // .clone();
     }
 
     void Session::setFaceOcclusionSegmentationImage(const cv::Mat& i_segmentationImage)
     {
-        m_faceOcclusionSegmentationImage = i_segmentationImage.clone();
+        m_faceOcclusionSegmentationImage = i_segmentationImage; // .clone();
     }
 
     cv::Mat Session::getFaceOcclusionSegmentationImage() const
     {
-        return m_faceOcclusionSegmentationImage.clone();
+        return m_faceOcclusionSegmentationImage; // .clone();
     }
-
 }

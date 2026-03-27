@@ -66,13 +66,13 @@ namespace OFIQ_LIB::modules::measures
          * @brief Instance of the enet_b0_8_best_vgaf_embed2 model. 
          * Set by ExpressionNeutrality.cnn1_model_path in the configuration file.
          */
-        ONNXRuntimeSegmentation m_onnxRuntimeEnvCNN1;
+        ONNXRuntimeEnv m_onnxRuntimeEnvCNN1;
 
         /**
          * @brief Instance of the enet_b2_8 model.
          * Set by ExpressionNeutrality.cnn2_model_path in the configuration file.
          */
-        ONNXRuntimeSegmentation m_onnxRuntimeEnvCNN2;
+        ONNXRuntimeEnv m_onnxRuntimeEnvCNN2;
 
         /**
          * @brief Instance of the AdaBoost classifier

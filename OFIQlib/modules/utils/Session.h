@@ -160,7 +160,7 @@ namespace OFIQ_LIB
 
         
         /**
-         * @brief Set the Aligned Face 
+         * @brief Assigns the aligned face image
          * 
          * @param i_alignedFace 
          */
@@ -173,6 +173,21 @@ namespace OFIQ_LIB
          */
         cv::Mat getAlignedFace() const;
 
+        /**
+         * @brief Assigns the luminance image of the aligned face
+         *
+         * @param i_alignedFace
+         */
+
+        void setAlignedFaceLuminance(const cv::Mat& i_alignedFaceLuminance);
+        /**
+         * @brief Get luminance image of the aligned face 
+         *
+         * @return cv::Mat
+         */
+
+        cv::Mat getAlignedFaceLuminance() const;
+        
         /**
          * @brief Set the Aligned Face Landmarked Region
          * 
@@ -263,6 +278,11 @@ namespace OFIQ_LIB
          */
         cv::Mat m_alignedFace;
 
+        /**
+         * @brief Aligned face image converte to luminance/gray image
+         *
+         */
+        cv::Mat m_alignedFaceLuminance;
         /**
          * @brief Container for storing the landmarks of the aligned face image
          * 
